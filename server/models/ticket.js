@@ -27,9 +27,13 @@ const ticketSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    status: {
+    department_name: {
       type: String,
       required: true,
+    },
+    status: {
+      type: String,
+      default: "Pending",
     },
   },
   { timestamps: true }
@@ -37,14 +41,25 @@ const ticketSchema = new mongoose.Schema(
 
 const Ticket = mongoose.model("Ticket", ticketSchema);
 
-function validateTicket(user) {
-  const schema = {
-    name: Joi.string().min(3).max(30).required(),
-    email: Joi.string().email().min(5).max(50).required(),
-    password: Joi.string().min(5).max(1024).required(),
-  };
+async function validateTicket(ticket) {
+  let error = false;
+  const schema = Joi.object({
+    subject: Joi.string().min(5).max(1024).required(),
+    body: Joi.string().min(5).required(),
+    user_id: Joi.number().required(),
+    department_id: Joi.number().required(),
+    department_name: Joi.string().min(2).max(50).required(),
+    // status: Joi.string().min(3).max(50).required(),
+  });
 
-  return Joi.validate(user, schema);
+  try {
+    const value = await schema.validateAsync(ticket);
+    return { error, value };
+  } catch (err) {
+    error = true;
+    let errorMessage = err.details[0].message;
+    return { error, errorMessage };
+  }
 }
 
 exports.Ticket = Ticket;
