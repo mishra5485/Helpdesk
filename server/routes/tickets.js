@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const { Ticket, validate } = require("../models/ticket");
 const express = require("express");
 const router = express.Router();
-const { v4: uuidv4 } = require("uuid");
+// const { v4: uuidv4 } = require("uuid");
 
 router.post("/create-ticket", auth, async (req, res) => {
   const response = await validate(req.body);
