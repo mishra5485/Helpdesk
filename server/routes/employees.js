@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { User, validate } = require("../models/user");
+const { Employee, validate } = require("../models/employee");
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
@@ -10,17 +10,17 @@ const { v4: uuidv4 } = require("uuid");
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await User.findOne({ email: email });
-  if (!user) return res.status(403).send("Invalid email or password");
+  const employee = await Employee.findOne({ email: email });
+  if (!employee) return res.status(403).send("Invalid email or password");
 
-  bcrypt.compare(password, user.password, function (err, result) {
+  bcrypt.compare(password, employee.password, function (err, result) {
     if (!result) return res.send("Invalid email or password");
     else {
       const token = generateAuthToken({ email });
       res
         .status(200)
         .header("x-auth-token", token)
-        .send({ username: user.name, token: token });
+        .send({ username: employee.name, token: token });
     }
   });
 });
@@ -32,16 +32,17 @@ router.post("/register", async (req, res) => {
   }
 
   const _id = uuidv4();
-  const { name, email, password } = req.body;
+  const { name, email, password, department_name } = req.body;
 
-  let user = await User.findOne({ email: email });
-  if (user) return res.send("User already registered. Please login in!");
+  let employee = await Employee.findOne({ email: email });
+  if (employee)
+    return res.send("Employee already registered. Please login in!");
 
-  user = new User({ _id, name, email, password });
+  employee = new Employee({ _id, name, email, password, department_name });
   bcrypt.hash(password, saltRounds, async function (err, hash) {
     if (err) console.log(err);
-    user.password = hash;
-    await user.save();
+    employee.password = hash;
+    await employee.save();
   });
 
   const token = generateAuthToken({ email });

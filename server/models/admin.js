@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
 
-const userSchema = new mongoose.Schema({
+const adminSchema = new mongoose.Schema({
   _id: {
     type: String,
     required: true,
@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    minlength: 2,
+    minlength: 3,
     maxlength: 50,
   },
   email: {
@@ -25,21 +25,26 @@ const userSchema = new mongoose.Schema({
     minlength: 5,
     maxlength: 1024,
   },
+  isAdmin: {
+    type: Boolean,
+    required: true,
+  },
   token: { type: String },
 });
 
-const User = mongoose.model("User", userSchema);
+const Admin = mongoose.model("Admin", adminSchema);
 
-async function validateUser(user) {
+async function validateAdmin(admin) {
   let error = false;
   const schema = Joi.object({
-    name: Joi.string().min(5).max(50).required(),
+    name: Joi.string().min(3).max(50).required(),
     email: Joi.string().min(5).max(255).required().email(),
-    password: Joi.string().min(5).max(255).required(),
+    password: Joi.string().min(5).max(1024).required(),
+    isAdmin: Joi.boolean().required(),
   });
 
   try {
-    const value = await schema.validateAsync(user);
+    const value = await schema.validateAsync(admin);
     return { error, value };
   } catch (err) {
     error = true;
@@ -48,5 +53,5 @@ async function validateUser(user) {
   }
 }
 
-exports.User = User;
-exports.validate = validateUser;
+exports.Admin = Admin;
+exports.validate = validateAdmin;
