@@ -52,7 +52,7 @@ router.post("/register", async (req, res) => {
   });
 
   const token = generateAuthToken({ email });
-  res.status(200).header("x-auth-token", token).send(email);
+  res.status(200).header("x-auth-token", token).send(email.toLowerCase());
 });
 
 generateAuthToken = (data) => {
