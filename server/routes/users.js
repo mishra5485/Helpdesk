@@ -35,7 +35,8 @@ router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
 
   let user = await User.findOne({ email: email });
-  if (user) return res.send("User already registered. Please login in!");
+  if (user)
+    return res.status(403).send("User already registered. Please login in!");
 
   user = new User({ _id, name, email, password });
   bcrypt.hash(password, saltRounds, async function (err, hash) {

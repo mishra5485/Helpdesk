@@ -10,6 +10,7 @@ import {
 } from "mdb-react-ui-kit";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import Logo from "../images/SlashLogo.png";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -32,12 +33,10 @@ export default class Login extends Component {
       })
       .then((response) => {
         localStorage.setItem("token", response.data.token);
-        toast.success(response.data.username);
-        // console.log(response.data.response.status);
+        toast.success("LoggedIn successfully");
       })
       .catch((err) => {
-        console.log("Errrorrr", err.message);
-        // toast.error(err);
+        toast.error(err.response.data);
       });
   };
 
@@ -77,7 +76,16 @@ export default class Login extends Component {
                     className="p-5 w-100 d-flex flex-column"
                     style={{ backgroundColor: "whitesmoke" }}
                   >
-                    <h2 className="fw-bold mb-2 text-center">Sign in</h2>
+                    <div style={{ display: "flex", justifyContent: "center" }}>
+                      <img
+                        src={Logo}
+                        alt="Logo"
+                        style={{
+                          width: "190px",
+                        }}
+                      />
+                    </div>
+                    <h2 className="fw-md mb-2 fs-3 text-center">Sign in</h2>
                     <p className="text-dark-50 mb-3">
                       Please enter your login and password!
                     </p>

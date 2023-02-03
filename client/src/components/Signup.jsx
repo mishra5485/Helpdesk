@@ -10,6 +10,7 @@ import {
 } from "mdb-react-ui-kit";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import Logo from "../images/SlashLogo.png";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -26,20 +27,21 @@ export default class Signup extends Component {
 
   handlesubmit = async (e) => {
     e.preventDefault();
-    alert("hello");
-    try {
-      await axios
-        .post("http://localhost:5000/register", {
-          name: this.state.username,
-          email: this.state.email,
-          password: this.state.password,
-        })
-        .then((response) => {
-          toast.success(response.data);
-        });
-    } catch (err) {
-      toast.error(err);
-    }
+
+    await axios
+      .post("http://localhost:5000/users/register", {
+        name: this.state.username,
+        email: this.state.email,
+        password: this.state.password,
+      })
+      .then((response) => {
+        console.log(response.data);
+        toast.success("User registered successfully");
+      })
+      .catch((err) => {
+        // console.log(err.response.data);
+        toast.error(err.response.data);
+      });
   };
   render() {
     return (
@@ -77,7 +79,16 @@ export default class Signup extends Component {
                     className="p-5 w-100 d-flex flex-column"
                     style={{ backgroundColor: "whitesmoke" }}
                   >
-                    <h2 className="fw-bold mb-2 text-center">Sign Up</h2>
+                    <div style={{ display: "flex", justifyContent: "center" }}>
+                      <img
+                        src={Logo}
+                        alt="Logo"
+                        style={{
+                          width: "190px",
+                        }}
+                      />
+                    </div>
+                    <h2 className="fw-md fs-3 mb-2 text-center">Sign Up</h2>
                     <p className="text-dark-50 mb-3">
                       Please enter your login and password!
                     </p>
