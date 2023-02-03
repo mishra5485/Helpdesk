@@ -38,7 +38,13 @@ router.post("/register", async (req, res) => {
   if (employee)
     return res.send("Employee already registered. Please login in!");
 
-  employee = new Employee({ _id, name, email, password, department_name });
+  employee = new Employee({
+    _id,
+    name,
+    email: email.toLowerCase(), // sanitize: convert email to lowercase
+    password,
+    department_name,
+  });
   bcrypt.hash(password, saltRounds, async function (err, hash) {
     if (err) console.log(err);
     employee.password = hash;

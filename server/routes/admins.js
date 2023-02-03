@@ -40,7 +40,7 @@ router.post("/register", async (req, res) => {
   admin = new Admin({
     _id,
     name,
-    email,
+    email: email.toLowerCase(), // sanitize: convert email to lowercase
     password,
     department_name,
     isAdmin,

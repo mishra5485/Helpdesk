@@ -37,7 +37,12 @@ router.post("/register", async (req, res) => {
   let user = await User.findOne({ email: email });
   if (user) return res.send("User already registered. Please login in!");
 
-  user = new User({ _id, name, email, password });
+  user = new User({
+    _id,
+    name,
+    email: email.toLowerCase(), // sanitize: convert email to lowercase
+    password,
+  });
   bcrypt.hash(password, saltRounds, async function (err, hash) {
     if (err) console.log(err);
     user.password = hash;
