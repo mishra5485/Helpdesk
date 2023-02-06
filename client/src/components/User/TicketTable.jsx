@@ -6,11 +6,8 @@ import {
   MDBTableBody,
   MDBContainer,
 } from "mdb-react-ui-kit";
-import { MDBTooltip } from "mdb-react-ui-kit";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Link } from "react-router-dom";
-
-export default class Smptable extends Component {
+export default class TicketTable extends Component {
   state = {
     items: [],
     pageCount: 0,
@@ -27,6 +24,7 @@ export default class Smptable extends Component {
     );
     const data = await res.json();
     const total = res.headers.get("x-total-count");
+    console.log(total);
     this.setState({ pageCount: Math.ceil(total / this.limit) });
     this.setState({ items: data });
   };
@@ -59,14 +57,13 @@ export default class Smptable extends Component {
                 <th scope="col">Username</th>
                 <th scope="col">Email</th>
                 <th scope="col">Body</th>
-                <th scope="col">Actions</th>
               </tr>
             </MDBTableHead>
             <MDBTableBody>
               {this.state.items.map((item, key) => {
                 return (
                   <tr key={key}>
-                    <Link to={`/ticketinfo/${item.id}`}>
+                    <Link to={`/user/ticketinfo/${item.id}`}>
                       <td>{item.id}</td>
                     </Link>
                     <td>{item.name}</td>

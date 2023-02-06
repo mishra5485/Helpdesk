@@ -10,7 +10,7 @@ import {
 } from "mdb-react-ui-kit";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import Logo from "../images/SlashLogo.png";
+import Logo from "../images/logo.svg";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -79,7 +79,13 @@ export default class Signup extends Component {
                     className="p-5 w-100 d-flex flex-column"
                     style={{ backgroundColor: "whitesmoke" }}
                   >
-                    <div style={{ display: "flex", justifyContent: "center" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        marginBottom: "15px",
+                      }}
+                    >
                       <img
                         src={Logo}
                         alt="Logo"
@@ -88,10 +94,7 @@ export default class Signup extends Component {
                         }}
                       />
                     </div>
-                    <h2 className="fw-md fs-3 mb-2 text-center">Sign Up</h2>
-                    <p className="text-dark-50 mb-3">
-                      Please enter your login and password!
-                    </p>
+                    <h2 className="fw-md fs-3 mb-4 text-center">Sign Up</h2>
 
                     <MDBInput
                       wrapperClass="mb-4 w-100"

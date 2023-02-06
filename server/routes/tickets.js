@@ -5,7 +5,7 @@ const express = require("express");
 const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
 
-router.post("/create-ticket", auth, async (req, res) => {
+router.post("/create-ticket", async (req, res) => {
   const response = await validate(req.body);
   if (response.error) {
     return res.status(400).send(response.errorMessage);
@@ -26,7 +26,7 @@ router.post("/create-ticket", auth, async (req, res) => {
   res.status(200).send("Tickect created successfully!");
 });
 
-router.get("/all/:limit/:pageNumber", auth, async (req, res) => {
+router.get("/all/:limit/:pageNumber", async (req, res) => {
   let limit = req.params.limit;
   let pageNumber = req.params.pageNumber;
   let skippedItems = pageNumber * limit;

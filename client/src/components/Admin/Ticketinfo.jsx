@@ -56,9 +56,13 @@ class TicketInfo extends Component {
                 <MDBCardBody className="p-5 w-100 d-flex flex-column">
                   <div>
                     <p className="mt-5">
-                      <Link to="/dashboard" className="text-dark-50 fw-bold">
+                      <Link
+                        to="/admin/dashboard"
+                        className="text-dark-50 fw-bold"
+                      >
                         Back to Table
                       </Link>
+                      <h1>Admin Ticket info</h1>
                     </p>
                   </div>
                   <MDBInput

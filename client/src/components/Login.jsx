@@ -10,7 +10,7 @@ import {
 } from "mdb-react-ui-kit";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import Logo from "../images/SlashLogo.png";
+import Logo from "../images/logo.svg";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -27,7 +27,7 @@ export default class Login extends Component {
   handlesubmit = async (e) => {
     e.preventDefault();
     await axios
-      .post("http://localhost:5000/users/login", {
+      .post("http://localhost:5000/login", {
         email: this.state.email,
         password: this.state.password,
       })
@@ -69,14 +69,20 @@ export default class Login extends Component {
             <MDBRow className="d-flex justify-content-center align-items-center h-100">
               <MDBCol col="12">
                 <MDBCard
-                  className="bg-white my-5 mx-auto"
+                  className="bg-dark my-5 mx-auto"
                   style={{ borderRadius: "1rem", maxWidth: "500px" }}
                 >
                   <MDBCardBody
                     className="p-5 w-100 d-flex flex-column"
                     style={{ backgroundColor: "whitesmoke" }}
                   >
-                    <div style={{ display: "flex", justifyContent: "center" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        marginBottom: "15px",
+                      }}
+                    >
                       <img
                         src={Logo}
                         alt="Logo"
@@ -85,10 +91,7 @@ export default class Login extends Component {
                         }}
                       />
                     </div>
-                    <h2 className="fw-md mb-2 fs-3 text-center">Sign in</h2>
-                    <p className="text-dark-50 mb-3">
-                      Please enter your login and password!
-                    </p>
+                    <h2 className="fw-md mb-4 fs-3 text-center">Sign in</h2>
                     <MDBInput
                       wrapperClass="mb-4 w-100"
                       label="Email address"
