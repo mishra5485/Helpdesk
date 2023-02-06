@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
+var moment = require("moment");
 
 const ticketSchema = new mongoose.Schema(
   {
@@ -23,10 +24,6 @@ const ticketSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    department_id: {
-      type: Number,
-      required: true,
-    },
     department_name: {
       type: String,
       required: true,
@@ -34,6 +31,10 @@ const ticketSchema = new mongoose.Schema(
     status: {
       type: String,
       default: "Pending",
+    },
+    createdDate: {
+      type: String,
+      default: moment().format("MMM Do YYYY"),
     },
   },
   { timestamps: true }
@@ -47,7 +48,6 @@ async function validateTicket(ticket) {
     subject: Joi.string().min(5).max(1024).required(),
     body: Joi.string().min(5).required(),
     user_id: Joi.number().required(),
-    department_id: Joi.number().required(),
     department_name: Joi.string().min(2).max(50).required(),
     // status: Joi.string().min(3).max(50).required(),
   });
