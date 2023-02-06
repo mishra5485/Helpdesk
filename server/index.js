@@ -8,6 +8,7 @@ const tickets = require("./routes/tickets");
 const users = require("./routes/users");
 const employees = require("./routes/employees");
 const admin = require("./routes/admins");
+const login = require("./routes/login");
 
 app.use(express.json());
 app.use(cors());
@@ -15,6 +16,7 @@ app.use("/tickets", tickets);
 app.use("/users", users);
 app.use("/employees", employees);
 app.use("/admins", admin);
+app.use("/", login);
 
 // This should be the last route else any after it won't work
 app.use("*", (req, res) => {
