@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
+var moment = require("moment");
 
 const ticketSchema = new mongoose.Schema(
   {
@@ -30,6 +31,10 @@ const ticketSchema = new mongoose.Schema(
     status: {
       type: String,
       default: "Pending",
+    },
+    createdDate: {
+      type: String,
+      default: moment().format("MMM Do YYYY"),
     },
   },
   { timestamps: true }
