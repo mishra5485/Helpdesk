@@ -26,8 +26,11 @@ router.post("/create-ticket", auth, async (req, res) => {
   res.status(200).send("Tickect created successfully!");
 });
 
-router.get("/all", auth, async (req, res) => {
-  let tickets = await Ticket.find({});
+router.get("/all/:limit/:pageNumber", auth, async (req, res) => {
+  let limit = req.params.limit;
+  let pageNumber = req.params.pageNumber;
+  let skippedItems = pageNumber * limit;
+  let tickets = await Ticket.find({}).limit(limit).skip(skippedItems);
   res.json(tickets);
 });
 
