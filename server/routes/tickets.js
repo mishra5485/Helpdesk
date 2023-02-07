@@ -27,7 +27,7 @@ router.post("/create-ticket", async (req, res) => {
   res.status(200).send("Tickect created successfully!");
 });
 
-router.get("/all/:limit/:pageNumber", async (req, res) => {
+router.get("/all/:limit/:pageNumber", auth, async (req, res) => {
   let limit = req.params.limit;
   let pageNumber = req.params.pageNumber;
   let skippedItems = pageNumber * limit;
