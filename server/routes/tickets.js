@@ -24,7 +24,7 @@ router.post("/create-ticket", async (req, res) => {
     department_name,
   });
   await ticket.save();
-  res.status(200).send("Tickect created successfully!");
+  res.status(200).send("Ticket created successfully!");
 });
 
 router.get("/all/:limit/:pageNumber", async (req, res) => {
@@ -40,17 +40,5 @@ router.get("/:id", async (req, res) => {
   let ticket = await Ticket.findById(req.params.id);
   res.send(ticket);
 });
-
-// function compareObjects(obj1, obj2) {
-//   const changes = {};
-//   for (const key in obj1) {
-//     if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
-//       if (obj1[key] !== obj2[key]) {
-//         changes[key] = obj2[key];
-//       }
-//     }
-//   }
-//   return changes;
-// }
 
 module.exports = router;
