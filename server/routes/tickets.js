@@ -6,7 +6,7 @@ const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
 var moment = require("moment");
 
-router.post("/create-ticket", async (req, res) => {
+router.post("/create-ticket", auth, async (req, res) => {
   const response = await validate(req.body);
   if (response.error) {
     return res.status(400).send(response.errorMessage);
@@ -36,7 +36,7 @@ router.get("/all/:limit/:pageNumber", auth, async (req, res) => {
   res.send({ tickets: tickets, count: count });
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth, async (req, res) => {
   let ticket = await Ticket.findById(req.params.id);
   res.send(ticket);
 });
