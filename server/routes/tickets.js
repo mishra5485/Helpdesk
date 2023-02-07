@@ -20,7 +20,6 @@ router.post("/create-ticket", auth, async (req, res) => {
     subject,
     body,
     user_id,
-    department_id,
     department_name,
   });
   await ticket.save();
