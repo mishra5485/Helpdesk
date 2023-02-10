@@ -27,11 +27,11 @@ export default class TicketTable extends Component {
         `http://localhost:5000/tickets/all/${this.limit}/${this.state.currentPage}`
       )
       .then((response) => {
-        console.log(response.data);
-        const total = response.headers.get("x-total-count");
-        console.log(total);
-        this.setState({ pageCount: Math.ceil(24 / this.limit) });
-        this.setState({ items: response.data });
+        let total = response.data.count;
+        this.setState({
+          pageCount: Math.ceil(total / this.limit),
+        });
+        this.setState({ items: response.data.tickets });
       })
       .catch((err) => {
         console.log(err.response.data);
@@ -43,16 +43,15 @@ export default class TicketTable extends Component {
       `http://localhost:5000/tickets/all/${this.limit}/${currentPage}`
     );
     const data = await res.json();
-    return data;
+    const pageData = data.tickets;
+    return pageData;
   };
 
   handlePageClick = async (data) => {
-    console.log(data.selected);
-
     let currentPage = data.selected + 1;
 
-    const commentsFormServer = await this.fetchComments(currentPage);
-    this.setState({ items: commentsFormServer });
+    const NextData = await this.fetchComments(currentPage);
+    this.setState({ items: NextData });
   };
 
   render() {
@@ -91,7 +90,7 @@ export default class TicketTable extends Component {
           breakLabel={"..."}
           pageCount={this.state.pageCount}
           marginPagesDisplayed={2}
-          pageRangeDisplayed={3}
+          pageRangeDisplayed={2}
           onPageChange={this.handlePageClick}
           containerClassName={"pagination justify-content-center"}
           pageClassName={"page-item"}
