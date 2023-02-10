@@ -16,8 +16,9 @@ class TicketInfo extends Component {
     userid: "",
     subject: "",
     body: "",
-    department_id: "",
+    departmentname: "",
     status: "",
+    CreatedAt: "",
   };
 
   componentDidMount() {
@@ -27,13 +28,15 @@ class TicketInfo extends Component {
 
   getdata = async (id) => {
     try {
-      let resp = await axios.get(`http://localhost:3000/tickets/${id}`);
+      let resp = await axios.get(`http://localhost:5000/tickets/${id}`);
+      console.log(resp.data);
       this.setState({
-        userid: resp.user_id,
-        subject: resp.subject,
-        body: resp.body,
-        departmentid: resp.department_id,
-        status: resp.status,
+        userid: resp.data.user_id,
+        subject: resp.data.subject,
+        body: resp.data.body,
+        departmentname: resp.data.department_name,
+        status: resp.data.status,
+        CreatedAt: resp.data.createdDate,
       });
     } catch (err) {
       console.log(err);
@@ -64,7 +67,68 @@ class TicketInfo extends Component {
                       </Link>
                     </p>
                   </div>
-                  <MDBInput
+                  <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="basic-addon1">
+                        User Id
+                      </span>
+                    </div>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Username"
+                      aria-label="Username"
+                      aria-describedby="basic-addon1"
+                      value={this.state.userid}
+                    />
+                  </div>
+                  <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="basic-addon1">
+                        Subject
+                      </span>
+                    </div>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Username"
+                      aria-label="Username"
+                      aria-describedby="basic-addon1"
+                      value={this.state.subject}
+                    />
+                  </div>
+                  <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="basic-addon1">
+                        Body
+                      </span>
+                    </div>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Username"
+                      aria-label="Username"
+                      aria-describedby="basic-addon1"
+                      value={this.state.Body}
+                    />
+                  </div>
+                  <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="basic-addon1">
+                        CreatedOn
+                      </span>
+                    </div>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Username"
+                      aria-label="Username"
+                      aria-describedby="basic-addon1"
+                      value={this.state.CreatedAt}
+                    />
+                  </div>
+
+                  {/* <MDBInput
                     wrapperClass="mb-4 w-100"
                     id="formControlemail"
                     type="email"
@@ -95,7 +159,7 @@ class TicketInfo extends Component {
                     id="formControlResolution"
                     type="text"
                     size="lg"
-                    value={this.state.departmentid}
+                    value={this.state.departmentname}
                     disabled
                   />
 
@@ -106,7 +170,7 @@ class TicketInfo extends Component {
                     size="sm"
                     value={this.state.status}
                     disabled
-                  />
+                  /> */}
                 </MDBCardBody>
               </MDBCard>
             </MDBCol>
