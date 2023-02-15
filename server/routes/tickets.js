@@ -40,4 +40,27 @@ router.get("/:id", auth, async (req, res) => {
   res.send(ticket);
 });
 
+router.get("/all", auth, async (req, res) => {
+  let tickets = await Ticket.find({});
+  res.send(tickets);
+});
+
+router.post("/comment", async (req, res) => {
+  try {
+    const { id, content, createdBy } = req.body;
+    let ticket = await Ticket.findById(id);
+    await Ticket.updateOne(
+      { _id: id },
+      {
+        $push: {
+          comments: [{ content, createdBy }],
+        },
+      }
+    );
+    ticket = await Ticket.findById(id);
+
+    res.send(ticket);
+  } catch (ex) {}
+});
+
 module.exports = router;
