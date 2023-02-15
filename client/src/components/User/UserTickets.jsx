@@ -9,8 +9,6 @@ import {
 import { Link } from "react-router-dom";
 import axios from "axios";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
-import DeleteIcon from "@mui/icons-material/Delete";
-import Badge from "react-bootstrap/Badge";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AuthContext from "../context/AuthContext";
@@ -31,7 +29,6 @@ class UserTickets extends Component {
   }
   getData = async () => {
     const Usertoken = localStorage.getItem("token");
-    console.log(Usertoken);
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
@@ -41,7 +38,6 @@ class UserTickets extends Component {
         config
       )
       .then((response) => {
-        console.log(response);
         let total = response.data.count;
         this.setState({
           pageCount: Math.ceil(total / this.limit),
@@ -56,7 +52,6 @@ class UserTickets extends Component {
 
   fetchComments = async (currentPage) => {
     const Usertoken = localStorage.getItem("token");
-    console.log(Usertoken);
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
@@ -67,7 +62,6 @@ class UserTickets extends Component {
       );
       let respdata = await response.data;
 
-      console.log(respdata);
       return respdata.tickets;
     } catch (error) {
       console.log(error);
@@ -75,7 +69,7 @@ class UserTickets extends Component {
   };
 
   handlePageClick = async (data) => {
-    let currentPage = data.selected + 1;
+    let currentPage = data.selected;
     this.setState({ currentPage: currentPage });
     const ApiData = await this.fetchComments(currentPage);
     this.setState({ items: ApiData });
