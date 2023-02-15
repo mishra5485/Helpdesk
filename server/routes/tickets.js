@@ -4,14 +4,22 @@ const { Ticket, validate, validateComment } = require("../models/ticket");
 const express = require("express");
 const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
-// var moment = require("moment");
+var moment = require("moment");
 
-router.post("/create-ticket", auth, async (req, res) => {
-  console.log(req.body);
+router.post("/create-ticket", async (req, res) => {
   const response = await validate(req.body);
   if (response.error) {
     return res.status(400).send(response.errorMessage);
   }
+
+  let lastTicketNumber;
+  try {
+    const lastTicket = await Ticket.findOne().sort({ ticketNumber: -1 });
+    if (lastTicket) {
+      lastTicketNumber = lastTicket.ticketNumber;
+      lastTicketNumber++;
+    }
+  } catch (ex) {}
 
   const _id = uuidv4();
   const { subject, body, user_id, department_name } = req.body;
@@ -21,6 +29,7 @@ router.post("/create-ticket", auth, async (req, res) => {
     body,
     user_id,
     department_name,
+    ticketNumber: lastTicketNumber,
   });
   await ticket.save();
   res.status(200).send("Ticket created successfully!");
@@ -51,7 +60,8 @@ router.post("/comment", auth, async (req, res) => {
     return res.status(400).send(response.errorMessage);
   }
 
-  const { id, content, createdBy } = req.body;
+  const { id, content, createdBy, userName } = req.body;
+  let createdAt = getTimestamp();
   let ticket = await Ticket.findById(id);
   if (!ticket) {
     return res.send("Can't find ticket id");
@@ -60,14 +70,17 @@ router.post("/comment", auth, async (req, res) => {
     { _id: id },
     {
       $push: {
-        comments: [{ content, createdBy }],
+        comments: [{ content, createdBy, userName, createdAt }],
       },
     }
   );
   ticket = await Ticket.findById(id);
-  // ticket = await Ticket.findById(id);
 
   res.status(200).send("Success!");
 });
+
+const getTimestamp = () => {
+  return (unixTimestamp = Math.ceil(moment().valueOf() / 1000));
+};
 
 module.exports = router;
