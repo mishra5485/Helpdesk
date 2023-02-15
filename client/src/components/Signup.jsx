@@ -27,16 +27,19 @@ export default class Signup extends Component {
 
   handlesubmit = async (e) => {
     e.preventDefault();
+    const data = {
+      name: this.state.username,
+      email: this.state.email,
+      password: this.state.password,
+    };
 
     await axios
-      .post("http://localhost:5000/users/register", {
-        name: this.state.username,
-        email: this.state.email,
-        password: this.state.password,
-      })
+      .post(`${process.env.REACT_APP_BASE_URL}/users/register`, data)
       .then((response) => {
         console.log(response.data);
-        toast.success("User registered successfully");
+        localStorage.setItem("username", response.data.username);
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("access", response.data.access);
       })
       .catch((err) => {
         // console.log(err.response.data);

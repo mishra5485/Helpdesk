@@ -16,24 +16,28 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default class Login extends Component {
-  constructor() {
-    super();
-    this.state = {
-      email: "",
-      password: "",
-    };
-  }
+  state = {
+    email: "",
+    password: "",
+    success: false,
+  };
 
   handlesubmit = async (e) => {
+    const data = {
+      email: this.state.email,
+      password: this.state.password,
+    };
     e.preventDefault();
+
     await axios
-      .post("http://localhost:5000/login", {
-        email: this.state.email,
-        password: this.state.password,
-      })
+      .post(`${process.env.REACT_APP_BASE_URL}/login`, data)
       .then((response) => {
-        localStorage.setItem("token", response.data.token);
-        toast.success("LoggedIn successfully");
+        if (response.status === 200) {
+          toast.success("User LoggedIn Successfully");
+          localStorage.setItem("username", response.data.username);
+          localStorage.setItem("token", response.data.token);
+          localStorage.setItem("access", response.data.access);
+        }
       })
       .catch((err) => {
         toast.error(err.response.data);

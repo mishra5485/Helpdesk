@@ -5,6 +5,7 @@ import Login from "./components/Login";
 import DashBoard from "./components/User/DashBoard";
 import PageNotFound from "./components/404Page";
 import TicketInfo from "./components/User/TicketInfo";
+import AuthContext, { AuthProvider } from "./components/context/AuthContext";
 
 // import Signup from "./components/Signup";
 // import Login from "./components/Login";
@@ -18,13 +19,15 @@ import TicketInfo from "./components/User/TicketInfo";
 function App() {
   return (
     <>
-      <Switch>
-        <Route exact path="/" component={Login} />
-        <Route path="/signup" component={Signup} />
-        <Route path="/user/dashboard" component={DashBoard} />
-        <Route path="/user/ticketinfo/:id" component={TicketInfo} />
-        <Route path="*" component={PageNotFound} />
-      </Switch>
+      <AuthProvider>
+        <Switch>
+          <Route exact path="/" component={Login} />
+          <Route path="/signup" component={Signup} />
+          <Route path="/user/dashboard" component={DashBoard} />
+          <Route path="/user/ticketinfo/:id" component={TicketInfo} />
+          <Route path="*" component={PageNotFound} />
+        </Switch>
+      </AuthProvider>
 
       {/* <Switch>
         <Route exact path="/" component={Login} />

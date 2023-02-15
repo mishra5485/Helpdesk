@@ -9,12 +9,19 @@ import {
 import { Link } from "react-router-dom";
 import axios from "axios";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Badge from "react-bootstrap/Badge";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import AuthContext from "../context/AuthContext";
 
-export default class TicketTable extends Component {
+class UserTickets extends Component {
+  static contextType = AuthContext;
   state = {
     items: [],
-    pageCount: 0,
     currentpage: 0,
+    pageCount: 0,
+    bdcolor: "",
   };
 
   limit = 5;
@@ -23,102 +30,141 @@ export default class TicketTable extends Component {
     this.getData();
   }
   getData = async () => {
+    const Usertoken = localStorage.getItem("token");
+    console.log(Usertoken);
     const config = {
-      headers: {
-        "x-auth-token":
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhhcnNobWlzaHJhNTQ4NUBnbWFpbC5jb20iLCJpYXQiOjE2NzYwMDkyOTEsImV4cCI6MTY3NjAxMjg5MX0.znoU1FSOoF9WAeECTe_-EzkIEQ2K2fmWUQyZYqrzqdk",
-      },
+      headers: { Authorization: `Bearer ${Usertoken}` },
     };
-    const URL = `http://localhost:5000/tickets/all/${this.limit}/${this.state.currentPage}`;
-
     await axios
-      .get(URL, config)
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/tickets/all/${this.limit}/${this.state.currentPage}`,
+        config
+      )
       .then((response) => {
+        console.log(response);
         let total = response.data.count;
         this.setState({
           pageCount: Math.ceil(total / this.limit),
         });
         this.setState({ items: response.data.tickets });
+        toast.success("Tickets Fetched Successfully");
       })
       .catch((err) => {
-        console.log(err.response.data);
+        toast.error(err.response.data);
       });
   };
 
   fetchComments = async (currentPage) => {
-    const res = await fetch(
-      `http://localhost:5000/tickets/all/${this.limit}/${currentPage}`
-    );
-    const data = await res.json();
-    const pageData = data.tickets;
-    return pageData;
+    const Usertoken = localStorage.getItem("token");
+    console.log(Usertoken);
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+    try {
+      let response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/tickets/all/${this.limit}/${currentPage}`,
+        config
+      );
+      let respdata = await response.data;
+
+      console.log(respdata);
+      return respdata.tickets;
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   handlePageClick = async (data) => {
     let currentPage = data.selected + 1;
-
-    const NextData = await this.fetchComments(currentPage);
-    this.setState({ items: NextData });
+    this.setState({ currentPage: currentPage });
+    const ApiData = await this.fetchComments(currentPage);
+    this.setState({ items: ApiData });
   };
 
   render() {
     return (
-      <div className="table-responsive">
-        <MDBContainer>
-          <MDBTable className="mt-5">
-            <MDBTableHead className="table-dark">
-              <tr>
-                <th scope="col">Ticket.no</th>
-                <th scope="col">Subject</th>
-                <th scope="col">Created-on</th>
-                <th scope="col">Status</th>
-                <th scope="col">Action</th>
-              </tr>
-            </MDBTableHead>
-            <MDBTableBody>
-              {this.state.items.map((item, key) => {
-                return (
-                  <tr key={key}>
-                    <td>
-                      <Link to={`/user/ticketinfo/${item.id}`}>{key + 1}</Link>
-                    </td>
-                    <td>{item.subject}</td>
-                    <td>{item.createdDate}</td>
-                    <td>{item.status}</td>
-                    <td>
-                      <Link to={`/user/ticketinfo/${item._id}`}>
-                        <button className="btn btn-success">
-                          <RemoveRedEyeOutlinedIcon />
-                        </button>
-                      </Link>
-                    </td>
-                  </tr>
-                );
-              })}
-            </MDBTableBody>
-          </MDBTable>
-        </MDBContainer>
+      <>
+        <div className="form-group">
+          <ToastContainer
+            position="top-right"
+            autoClose={2000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            theme="dark"
+          />
+        </div>
 
-        <ReactPaginate
-          previousLabel={"previous"}
-          nextLabel={"next"}
-          breakLabel={"..."}
-          pageCount={this.state.pageCount}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={2}
-          onPageChange={this.handlePageClick}
-          containerClassName={"pagination justify-content-center"}
-          pageClassName={"page-item"}
-          pageLinkClassName={"page-link"}
-          previousClassName={"page-item"}
-          previousLinkClassName={"page-link"}
-          nextClassName={"page-item"}
-          nextLinkClassName={"page-link"}
-          breakClassName={"page-item"}
-          breakLinkClassName={"page-link"}
-          activeClassName={"active"}
-        />
-      </div>
+        <div className="table-responsive">
+          <MDBContainer>
+            <MDBTable bordered className="mt-5">
+              <MDBTableHead className="table-dark">
+                <tr>
+                  <th scope="col">Ticket.no</th>
+                  <th scope="col">Subject</th>
+                  <th scope="col">Created-on</th>
+                  <th scope="col">Department</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </MDBTableHead>
+              <MDBTableBody>
+                {this.state.items.map((item, key) => {
+                  return (
+                    <tr key={key}>
+                      <td>
+                        <Link to={`/user/ticketinfo/${item.id}`}>
+                          {key + 1}
+                        </Link>
+                      </td>
+                      <td>{item.subject}</td>
+                      <td>{item.createdDate}</td>
+                      <td>{item.department_name}</td>
+                      <td>{item.status}</td>
+
+                      <td>
+                        <Link to={`/user/ticketinfo/${item._id}`}>
+                          <button
+                            className="btn btn-success "
+                            style={{ marginRight: "8px" }}
+                          >
+                            <RemoveRedEyeOutlinedIcon />
+                          </button>
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </MDBTableBody>
+            </MDBTable>
+          </MDBContainer>
+
+          <ReactPaginate
+            previousLabel={"previous"}
+            nextLabel={"next"}
+            breakLabel={"..."}
+            pageCount={this.state.pageCount}
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={2}
+            onPageChange={this.handlePageClick}
+            containerClassName={"pagination justify-content-center"}
+            pageClassName={"page-item"}
+            pageLinkClassName={"page-link"}
+            previousClassName={"page-item"}
+            previousLinkClassName={"page-link"}
+            nextClassName={"page-item"}
+            nextLinkClassName={"page-link"}
+            breakClassName={"page-item"}
+            breakLinkClassName={"page-link"}
+            activeClassName={"active"}
+          />
+        </div>
+      </>
     );
   }
 }
+
+export default UserTickets;

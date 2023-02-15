@@ -7,6 +7,7 @@ const { v4: uuidv4 } = require("uuid");
 var moment = require("moment");
 
 router.post("/create-ticket", auth, async (req, res) => {
+  console.log(req.body);
   const response = await validate(req.body);
   if (response.error) {
     return res.status(400).send(response.errorMessage);
@@ -14,7 +15,6 @@ router.post("/create-ticket", auth, async (req, res) => {
 
   const _id = uuidv4();
   const { subject, body, user_id, department_name } = req.body;
-
   let ticket = new Ticket({
     _id,
     subject,

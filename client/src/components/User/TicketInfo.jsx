@@ -5,7 +5,6 @@ import {
   MDBCol,
   MDBCard,
   MDBCardBody,
-  MDBInput,
 } from "mdb-react-ui-kit";
 import axios from "axios";
 import { withRouter } from "react-router";
@@ -27,8 +26,17 @@ class TicketInfo extends Component {
   }
 
   getdata = async (id) => {
+    const Usertoken = localStorage.getItem("token");
+    console.log(Usertoken);
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+
     try {
-      let resp = await axios.get(`http://localhost:5000/tickets/${id}`);
+      let resp = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/tickets/${id}`,
+        config
+      );
       console.log(resp.data);
       this.setState({
         userid: resp.data.user_id,
@@ -57,120 +65,10 @@ class TicketInfo extends Component {
                 style={{ borderRadius: "1rem", maxWidth: "1100px" }}
               >
                 <MDBCardBody className="p-5 w-100 d-flex flex-column">
-                  <div>
-                    <p className="mt-5">
-                      <Link
-                        to="/user/dashboard"
-                        className="text-dark-50 fw-bold"
-                      >
-                        Back to Table
-                      </Link>
-                    </p>
-                  </div>
-                  <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text" id="basic-addon1">
-                        User Id
-                      </span>
-                    </div>
-                    <input
-                      type="text"
-                      class="form-control"
-                      placeholder="Username"
-                      aria-label="Username"
-                      aria-describedby="basic-addon1"
-                      value={this.state.userid}
-                    />
-                  </div>
-                  <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text" id="basic-addon1">
-                        Subject
-                      </span>
-                    </div>
-                    <input
-                      type="text"
-                      class="form-control"
-                      placeholder="Username"
-                      aria-label="Username"
-                      aria-describedby="basic-addon1"
-                      value={this.state.subject}
-                    />
-                  </div>
-                  <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text" id="basic-addon1">
-                        Body
-                      </span>
-                    </div>
-                    <input
-                      type="text"
-                      class="form-control"
-                      placeholder="Username"
-                      aria-label="Username"
-                      aria-describedby="basic-addon1"
-                      value={this.state.Body}
-                    />
-                  </div>
-                  <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text" id="basic-addon1">
-                        CreatedOn
-                      </span>
-                    </div>
-                    <input
-                      type="text"
-                      class="form-control"
-                      placeholder="Username"
-                      aria-label="Username"
-                      aria-describedby="basic-addon1"
-                      value={this.state.CreatedAt}
-                    />
-                  </div>
-
-                  {/* <MDBInput
-                    wrapperClass="mb-4 w-100"
-                    id="formControlemail"
-                    type="email"
-                    size="lg"
-                    value={this.state.userid}
-                    disabled
-                  />
-
-                  <MDBInput
-                    wrapperClass="mb-4 w-100"
-                    id="formControlBody"
-                    type="textarea"
-                    size="lg"
-                    value={this.state.subject}
-                    disabled
-                  />
-                  <MDBInput
-                    wrapperClass="mb-4 w-100"
-                    id="formControlCreatedOn"
-                    type="textarea"
-                    size="lg"
-                    value={this.state.body}
-                    disabled
-                  />
-
-                  <MDBInput
-                    wrapperClass="mb-4 w-100"
-                    id="formControlResolution"
-                    type="text"
-                    size="lg"
-                    value={this.state.departmentname}
-                    disabled
-                  />
-
-                  <MDBInput
-                    wrapperClass="mb-4 w-100"
-                    id="formControlResolution"
-                    type="text"
-                    size="sm"
-                    value={this.state.status}
-                    disabled
-                  /> */}
+                  <h4>
+                    Ticket Id
+                    <MDBBadge className="ms-2">{this.state.userid}</MDBBadge>
+                  </h4>
                 </MDBCardBody>
               </MDBCard>
             </MDBCol>
