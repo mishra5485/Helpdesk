@@ -2,21 +2,19 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 var moment = require("moment");
 
-const unixTimestamp = Math.ceil(moment().valueOf() / 1000);
-
 const commentSchema = new mongoose.Schema(
   {
     content: {
       type: String,
-      required: true,
     },
     createdBy: {
       type: String,
-      required: true,
+    },
+    userName: {
+      type: String,
     },
     createdAt: {
       type: Number,
-      default: unixTimestamp,
     },
   },
   { _id: false }
@@ -27,6 +25,11 @@ const ticketSchema = new mongoose.Schema(
     _id: {
       type: String,
       required: true,
+    },
+    ticketNumber: {
+      type: Number,
+      unique: true,
+      default: 100,
     },
     subject: {
       type: String,
@@ -50,7 +53,13 @@ const ticketSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      default: "Pending",
+      enum: ["Open", "In Progress", "Resolved"],
+      default: "Open",
+    },
+    priority: {
+      type: String,
+      enum: ["Low", "Medium", "High"],
+      default: "Low",
     },
     createdDate: {
       type: String,
@@ -89,6 +98,7 @@ async function validateComment(comment) {
     id: Joi.string().min(2).max(100).required(),
     content: Joi.string().min(2).required(),
     createdBy: Joi.string().min(2).max(10).required(),
+    userName: Joi.string().min(2).max(20).required(),
   });
 
   try {
