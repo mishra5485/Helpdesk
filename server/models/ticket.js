@@ -2,6 +2,24 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 var moment = require("moment");
 
+const now = moment();
+const unixTimestampMs = now.unix() * 1000; // get Unix timestamp in milliseconds
+
+const commentSchema = new mongoose.Schema({
+  content: {
+    type: String,
+    required: true,
+  },
+  createdBy: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Number,
+    default: unixTimestampMs,
+  },
+});
+
 const ticketSchema = new mongoose.Schema(
   {
     _id: {
@@ -36,6 +54,7 @@ const ticketSchema = new mongoose.Schema(
       type: String,
       default: moment().format("MMM Do YYYY"),
     },
+    comments: [commentSchema],
   },
   { timestamps: true }
 );
