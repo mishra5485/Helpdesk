@@ -2,11 +2,34 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 var moment = require("moment");
 
+const commentSchema = new mongoose.Schema(
+  {
+    content: {
+      type: String,
+    },
+    createdBy: {
+      type: String,
+    },
+    userName: {
+      type: String,
+    },
+    createdAt: {
+      type: Number,
+    },
+  },
+  { _id: false }
+);
+
 const ticketSchema = new mongoose.Schema(
   {
     _id: {
       type: String,
       required: true,
+    },
+    ticketNumber: {
+      type: Number,
+      unique: true,
+      default: 100,
     },
     subject: {
       type: String,
@@ -30,12 +53,19 @@ const ticketSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      default: "Pending",
+      enum: ["Open", "In Progress", "Resolved"],
+      default: "Open",
+    },
+    priority: {
+      type: String,
+      enum: ["Low", "Medium", "High"],
+      default: "Low",
     },
     createdDate: {
       type: String,
       default: moment().format("MMM Do YYYY"),
     },
+    comments: [commentSchema],
   },
   { timestamps: true }
 );
@@ -61,5 +91,26 @@ async function validateTicket(ticket) {
   }
 }
 
+async function validateComment(comment) {
+  let error = false;
+
+  const schema = Joi.object({
+    id: Joi.string().min(2).max(100).required(),
+    content: Joi.string().min(2).required(),
+    createdBy: Joi.string().min(2).max(10).required(),
+    userName: Joi.string().min(2).max(20).required(),
+  });
+
+  try {
+    const value = await schema.validateAsync(comment);
+    return { error, value };
+  } catch (err) {
+    error = true;
+    let errorMessage = err.details[0].message;
+    return { error, errorMessage };
+  }
+}
+
 exports.Ticket = Ticket;
 exports.validate = validateTicket;
+exports.validateComment = validateComment;
