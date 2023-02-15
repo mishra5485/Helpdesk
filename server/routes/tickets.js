@@ -1,10 +1,10 @@
 const auth = require("../middleware/auth");
 const mongoose = require("mongoose");
-const { Ticket, validate } = require("../models/ticket");
+const { Ticket, validate, validateComment } = require("../models/ticket");
 const express = require("express");
 const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
-var moment = require("moment");
+// var moment = require("moment");
 
 router.post("/create-ticket", auth, async (req, res) => {
   const response = await validate(req.body);
@@ -45,22 +45,29 @@ router.get("/all", auth, async (req, res) => {
   res.send(tickets);
 });
 
-router.post("/comment", async (req, res) => {
-  try {
-    const { id, content, createdBy } = req.body;
-    let ticket = await Ticket.findById(id);
-    await Ticket.updateOne(
-      { _id: id },
-      {
-        $push: {
-          comments: [{ content, createdBy }],
-        },
-      }
-    );
-    ticket = await Ticket.findById(id);
+router.post("/comment", auth, async (req, res) => {
+  const response = await validateComment(req.body);
+  if (response.error) {
+    return res.status(400).send(response.errorMessage);
+  }
 
-    res.send(ticket);
-  } catch (ex) {}
+  const { id, content, createdBy } = req.body;
+  let ticket = await Ticket.findById(id);
+  if (!ticket) {
+    return res.send("Can't find ticket id");
+  }
+  await Ticket.updateOne(
+    { _id: id },
+    {
+      $push: {
+        comments: [{ content, createdBy }],
+      },
+    }
+  );
+  ticket = await Ticket.findById(id);
+  // ticket = await Ticket.findById(id);
+
+  res.status(200).send("Success!");
 });
 
 module.exports = router;

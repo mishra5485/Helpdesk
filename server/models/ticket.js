@@ -76,5 +76,25 @@ async function validateTicket(ticket) {
   }
 }
 
+async function validateComment(comment) {
+  let error = false;
+
+  const schema = Joi.object({
+    id: Joi.string().min(2).max(100).required(),
+    content: Joi.string().min(2).required(),
+    createdBy: Joi.string().min(2).max(10).required(),
+  });
+
+  try {
+    const value = await schema.validateAsync(comment);
+    return { error, value };
+  } catch (err) {
+    error = true;
+    let errorMessage = err.details[0].message;
+    return { error, errorMessage };
+  }
+}
+
 exports.Ticket = Ticket;
 exports.validate = validateTicket;
+exports.validateComment = validateComment;
