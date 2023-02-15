@@ -2,9 +2,6 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 var moment = require("moment");
 
-const now = moment();
-const unixTimestampMs = now.unix() * 1000; // get Unix timestamp in milliseconds
-
 const commentSchema = new mongoose.Schema(
   {
     content: {
