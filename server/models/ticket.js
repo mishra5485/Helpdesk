@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 var moment = require("moment");
 
+const unixTimestamp = Math.ceil(moment().valueOf() / 1000);
+
 const commentSchema = new mongoose.Schema(
   {
     content: {
@@ -12,8 +14,12 @@ const commentSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    createdAt: {
+      type: Number,
+      default: unixTimestamp,
+    },
   },
-  { timestamps: true }
+  { _id: false }
 );
 
 const ticketSchema = new mongoose.Schema(
