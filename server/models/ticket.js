@@ -5,20 +5,19 @@ var moment = require("moment");
 const now = moment();
 const unixTimestampMs = now.unix() * 1000; // get Unix timestamp in milliseconds
 
-const commentSchema = new mongoose.Schema({
-  content: {
-    type: String,
-    required: true,
+const commentSchema = new mongoose.Schema(
+  {
+    content: {
+      type: String,
+      required: true,
+    },
+    createdBy: {
+      type: String,
+      required: true,
+    },
   },
-  createdBy: {
-    type: String,
-    required: true,
-  },
-  createdAt: {
-    type: Number,
-    default: unixTimestampMs,
-  },
-});
+  { timestamps: true }
+);
 
 const ticketSchema = new mongoose.Schema(
   {
