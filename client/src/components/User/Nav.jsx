@@ -22,7 +22,8 @@ import { Link } from "react-router-dom";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import axios from "axios";
-// import Logo from ".../images/logo.svg";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default class Nav extends Component {
   constructor() {
@@ -39,20 +40,31 @@ export default class Nav extends Component {
   toggleShow = () => this.setState({ modal: !this.state.modal });
 
   handleSubmit = async (e) => {
+    const Usertoken = localStorage.getItem("token");
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+    const data = {
+      subject: this.state.Subject,
+      body: this.state.Body,
+      department_name: this.state.Department,
+      user_id: "21",
+    };
+
     e.preventDefault();
     try {
       await axios
-        .post("http://localhost:5000/tickets/create-ticket", {
-          subject: this.state.Subject,
-          body: this.state.Body,
-          department_name: this.state.Department,
-          user_id: "21",
-        })
+        .post(
+          `${process.env.REACT_APP_BASE_URL}/tickets/create-ticket`,
+          data,
+          config
+        )
         .then((response) => {
+          toast.success(response.data);
           console.log(response.data);
         });
     } catch (err) {
-      console.log(err);
+      toast.error(err);
     }
     this.setState({ modal: false });
   };
@@ -64,6 +76,19 @@ export default class Nav extends Component {
   render() {
     return (
       <>
+        <div className="form-group">
+          <ToastContainer
+            position="top-right"
+            autoClose={1000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            theme="dark"
+          />
+        </div>
         <MDBNavbar expand="lg" light bgColor="light">
           <MDBContainer fluid>
             <MDBNavbarBrand>SlashRtc</MDBNavbarBrand>
@@ -96,7 +121,6 @@ export default class Nav extends Component {
             </MDBCollapse>
           </MDBContainer>
         </MDBNavbar>
-
         <MDBModal
           show={this.state.modal}
           setShow={!this.state.modal}
