@@ -9,9 +9,8 @@ import {
 import { Link } from "react-router-dom";
 import axios from "axios";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import AuthContext from "../context/AuthContext";
+import toast, { Toaster } from "react-hot-toast";
 
 class UserTickets extends Component {
   static contextType = AuthContext;
@@ -61,7 +60,7 @@ class UserTickets extends Component {
         config
       );
       let respdata = await response.data;
-
+      toast.success("Tickets Fetched Successfully");
       return respdata.tickets;
     } catch (error) {
       console.log(error);
@@ -78,20 +77,7 @@ class UserTickets extends Component {
   render() {
     return (
       <>
-        <div className="form-group">
-          <ToastContainer
-            position="top-right"
-            autoClose={2000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            theme="dark"
-          />
-        </div>
-
+        <Toaster position="top-right" />
         <div className="table-responsive">
           <MDBContainer>
             <MDBTable bordered className="mt-5">

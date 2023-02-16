@@ -11,9 +11,7 @@ import {
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Logo from "../images/logo.svg";
-
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import toast, { Toaster } from "react-hot-toast";
 
 export default class Signup extends Component {
   constructor() {
@@ -37,6 +35,7 @@ export default class Signup extends Component {
       .post(`${process.env.REACT_APP_BASE_URL}/users/register`, data)
       .then((response) => {
         console.log(response.data);
+        toast.success("Registered Successfully");
         localStorage.setItem("username", response.data.username);
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("access", response.data.access);
@@ -49,19 +48,7 @@ export default class Signup extends Component {
   render() {
     return (
       <>
-        <div className="form-group">
-          <ToastContainer
-            position="top-right"
-            autoClose={2000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            theme="dark"
-          />
-        </div>
+        <Toaster position="top-right" />
         <MDBContainer
           fluid
           style={{
