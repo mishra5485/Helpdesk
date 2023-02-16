@@ -4,6 +4,9 @@ var moment = require("moment");
 
 const commentSchema = new mongoose.Schema(
   {
+    type: {
+      type: String,
+    },
     content: {
       type: String,
     },
@@ -91,12 +94,54 @@ async function validateTicket(ticket) {
   }
 }
 
-async function validateComment(comment) {
+async function validateMessageType(comment) {
   let error = false;
 
   const schema = Joi.object({
     id: Joi.string().min(2).max(100).required(),
+    type: Joi.string().min(2).max(100).required(),
     content: Joi.string().min(2).required(),
+    createdBy: Joi.string().min(2).max(10).required(),
+    userName: Joi.string().min(2).max(20).required(),
+  });
+
+  try {
+    const value = await schema.validateAsync(comment);
+    return { error, value };
+  } catch (err) {
+    error = true;
+    let errorMessage = err.details[0].message;
+    return { error, errorMessage };
+  }
+}
+
+async function validateMessageType(comment) {
+  let error = false;
+
+  const schema = Joi.object({
+    id: Joi.string().min(2).max(100).required(),
+    type: Joi.string().min(2).max(100).required(),
+    content: Joi.string().min(2).required(),
+    createdBy: Joi.string().min(2).max(10).required(),
+    userName: Joi.string().min(2).max(20).required(),
+  });
+
+  try {
+    const value = await schema.validateAsync(comment);
+    return { error, value };
+  } catch (err) {
+    error = true;
+    let errorMessage = err.details[0].message;
+    return { error, errorMessage };
+  }
+}
+
+async function validateImageType(comment) {
+  let error = false;
+
+  const schema = Joi.object({
+    id: Joi.string().min(2).max(100).required(),
+    type: Joi.string().min(2).max(100).required(),
     createdBy: Joi.string().min(2).max(10).required(),
     userName: Joi.string().min(2).max(20).required(),
   });
@@ -113,4 +158,5 @@ async function validateComment(comment) {
 
 exports.Ticket = Ticket;
 exports.validate = validateTicket;
-exports.validateComment = validateComment;
+exports.validateMessageType = validateMessageType;
+exports.validateImageType = validateImageType;
