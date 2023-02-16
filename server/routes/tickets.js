@@ -1,27 +1,15 @@
 const auth = require("../middleware/auth");
-const mongoose = require("mongoose");
+const { Ticket } = require("../models/ticket");
 const {
-  Ticket,
   validate,
   validateMessageType,
   validateImageType,
-} = require("../models/ticket");
+} = require("../middleware/validator");
 const express = require("express");
 const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
 var moment = require("moment");
-const multer = require("multer");
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads");
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
-  },
-});
-
-const upload = multer({ storage: storage });
+const upload = require("../middleware/multer");
 
 router.post("/create-ticket", async (req, res) => {
   const response = await validate(req.body);
@@ -73,7 +61,6 @@ router.get("/all", auth, async (req, res) => {
 
 router.post("/comment", upload.single("avatar"), async (req, res) => {
   const file = req.file;
-  console.log(file);
   const content = file.filename;
 
   const { type } = req.body;
