@@ -60,9 +60,6 @@ router.get("/all", auth, async (req, res) => {
 });
 
 router.post("/comment", upload.single("avatar"), async (req, res) => {
-  const file = req.file;
-  const content = file.filename;
-
   const { type } = req.body;
 
   if (type === "text") {
@@ -95,6 +92,8 @@ router.post("/comment", upload.single("avatar"), async (req, res) => {
     if (response.error) {
       return res.status(400).send(response.errorMessage);
     }
+
+    const content = req.file.filename;
     const { id, createdBy, userName, type } = req.body;
 
     userName.toLowerCase();
