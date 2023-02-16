@@ -9,11 +9,8 @@ import {
 import { Link } from "react-router-dom";
 import axios from "axios";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
-import DeleteIcon from "@mui/icons-material/Delete";
-import Badge from "react-bootstrap/Badge";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import AuthContext from "../context/AuthContext";
+import toast, { Toaster } from "react-hot-toast";
 
 class UserTickets extends Component {
   static contextType = AuthContext;
@@ -31,7 +28,6 @@ class UserTickets extends Component {
   }
   getData = async () => {
     const Usertoken = localStorage.getItem("token");
-    console.log(Usertoken);
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
@@ -41,7 +37,6 @@ class UserTickets extends Component {
         config
       )
       .then((response) => {
-        console.log(response);
         let total = response.data.count;
         this.setState({
           pageCount: Math.ceil(total / this.limit),
@@ -56,7 +51,6 @@ class UserTickets extends Component {
 
   fetchComments = async (currentPage) => {
     const Usertoken = localStorage.getItem("token");
-    console.log(Usertoken);
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
@@ -66,8 +60,7 @@ class UserTickets extends Component {
         config
       );
       let respdata = await response.data;
-
-      console.log(respdata);
+      toast.success("Tickets Fetched Successfully");
       return respdata.tickets;
     } catch (error) {
       console.log(error);
@@ -75,7 +68,7 @@ class UserTickets extends Component {
   };
 
   handlePageClick = async (data) => {
-    let currentPage = data.selected + 1;
+    let currentPage = data.selected;
     this.setState({ currentPage: currentPage });
     const ApiData = await this.fetchComments(currentPage);
     this.setState({ items: ApiData });
@@ -84,20 +77,7 @@ class UserTickets extends Component {
   render() {
     return (
       <>
-        <div className="form-group">
-          <ToastContainer
-            position="top-right"
-            autoClose={2000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            theme="dark"
-          />
-        </div>
-
+        <Toaster position="top-right" />
         <div className="table-responsive">
           <MDBContainer>
             <MDBTable bordered className="mt-5">

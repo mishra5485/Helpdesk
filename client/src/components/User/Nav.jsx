@@ -22,8 +22,7 @@ import { Link } from "react-router-dom";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import toast, { Toaster } from "react-hot-toast";
 
 export default class Nav extends Component {
   constructor() {
@@ -76,19 +75,7 @@ export default class Nav extends Component {
   render() {
     return (
       <>
-        <div className="form-group">
-          <ToastContainer
-            position="top-right"
-            autoClose={1000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            theme="dark"
-          />
-        </div>
+        <Toaster position="top-right" />
         <MDBNavbar expand="lg" light bgColor="light">
           <MDBContainer fluid>
             <MDBNavbarBrand>SlashRtc</MDBNavbarBrand>
