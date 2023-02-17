@@ -17,6 +17,7 @@ app.use("/users", users);
 app.use("/employees", employees);
 app.use("/admins", admin);
 app.use("/", login);
+app.use("/uploads", express.static("uploads"));
 
 // This should be the last route else any after it won't work
 app.use("*", (req, res) => {

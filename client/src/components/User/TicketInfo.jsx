@@ -16,6 +16,7 @@ import moment from "moment";
 import SendIcon from "@mui/icons-material/Send";
 import Nav from "./Nav";
 import toast, { Toaster } from "react-hot-toast";
+import ModalImage from "react-modal-image";
 
 class TicketInfo extends Component {
   state = {
@@ -28,7 +29,6 @@ class TicketInfo extends Component {
     msg: "",
     file: null,
     resmsg: [],
-    fillActive: "tab1",
   };
 
   componentDidMount() {
@@ -73,6 +73,7 @@ class TicketInfo extends Component {
       content: this.state.msg,
       createdBy: localStorage.getItem("access"),
       userName: localStorage.getItem("username"),
+      type: "text",
     };
     await axios
       .post(`${process.env.REACT_APP_BASE_URL}/tickets/comment`, data, config)
@@ -90,33 +91,35 @@ class TicketInfo extends Component {
   };
 
   handleFileSubmit = async (e) => {
+    console.log("hello");
     e.preventDefault();
     const objid = this.props.match.params.id;
+
     const Usertoken = localStorage.getItem("token");
+
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
 
     const formData = new FormData();
-    formData.append("avtar", this.state.file);
+    formData.append("avatar", this.state.file);
+    formData.append("id", objid);
     formData.append("createdBy", localStorage.getItem("access"));
     formData.append("userName", localStorage.getItem("username"));
-
-    const data = {
-      id: objid,
-      content: this.state.msg,
-    };
+    formData.append("type", "image");
 
     axios
-      .post(`http://localhost:3001/upload/`, formData, config)
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/tickets/comment`,
+        formData,
+        config
+      )
       .then((res) => {
-        toast.success(res.data);
-        this.setState({ uploaded: res.data }, () =>
-          console.log(this.state.uploaded)
-        );
+        toast.success("File Sent Successfully");
+        this.getdata(objid);
       })
       .catch((err) => {
-        toast.error(err);
+        toast.error("Try AfterSomeTime");
       });
   };
   render() {
@@ -130,7 +133,7 @@ class TicketInfo extends Component {
           style={{ backgroundColor: "#eee" }}
         >
           <MDBRow className="d-flex justify-content-center">
-            <MDBCol md="8" lg="10" xl="10">
+            <MDBCol sm="10" md="10" lg="10" xl="10">
               <MDBCard>
                 <MDBCardHeader className="d-flex justify-content-between align-items-center p-3">
                   <MDBContainer>
@@ -221,9 +224,21 @@ class TicketInfo extends Component {
                               <div>
                                 <p
                                   className="small p-2 ms-3 mb-3 rounded-3"
-                                  style={{ backgroundColor: "#9FA6B2" }}
+                                  // style={{ backgroundColor: "#9FA6B2" }}
                                 >
-                                  {elem.content}
+                                  {elem.type === "text" ? (
+                                    <p className="small p-2 me-3 mb-3 text-white rounded-3 bg-info">
+                                      {elem.content}
+                                    </p>
+                                  ) : (
+                                    <MDBCard style={{ width: "250px" }}>
+                                      <ModalImage
+                                        small={`http://localhost:5000/uploads/${elem.content}`}
+                                        large={`http://localhost:5000/uploads/${elem.content}`}
+                                        hideZoom={true}
+                                      />
+                                    </MDBCard>
+                                  )}
                                 </p>
                               </div>
                             </div>
@@ -240,9 +255,19 @@ class TicketInfo extends Component {
                             </div>
                             <div className="d-flex flex-row justify-content-end mb-4 pt-1">
                               <div>
-                                <p className="small p-2 me-3 mb-3 text-white rounded-3 bg-info">
-                                  {elem.content}
-                                </p>
+                                {elem.type === "text" ? (
+                                  <p className="small p-2 me-3 mb-3 text-white rounded-3 bg-info">
+                                    {elem.content}
+                                  </p>
+                                ) : (
+                                  <MDBCard style={{ width: "250px" }}>
+                                    <ModalImage
+                                      small={`http://localhost:5000/uploads/${elem.content}`}
+                                      large={`http://localhost:5000/uploads/${elem.content}`}
+                                      hideZoom={true}
+                                    />
+                                  </MDBCard>
+                                )}
                               </div>
                               <img
                                 src="https://media.istockphoto.com/id/1131164548/vector/avatar-5.jpg?s=612x612&w=0&k=20&c=CK49ShLJwDxE4kiroCR42kimTuuhvuo2FH5y_6aSgEo="
@@ -256,6 +281,7 @@ class TicketInfo extends Component {
                     );
                   })}
                 </MDBCardBody>
+
                 <form onSubmit={this.handlesubmit}>
                   <MDBCardFooter className="text-muted d-flex justify-content-start align-items-center p-3">
                     <MDBInputGroup className="mb-0">
@@ -275,7 +301,7 @@ class TicketInfo extends Component {
                     </MDBInputGroup>
                   </MDBCardFooter>
                 </form>
-                <form onSubmit={this.handlefileSubmit}>
+                <form onSubmit={this.handleFileSubmit}>
                   <MDBCardFooter className="text-muted d-flex justify-content-start align-items-center p-3">
                     <MDBInputGroup className="mb-3">
                       <input
@@ -284,13 +310,9 @@ class TicketInfo extends Component {
                         name="file"
                         style={{ height: "40px", resize: "none" }}
                         onChange={(e) =>
-                          // this.setState(
-                          //   {
-                          //     file: e.target.files[0],
-                          //   },
-                          //   () => console.log(this.state.file)
-                          // )
-                          console.log(e.target.files[0])
+                          this.setState({
+                            file: e.target.files[0],
+                          })
                         }
                       />
                       <MDBBtn color="primary" style={{ paddingTop: ".55rem" }}>

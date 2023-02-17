@@ -88,6 +88,8 @@ router.post("/comment", upload.single("avatar"), async (req, res) => {
 
     res.status(200).send("Success!");
   } else if (type === "image") {
+    const file = req.file;
+    const content = file.filename;
     const response = await validateImageType(req.body);
     if (response.error) {
       return res.status(400).send(response.errorMessage);
