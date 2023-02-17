@@ -94,6 +94,7 @@ router.post("/comment", upload.single("avatar"), async (req, res) => {
     if (response.error) {
       return res.status(400).send(response.errorMessage);
     }
+
     const { id, createdBy, userName, type } = req.body;
 
     userName.toLowerCase();
