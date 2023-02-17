@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
+const generateAuthToken = require("../common/utils");
 
 router.post("/register", async (req, res) => {
   const response = await validateEmployee(req.body);
@@ -38,12 +39,5 @@ router.post("/register", async (req, res) => {
   const token = generateAuthToken({ email });
   res.status(200).header("x-auth-token", token).send(email.toLowerCase());
 });
-
-generateAuthToken = (data) => {
-  const token = jwt.sign(data, process.env.JWT_PRIVATE_KEY, {
-    expiresIn: "24h",
-  });
-  return token;
-};
 
 module.exports = router;
