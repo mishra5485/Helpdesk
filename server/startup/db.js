@@ -1,8 +1,8 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
 
 module.exports = function () {
-  const uri =
-    "mongodb+srv://amitsin:Slash123@cluster0.0ivaxjw.mongodb.net/helpdesk?retryWrites=true&w=majority";
+  const uri = process.env.MONGO_URL;
 
   mongoose
     .connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })

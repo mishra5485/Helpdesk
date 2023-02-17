@@ -9,6 +9,7 @@
 
 # production
 /build
+s/erver/.env
 
 # misc
 .DS_Store
