@@ -95,11 +95,7 @@ class UserTickets extends Component {
                 {this.state.items.map((item, key) => {
                   return (
                     <tr key={key}>
-                      <td>
-                        <Link to={`/user/ticketinfo/${item.id}`}>
-                          {key + 1}
-                        </Link>
-                      </td>
+                      <td>{`#${item.ticketNumber}`}</td>
                       <td>{item.subject}</td>
                       <td>{item.createdDate}</td>
                       <td>{item.department_name}</td>

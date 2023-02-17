@@ -22,6 +22,7 @@ import { Link } from "react-router-dom";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import axios from "axios";
+import PersonIcon from "@mui/icons-material/Person";
 import toast, { Toaster } from "react-hot-toast";
 
 export default class Nav extends Component {
@@ -47,7 +48,7 @@ export default class Nav extends Component {
       subject: this.state.Subject,
       body: this.state.Body,
       department_name: this.state.Department,
-      user_id: "21",
+      user_id: localStorage.setItem("username"),
     };
 
     e.preventDefault();
@@ -60,7 +61,6 @@ export default class Nav extends Component {
         )
         .then((response) => {
           toast.success(response.data);
-          console.log(response.data);
         });
     } catch (err) {
       toast.error(err);
@@ -70,6 +70,7 @@ export default class Nav extends Component {
 
   handleLogout = () => {
     localStorage.clear();
+    toast.success("Logout Successfully");
   };
 
   render() {
@@ -94,8 +95,13 @@ export default class Nav extends Component {
                     Create Ticket
                   </MDBNavbarLink>
                 </MDBNavbarItem>
-                <MDBNavbarItem>
-                  <MDBNavbarLink>UserName</MDBNavbarLink>
+                <MDBNavbarItem
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <MDBNavbarLink>{`${localStorage.getItem(
+                    "username"
+                  )}`}</MDBNavbarLink>
+                  <PersonIcon />
                 </MDBNavbarItem>
                 <MDBNavbarItem>
                   <MDBNavbarLink>

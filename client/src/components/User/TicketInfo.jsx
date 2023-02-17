@@ -9,6 +9,7 @@ import {
   MDBBtn,
   MDBCardFooter,
   MDBInputGroup,
+  MDBBadge,
 } from "mdb-react-ui-kit";
 import axios from "axios";
 import { withRouter } from "react-router";
@@ -17,9 +18,12 @@ import SendIcon from "@mui/icons-material/Send";
 import Nav from "./Nav";
 import toast, { Toaster } from "react-hot-toast";
 import ModalImage from "react-modal-image";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import MessageIcon from "@mui/icons-material/Message";
 
 class TicketInfo extends Component {
   state = {
+    ticketNumber: "",
     userid: "",
     subject: "",
     body: "",
@@ -29,6 +33,7 @@ class TicketInfo extends Component {
     msg: "",
     file: null,
     resmsg: [],
+    toggle: true,
   };
 
   componentDidMount() {
@@ -49,6 +54,7 @@ class TicketInfo extends Component {
       );
       this.setState({
         userid: resp.data.user_id,
+        TicketNumber: resp.data.ticketNumber,
         subject: resp.data.subject,
         body: resp.data.body,
         departmentname: resp.data.department_name,
@@ -132,34 +138,50 @@ class TicketInfo extends Component {
           className="py-5"
           style={{ backgroundColor: "#eee" }}
         >
-          <MDBRow className="d-flex justify-content-center">
+          <MDBRow className="d-flex justify-content-center ">
             <MDBCol sm="10" md="10" lg="10" xl="10">
               <MDBCard>
                 <MDBCardHeader className="d-flex justify-content-between align-items-center p-3">
-                  <MDBContainer>
+                  <MDBContainer fluid>
                     <MDBRow between className="mt-3">
-                      <MDBCol size="4">
+                      <MDBCol size="12">
                         <MDBRow className="mt-3">
-                          <MDBCol size="6" style={{ fontWeight: "bold" }}>
+                          <MDBCol
+                            size="2"
+                            style={{
+                              fontWeight: "bold",
+                              textAlign: "end",
+                              fontSize: "1.5rem",
+                            }}
+                          >
                             TicketId:
                           </MDBCol>
-                          <MDBCol size="6">#{this.state.userid}</MDBCol>
+                          <MDBCol
+                            size="4"
+                            style={{
+                              fontWeight: "bolder",
+                              fontSize: "1.5rem",
+                              textAlign: "start",
+                            }}
+                          >
+                            #{this.state.TicketNumber}
+                          </MDBCol>
                         </MDBRow>
                       </MDBCol>
                     </MDBRow>
                     <hr />
                     <MDBRow between className="mt-3">
-                      <MDBCol size="4">
+                      <MDBCol size="6">
                         <MDBRow className="mt-3">
-                          <MDBCol size="6" style={{ fontWeight: "bold" }}>
+                          <MDBCol size="3" style={{ fontWeight: "bold" }}>
                             CreatedOn:
                           </MDBCol>
                           <MDBCol size="6">{this.state.CreatedAt}</MDBCol>
                         </MDBRow>
                       </MDBCol>
-                      <MDBCol size="4">
+                      <MDBCol size="6">
                         <MDBRow className="mt-3">
-                          <MDBCol size="6" style={{ fontWeight: "bold" }}>
+                          <MDBCol size="3" style={{ fontWeight: "bold" }}>
                             AssignedTo:
                           </MDBCol>
                           <MDBCol size="6">{this.state.departmentname}</MDBCol>
@@ -167,18 +189,18 @@ class TicketInfo extends Component {
                       </MDBCol>
                     </MDBRow>
                     <MDBRow between className="mt-3">
-                      <MDBCol size="4">
+                      <MDBCol size="6">
                         <MDBRow className="mt-3">
-                          <MDBCol size="6" style={{ fontWeight: "bold" }}>
+                          <MDBCol size="3" style={{ fontWeight: "bold" }}>
                             Status:
                           </MDBCol>
                           <MDBCol size="6">{this.state.status}</MDBCol>
                         </MDBRow>
                       </MDBCol>
-                      <MDBCol size="4">
+                      <MDBCol size="6">
                         <MDBRow className="mt-3">
-                          <MDBCol size="6" style={{ fontWeight: "bold" }}>
-                            Userid:
+                          <MDBCol size="3" style={{ fontWeight: "bold" }}>
+                            UserName:
                           </MDBCol>
                           <MDBCol size="6">{this.state.userid}</MDBCol>
                         </MDBRow>
@@ -188,13 +210,13 @@ class TicketInfo extends Component {
                 </MDBCardHeader>
                 <MDBContainer fluid>
                   <MDBRow className="mt-3 d-flex p-2 ml-10">
-                    <MDBCol size="2" style={{ fontWeight: "bold" }}>
+                    <MDBCol size="1" style={{ fontWeight: "bold" }}>
                       Subject:
                     </MDBCol>
                     <MDBCol size="10">{this.state.subject}</MDBCol>
                   </MDBRow>
                   <MDBRow className="mt-3 d-flex p-2 ml-10">
-                    <MDBCol size="2" style={{ fontWeight: "bold" }}>
+                    <MDBCol size="1" style={{ fontWeight: "bold" }}>
                       Body:
                     </MDBCol>
                     <MDBCol size="10">{this.state.body}</MDBCol>
@@ -209,11 +231,6 @@ class TicketInfo extends Component {
                           <>
                             <div className="d-flex justify-content-between">
                               <p className="small mb-1">{elem.userName}</p>
-                              <p className="small mb-1 text-muted">
-                                {moment
-                                  .unix(elem.createdAt)
-                                  .format("MMMM Do YYYY, h:mm:ss a")}
-                              </p>
                             </div>
                             <div className="d-flex flex-row justify-content-start">
                               <img
@@ -221,39 +238,7 @@ class TicketInfo extends Component {
                                 alt="avatar 1"
                                 style={{ width: "45px", height: "100%" }}
                               />
-                              <div>
-                                <p
-                                  className="small p-2 ms-3 mb-3 rounded-3"
-                                  // style={{ backgroundColor: "#9FA6B2" }}
-                                >
-                                  {elem.type === "text" ? (
-                                    <p className="small p-2 me-3 mb-3 text-white rounded-3 bg-info">
-                                      {elem.content}
-                                    </p>
-                                  ) : (
-                                    <MDBCard style={{ width: "250px" }}>
-                                      <ModalImage
-                                        small={`http://localhost:5000/uploads/${elem.content}`}
-                                        large={`http://localhost:5000/uploads/${elem.content}`}
-                                        hideZoom={true}
-                                      />
-                                    </MDBCard>
-                                  )}
-                                </p>
-                              </div>
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <div className="d-flex justify-content-between">
-                              <p className="small mb-1 text-muted">
-                                {moment
-                                  .unix(elem.createdAt)
-                                  .format("MMMM Do YYYY, h:mm:ss a")}
-                              </p>
-                              <p className="small mb-1">{elem.userName}</p>
-                            </div>
-                            <div className="d-flex flex-row justify-content-end mb-4 pt-1">
+
                               <div>
                                 {elem.type === "text" ? (
                                   <p className="small p-2 me-3 mb-3 text-white rounded-3 bg-info">
@@ -264,9 +249,53 @@ class TicketInfo extends Component {
                                     <ModalImage
                                       small={`http://localhost:5000/uploads/${elem.content}`}
                                       large={`http://localhost:5000/uploads/${elem.content}`}
-                                      hideZoom={true}
+                                      hideZoom={false}
                                     />
+                                    <p className="small mb-1 text-muted">
+                                      {moment
+                                        .unix(elem.createdAt)
+                                        .format("MMMM Do YYYY")}
+                                    </p>
                                   </MDBCard>
+                                )}
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="d-flex flex-row justify-content-end mb-4 pt-1">
+                              <div>
+                                {elem.type === "text" ? (
+                                  <>
+                                    <p className="small p-2 me-3 mb-3 text-white rounded-3 bg-info">
+                                      {elem.content}
+                                    </p>
+                                    <p className="small mb-1 text-muted">
+                                      {moment
+                                        .unix(elem.createdAt)
+                                        .format("MMMM Do YYYY")}
+                                      {/* .format("MMMM Do YYYY, h:mm:ss a")} */}
+                                    </p>
+                                  </>
+                                ) : (
+                                  <>
+                                    <div>
+                                      <MDBCard style={{ width: "250px" }}>
+                                        <ModalImage
+                                          small={`http://localhost:5000/uploads/${elem.content}`}
+                                          large={`http://localhost:5000/uploads/${elem.content}`}
+                                          hideZoom={true}
+                                        />
+                                      </MDBCard>
+
+                                      <p className="small mb-1 text-muted text-end">
+                                        {moment
+                                          .unix(elem.createdAt)
+                                          .format("MMMM Do YYYY")}
+                                        {/* .format("MMMM Do YYYY, h:mm:ss a")} */}
+                                      </p>
+                                    </div>
+                                  </>
                                 )}
                               </div>
                               <img
@@ -281,46 +310,78 @@ class TicketInfo extends Component {
                     );
                   })}
                 </MDBCardBody>
+                {this.state.toggle ? (
+                  <form onSubmit={this.handlesubmit}>
+                    <MDBCardFooter className="text-muted d-flex justify-content-start align-items-center p-3">
+                      <MDBInputGroup className="mb-0">
+                        <MDBBadge
+                          className="mx-2"
+                          color="dark"
+                          light
+                          onClick={() =>
+                            this.setState({ toggle: !this.state.toggle })
+                          }
+                        >
+                          <AttachFileIcon className="m-auto" />
+                        </MDBBadge>
+                        <textarea
+                          className="form-control"
+                          placeholder="Type message"
+                          type="text"
+                          value={this.state.msg}
+                          style={{ height: "40px", resize: "none" }}
+                          onChange={(e) =>
+                            this.setState({ msg: e.target.value })
+                          }
+                          required
+                        />
 
-                <form onSubmit={this.handlesubmit}>
-                  <MDBCardFooter className="text-muted d-flex justify-content-start align-items-center p-3">
-                    <MDBInputGroup className="mb-0">
-                      <textarea
-                        className="form-control"
-                        placeholder="Type message"
-                        type="text"
-                        value={this.state.msg}
-                        style={{ height: "40px", resize: "none" }}
-                        onChange={(e) => this.setState({ msg: e.target.value })}
-                        required
-                      />
-
-                      <MDBBtn color="primary" style={{ paddingTop: ".55rem" }}>
-                        <SendIcon />
-                      </MDBBtn>
-                    </MDBInputGroup>
-                  </MDBCardFooter>
-                </form>
-                <form onSubmit={this.handleFileSubmit}>
-                  <MDBCardFooter className="text-muted d-flex justify-content-start align-items-center p-3">
-                    <MDBInputGroup className="mb-3">
-                      <input
-                        className="form-control"
-                        type="file"
-                        name="file"
-                        style={{ height: "40px", resize: "none" }}
-                        onChange={(e) =>
-                          this.setState({
-                            file: e.target.files[0],
-                          })
-                        }
-                      />
-                      <MDBBtn color="primary" style={{ paddingTop: ".55rem" }}>
-                        <SendIcon />
-                      </MDBBtn>
-                    </MDBInputGroup>
-                  </MDBCardFooter>
-                </form>
+                        <MDBBtn
+                          color="primary"
+                          style={{
+                            paddingTop: ".55rem",
+                          }}
+                        >
+                          <SendIcon />
+                        </MDBBtn>
+                      </MDBInputGroup>
+                    </MDBCardFooter>
+                  </form>
+                ) : (
+                  <form onSubmit={this.handleFileSubmit}>
+                    <MDBCardFooter className="text-muted d-flex justify-content-start align-items-center p-3">
+                      <MDBInputGroup className="mb-3">
+                        <MDBBadge
+                          className="mx-2 "
+                          color="dark"
+                          light
+                          onClick={() =>
+                            this.setState({ toggle: !this.state.toggle })
+                          }
+                        >
+                          <MessageIcon className="m-auto" />
+                        </MDBBadge>
+                        <input
+                          className="form-control"
+                          type="file"
+                          name="file"
+                          style={{ height: "40px", resize: "none" }}
+                          onChange={(e) =>
+                            this.setState({
+                              file: e.target.files[0],
+                            })
+                          }
+                        />
+                        <MDBBtn
+                          color="primary"
+                          style={{ paddingTop: ".55rem" }}
+                        >
+                          <SendIcon />
+                        </MDBBtn>
+                      </MDBInputGroup>
+                    </MDBCardFooter>
+                  </form>
+                )}
               </MDBCard>
             </MDBCol>
           </MDBRow>
