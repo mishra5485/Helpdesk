@@ -14,14 +14,12 @@ router.post("/login", async (req, res) => {
     if (!result) return res.send("Invalid email or password");
     else {
       const token = generateAuthToken({ email });
-      res
-        .status(200)
-        .header("x-auth-token", token)
-        .send({
-          username: user.name,
-          token: token,
-          access_level: user.access_level,
-        });
+      res.status(200).header("x-auth-token", token).send({
+        user_id: user._id,
+        username: user.name,
+        token: token,
+        access_level: user.access_level,
+      });
     }
   });
 });
