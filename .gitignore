@@ -9,7 +9,7 @@
 
 # production
 /build
-server/.env
+/server/.env
 
 # misc
 .DS_Store
