@@ -75,13 +75,42 @@ router.get("/emp/all/:limit/:pageNumber", async (req, res) => {
     let limit = req.params.limit;
     let pageNumber = req.params.pageNumber;
     let skippedItems = pageNumber * limit;
-    let employees = await CommonUser.find({ access_level: "employee" })
+    let employees = await CommonUser.find({
+      access_level: "employee",
+      status: 1,
+    })
       .limit(limit)
       .skip(skippedItems);
-    let count = await CommonUser.countDocuments({ access_level: "employee" });
+    let count = await CommonUser.countDocuments({
+      access_level: "employee",
+      status: 1,
+    });
     res.status(200).send({ employees, count });
   } catch (ex) {
     res.status(404).send("Unable to fetch employees");
+  }
+});
+
+router.post("/delete/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const employee = await CommonUser.find({
+      _id: id,
+      access_level: "employee",
+    });
+    if (!employee || employee.length === 0) {
+      res.status(500).send("Failed to delete employee");
+    } else {
+      CommonUser.findByIdAndUpdate(id, { status: 0 }, function (err, docs) {
+        if (err) {
+          res.send(err);
+        } else {
+          res.status(200).send(docs);
+        }
+      });
+    }
+  } catch (ex) {
+    res.status(500).send("Failed to delete employee");
   }
 });
 
