@@ -62,7 +62,7 @@ router.get("/emp/all/:limit/:pageNumber", async (req, res) => {
     let skippedItems = pageNumber * limit;
     let allUsers = await CommonUser.find({}).limit(limit).skip(skippedItems);
     let allemp = allUsers.filter((e) => e.access_level === "employee");
-    let count = await CommonUser.countDocuments({});
+    let count = allemp.length;
 
     const usersWithoutPassword = allemp.map((e) => {
       const { password, ...userWithoutPassword } = e;
