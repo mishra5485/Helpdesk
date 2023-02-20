@@ -8,8 +8,8 @@ const {
 const express = require("express");
 const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
-var moment = require("moment");
 const upload = require("../middleware/multer");
+const getTimestamp = require("../common/utils");
 
 router.post("/create-ticket", async (req, res) => {
   const response = await validate(req.body);
@@ -125,9 +125,5 @@ router.post("/comment", upload.single("avatar"), async (req, res) => {
     res.status(200).send("Success!");
   }
 });
-
-const getTimestamp = () => {
-  return (unixTimestamp = Math.ceil(moment().valueOf() / 1000));
-};
 
 module.exports = router;
