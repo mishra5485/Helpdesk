@@ -43,9 +43,11 @@ router.post("/register", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     let employee = await CommonUser.findById(req.params.id);
-    const { _id, name, department_name, email } = employee;
-    delete employee.password;
-    res.status(200).send({ _id, name, department_name, email });
+    if (employee.access_level === "employee") {
+      const { _id, name, department_name, email } = employee;
+      delete employee.password;
+      res.status(200).send({ _id, name, department_name, email });
+    }
   } catch (ex) {
     res
       .status(404)
@@ -60,12 +62,13 @@ router.get("/emp/all/:limit/:pageNumber", async (req, res) => {
     let skippedItems = pageNumber * limit;
     let allUsers = await CommonUser.find({}).limit(limit).skip(skippedItems);
     let allemp = allUsers.filter((e) => e.access_level === "employee");
+    let count = await CommonUser.countDocuments({});
 
     const usersWithoutPassword = allemp.map((e) => {
       const { password, ...userWithoutPassword } = e;
       return userWithoutPassword;
     });
-    res.send(allemp);
+    res.send({ employees: allemp, count });
   } catch (ex) {
     res.status(404).send("Unable to fetch employees");
   }
