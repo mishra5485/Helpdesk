@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
   department_name: { type: String },
   email: { type: String },
   createdAt: { type: String },
+  status: { type: Number, required: true, default: 1 },
 });
 
 const CommonUser = mongoose.model("AllUser", userSchema);
