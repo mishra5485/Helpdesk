@@ -21,9 +21,9 @@ import {
 import { Link } from "react-router-dom";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import PersonIcon from "@mui/icons-material/Person";
+import toast, { Toaster } from "react-hot-toast";
 
 export default class Nav extends Component {
   constructor() {
@@ -31,10 +31,10 @@ export default class Nav extends Component {
     this.state = {
       showNav: false,
       modal: false,
-      name: "",
+      username: "",
       email: "",
       password: "",
-      department_name: "",
+      department: "",
     };
   }
 
@@ -42,46 +42,47 @@ export default class Nav extends Component {
 
   handleSubmit = async (e) => {
     e.preventDefault();
-    await axios
-      .post("http://localhost:5000/employees/register", {
-        name: this.state.name,
-        email: this.state.name,
-        password: this.state.name,
-        department_name: this.state.name,
-      })
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((err) => {
-        toast.error(err.response.data);
-      });
+    const Usertoken = localStorage.getItem("token");
 
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+    const data = {
+      name: this.state.username,
+      password: this.state.password,
+      department_name: this.state.department,
+      email: this.state.email,
+    };
+
+    try {
+      await axios
+        .post(
+          `${process.env.REACT_APP_BASE_URL}/employees/register`,
+          data,
+          config
+        )
+        .then((response) => {
+          console.log(response);
+          toast.success(response.data);
+        });
+    } catch (err) {
+      toast.error(err);
+    }
     this.setState({ modal: false });
   };
 
   handleLogout = () => {
     localStorage.clear();
+    toast.success("Logout Successfully");
   };
 
   render() {
     return (
       <>
-        <div className="form-group">
-          <ToastContainer
-            position="top-right"
-            autoClose={2000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            theme="dark"
-          />
-        </div>
+        <Toaster position="top-right" />
         <MDBNavbar expand="lg" light bgColor="light">
           <MDBContainer fluid>
-            <MDBNavbarBrand>SlashRTC</MDBNavbarBrand>
+            <MDBNavbarBrand>SlashRtc</MDBNavbarBrand>
             <MDBNavbarToggler
               type="button"
               aria-expanded="false"
@@ -93,23 +94,27 @@ export default class Nav extends Component {
             <MDBCollapse navbar show={this.state.showNav}>
               <MDBNavbarNav style={{ justifyContent: "end" }}>
                 <MDBNavbarItem>
+                  <MDBNavbarLink>
+                    <Link to="/admin/tickettable">Manage Tickets</Link>
+                  </MDBNavbarLink>
+                </MDBNavbarItem>
+                <MDBNavbarItem>
                   <MDBNavbarLink onClick={this.toggleShow}>
                     Create Employee
                   </MDBNavbarLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
-                  <Link to="/admin/employee/table">
-                    <MDBNavbarLink>Manage Employees</MDBNavbarLink>
-                  </Link>
+                  <MDBNavbarLink>
+                    <Link to="/admin/employeetable">Manage Employee</Link>
+                  </MDBNavbarLink>
                 </MDBNavbarItem>
-
-                <MDBNavbarItem>
-                  <Link to="/admin/ticket/table">
-                    <MDBNavbarLink>Tickets</MDBNavbarLink>
-                  </Link>
-                </MDBNavbarItem>
-                <MDBNavbarItem>
-                  <MDBNavbarLink>UserName</MDBNavbarLink>
+                <MDBNavbarItem
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <MDBNavbarLink>{`${localStorage.getItem(
+                    "username"
+                  )}`}</MDBNavbarLink>
+                  <PersonIcon />
                 </MDBNavbarItem>
                 <MDBNavbarItem>
                   <MDBNavbarLink>
@@ -122,7 +127,6 @@ export default class Nav extends Component {
             </MDBCollapse>
           </MDBContainer>
         </MDBNavbar>
-
         <MDBModal
           show={this.state.modal}
           setShow={!this.state.modal}
@@ -142,14 +146,16 @@ export default class Nav extends Component {
                 <MDBModalBody>
                   <FloatingLabel
                     controlId="floatingInput"
-                    label="Employee Name"
+                    label="UserName"
                     className="mb-3"
                   >
                     <Form.Control
-                      required
                       type="text"
                       placeholder="name@example.com"
-                      onChange={(e) => this.setState({ name: e.target.value })}
+                      autoComplete="off"
+                      onChange={(e) =>
+                        this.setState({ username: e.target.value })
+                      }
                     />
                   </FloatingLabel>
                   <FloatingLabel
@@ -158,9 +164,9 @@ export default class Nav extends Component {
                     className="mb-3"
                   >
                     <Form.Control
-                      required
                       type="email"
                       placeholder="name@example.com"
+                      autoComplete="off"
                       onChange={(e) => this.setState({ email: e.target.value })}
                     />
                   </FloatingLabel>
@@ -170,9 +176,9 @@ export default class Nav extends Component {
                     className="mb-3"
                   >
                     <Form.Control
-                      required
                       type="password"
                       placeholder="Password"
+                      autoComplete="off"
                       onChange={(e) =>
                         this.setState({ password: e.target.value })
                       }
@@ -187,7 +193,7 @@ export default class Nav extends Component {
                       required
                       aria-label="Floating label select example"
                       onChange={(e) =>
-                        this.setState({ department_name: e.target.value })
+                        this.setState({ department: e.target.value })
                       }
                     >
                       <option>please select Department</option>

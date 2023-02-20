@@ -1,12 +1,12 @@
 import React, { Component } from "react";
-import Navbar from "./Navbar";
+import Nav from "./Nav";
 import TicketsTable from "./TicketsTable";
 
 export default class DashBoard extends Component {
   render() {
     return (
       <>
-        <Navbar />
+        <Nav />
         <TicketsTable />
       </>
     );

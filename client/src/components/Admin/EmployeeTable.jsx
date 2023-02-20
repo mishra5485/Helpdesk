@@ -1,19 +1,19 @@
 import React, { Component } from "react";
 import ReactPaginate from "react-paginate";
+import Nav from "./Nav";
 import {
   MDBTable,
   MDBTableHead,
   MDBTableBody,
   MDBContainer,
-  MDBBadge,
 } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import Nav from "./Nav";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
+import DeleteIcon from "@mui/icons-material/Delete";
 import toast, { Toaster } from "react-hot-toast";
 
-class TicketsTable extends Component {
+class EmployeeTable extends Component {
   state = {
     items: [],
     currentpage: 0,
@@ -42,7 +42,7 @@ class TicketsTable extends Component {
           pageCount: Math.ceil(total / this.limit),
         });
         this.setState({ items: response.data.tickets });
-        toast.success("Tickets Fetched Successfully");
+        toast.success("Employee Fetched Successfully");
       })
       .catch((err) => {
         toast.error(err.response.data);
@@ -60,7 +60,7 @@ class TicketsTable extends Component {
         config
       );
       let respdata = await response.data;
-      toast.success("Tickets Fetched Successfully");
+      toast.success("Employee Fetched Successfully");
       return respdata.tickets;
     } catch (error) {
       console.log(error);
@@ -68,7 +68,7 @@ class TicketsTable extends Component {
   };
 
   handlePageClick = async (data) => {
-    let currentPage = data.selected;
+    let currentPage = data.selected + 1;
     this.setState({ currentPage: currentPage });
     const ApiData = await this.fetchComments(currentPage);
     this.setState({ items: ApiData });
@@ -84,11 +84,11 @@ class TicketsTable extends Component {
             <MDBTable bordered className="mt-5">
               <MDBTableHead className="table-dark">
                 <tr>
-                  <th scope="col">Ticket.no</th>
-                  <th scope="col">Subject</th>
-                  <th scope="col">Created-on</th>
+                  <th scope="col">Employee.Id</th>
+                  <th scope="col">Employee Name</th>
+                  <th scope="col">CreatedOn</th>
                   <th scope="col">Department</th>
-                  <th scope="col">Status</th>
+                  <th scope="col">Email-id</th>
                   <th scope="col">Action</th>
                 </tr>
               </MDBTableHead>
@@ -100,44 +100,23 @@ class TicketsTable extends Component {
                       <td>{item.subject}</td>
                       <td>{item.createdDate}</td>
                       <td>{item.department_name}</td>
-                      <td>
-                        {item.status === "Open" ? (
-                          <MDBBadge
-                            className="mx-2"
-                            color="warning"
-                            light
-                            style={{ fontSize: "medium" }}
-                          >
-                            {item.status}
-                          </MDBBadge>
-                        ) : item.status === "InProgress" ? (
-                          <MDBBadge
-                            className="mx-2"
-                            color="secondary"
-                            light
-                            style={{ fontSize: "medium" }}
-                          >
-                            {item.status}
-                          </MDBBadge>
-                        ) : (
-                          <MDBBadge
-                            className="mx-2"
-                            color="success"
-                            light
-                            style={{ fontSize: "medium" }}
-                          >
-                            {item.status}
-                          </MDBBadge>
-                        )}
-                      </td>
+                      <td>{item.status}</td>
 
                       <td>
-                        <Link to={`/admin/ticketinfo/${item._id}`}>
+                        <Link to={`/admin/employeeinfo/${item._id}`}>
                           <button
                             className="btn btn-success "
                             style={{ marginRight: "8px" }}
                           >
                             <RemoveRedEyeOutlinedIcon />
+                          </button>
+                        </Link>
+                        <Link to={`/user/ticketinfo/${item._id}`}>
+                          <button
+                            className="btn btn-danger "
+                            style={{ marginRight: "8px" }}
+                          >
+                            <DeleteIcon />
                           </button>
                         </Link>
                       </td>
@@ -173,4 +152,4 @@ class TicketsTable extends Component {
   }
 }
 
-export default TicketsTable;
+export default EmployeeTable;

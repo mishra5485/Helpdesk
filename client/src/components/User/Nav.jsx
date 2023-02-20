@@ -34,13 +34,18 @@ export default class Nav extends Component {
       Subject: "",
       Body: "",
       Department: "",
+      username: "",
     };
   }
 
   toggleShow = () => this.setState({ modal: !this.state.modal });
 
   handleSubmit = async (e) => {
+    e.preventDefault();
     const Usertoken = localStorage.getItem("token");
+    const localusername = await localStorage.getItem("username");
+    this.setState({ username: localusername });
+
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
@@ -48,10 +53,9 @@ export default class Nav extends Component {
       subject: this.state.Subject,
       body: this.state.Body,
       department_name: this.state.Department,
-      user_id: localStorage.setItem("username"),
+      user_id: 21,
     };
 
-    e.preventDefault();
     try {
       await axios
         .post(
@@ -60,6 +64,7 @@ export default class Nav extends Component {
           config
         )
         .then((response) => {
+          console.log(response);
           toast.success(response.data);
         });
     } catch (err) {
