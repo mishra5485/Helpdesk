@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
   token: { type: String },
   department_name: { type: String },
   email: { type: String },
+  createdAt: { type: String },
 });
 
 const CommonUser = mongoose.model("AllUser", userSchema);
