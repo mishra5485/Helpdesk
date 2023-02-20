@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 module.exports = function () {
   const uri = process.env.MONGO_URL;
 
+  mongoose.set("strictQuery", true);
+
   mongoose
     .connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log("Connected to MongoDB Atlas"))
