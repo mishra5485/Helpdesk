@@ -42,7 +42,7 @@ class EmployeeTable extends Component {
         this.setState({
           pageCount: Math.ceil(total / this.limit),
         });
-        this.setState({ items: response.data. });
+        this.setState({ items: response.data.employees });
         toast.success("Employee Fetched Successfully");
       })
       .catch((err) => {
@@ -98,7 +98,7 @@ class EmployeeTable extends Component {
                   return (
                     <tr key={key}>
                       <td>{`#${item.ticketNumber}`}</td>
-                      <td>{item.subject}</td>
+                      <td>{item.name}</td>
                       <td>{item.createdDate}</td>
                       <td>{item.department_name}</td>
                       <td>{item.status}</td>

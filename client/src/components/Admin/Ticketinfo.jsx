@@ -272,20 +272,11 @@ class TicketInfo extends Component {
                           </>
                         ) : elem.createdBy === "user" ? (
                           <>
-                            <div className="d-flex justify-content-between">
-                              <p className="small mb-1">{`${elem.userName}(${elem.createdBy})`}</p>
-                            </div>
-                            <div className="d-flex flex-row justify-content-start">
-                              <img
-                                src="https://media.istockphoto.com/id/1131164548/vector/avatar-5.jpg?s=612x612&w=0&k=20&c=CK49ShLJwDxE4kiroCR42kimTuuhvuo2FH5y_6aSgEo="
-                                alt="avatar 1"
-                                style={{ width: "45px", height: "100%" }}
-                              />
-
+                            <div className="d-flex flex-row justify-content-end mb-4 pt-1">
                               <div>
                                 {elem.type === "text" ? (
                                   <>
-                                    <p className="small p-2 me-3 mb-3 text-white rounded-3 bg-info">
+                                    <p className="small p-2 me-3 mb-3 text-white rounded-3 bg-warning">
                                       {elem.content}
                                     </p>
                                     <p className="small mb-1 text-muted">
@@ -295,20 +286,31 @@ class TicketInfo extends Component {
                                     </p>
                                   </>
                                 ) : (
-                                  <MDBCard style={{ width: "250px" }}>
-                                    <ModalImage
-                                      small={`http://localhost:5000/uploads/${elem.content}`}
-                                      large={`http://localhost:5000/uploads/${elem.content}`}
-                                      hideZoom={false}
-                                    />
-                                    <p className="small mb-1 text-muted">
-                                      {moment
-                                        .unix(elem.createdAt)
-                                        .format("MMMM Do YYYY")}
-                                    </p>
-                                  </MDBCard>
+                                  <>
+                                    <div>
+                                      <MDBCard style={{ width: "250px" }}>
+                                        <ModalImage
+                                          small={`http://localhost:5000/uploads/${elem.content}`}
+                                          large={`http://localhost:5000/uploads/${elem.content}`}
+                                          hideZoom={true}
+                                        />
+                                      </MDBCard>
+
+                                      <p className="small mb-1 text-muted text-end">
+                                        {moment
+                                          .unix(elem.createdAt)
+                                          .format("MMMM Do YYYY")}
+                                        {/* .format("MMMM Do YYYY, h:mm:ss a")} */}
+                                      </p>
+                                    </div>
+                                  </>
                                 )}
                               </div>
+                              <img
+                                src="https://media.istockphoto.com/id/1131164548/vector/avatar-5.jpg?s=612x612&w=0&k=20&c=CK49ShLJwDxE4kiroCR42kimTuuhvuo2FH5y_6aSgEo="
+                                alt="avatar 1"
+                                style={{ width: "45px", height: "100%" }}
+                              />
                             </div>
                           </>
                         ) : (

@@ -5,6 +5,7 @@ import {
   MDBTableHead,
   MDBTableBody,
   MDBContainer,
+  MDBBadge,
 } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -85,6 +86,7 @@ class UserTickets extends Component {
                   <th scope="col">Subject</th>
                   <th scope="col">Created-on</th>
                   <th scope="col">Department</th>
+                  <th scope="col">Priority</th>
                   <th scope="col">Status</th>
                   <th scope="col">Action</th>
                 </tr>
@@ -97,6 +99,66 @@ class UserTickets extends Component {
                       <td>{item.subject}</td>
                       <td>{item.createdDate}</td>
                       <td>{item.department_name}</td>
+                      <td>
+                        {item.priority === "Low" ? (
+                          <MDBBadge
+                            className="mx-2"
+                            color="success"
+                            light
+                            style={{ fontSize: "medium" }}
+                          >
+                            {item.priority}
+                          </MDBBadge>
+                        ) : item.priority === "Medium" ? (
+                          <MDBBadge
+                            className="mx-2"
+                            color="warning"
+                            light
+                            style={{ fontSize: "medium" }}
+                          >
+                            {item.priority}
+                          </MDBBadge>
+                        ) : (
+                          <MDBBadge
+                            className="mx-2"
+                            color="danger"
+                            light
+                            style={{ fontSize: "medium" }}
+                          >
+                            {item.priority}
+                          </MDBBadge>
+                        )}
+                      </td>
+                      <td>
+                        {item.status === "Open" ? (
+                          <MDBBadge
+                            className="mx-2"
+                            color="warning"
+                            light
+                            style={{ fontSize: "medium" }}
+                          >
+                            {item.status}
+                          </MDBBadge>
+                        ) : item.status === "In Progress" ? (
+                          <MDBBadge
+                            className="mx-2"
+                            color="primary"
+                            light
+                            style={{ fontSize: "medium" }}
+                          >
+                            {item.status}
+                          </MDBBadge>
+                        ) : (
+                          <MDBBadge
+                            className="mx-2"
+                            color="success"
+                            light
+                            style={{ fontSize: "medium" }}
+                          >
+                            {item.status}
+                          </MDBBadge>
+                        )}
+                      </td>
                       <td>{item.status}</td>
 
                       <td>

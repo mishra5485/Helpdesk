@@ -37,6 +37,7 @@ class TicketsTable extends Component {
         config
       )
       .then((response) => {
+        console.log(response);
         let total = response.data.count;
         this.setState({
           pageCount: Math.ceil(total / this.limit),
@@ -88,6 +89,7 @@ class TicketsTable extends Component {
                   <th scope="col">Subject</th>
                   <th scope="col">Created-on</th>
                   <th scope="col">Department</th>
+                  <th scope="col">Priority</th>
                   <th scope="col">Status</th>
                   <th scope="col">Action</th>
                 </tr>
@@ -101,6 +103,36 @@ class TicketsTable extends Component {
                       <td>{item.createdDate}</td>
                       <td>{item.department_name}</td>
                       <td>
+                        {item.priority === "Low" ? (
+                          <MDBBadge
+                            className="mx-2"
+                            color="success"
+                            light
+                            style={{ fontSize: "medium" }}
+                          >
+                            {item.priority}
+                          </MDBBadge>
+                        ) : item.priority === "Medium" ? (
+                          <MDBBadge
+                            className="mx-2"
+                            color="warning"
+                            light
+                            style={{ fontSize: "medium" }}
+                          >
+                            {item.priority}
+                          </MDBBadge>
+                        ) : (
+                          <MDBBadge
+                            className="mx-2"
+                            color="danger"
+                            light
+                            style={{ fontSize: "medium" }}
+                          >
+                            {item.priority}
+                          </MDBBadge>
+                        )}
+                      </td>
+                      <td>
                         {item.status === "Open" ? (
                           <MDBBadge
                             className="mx-2"
@@ -110,10 +142,10 @@ class TicketsTable extends Component {
                           >
                             {item.status}
                           </MDBBadge>
-                        ) : item.status === "InProgress" ? (
+                        ) : item.status === "In Progress" ? (
                           <MDBBadge
                             className="mx-2"
-                            color="secondary"
+                            color="primary"
                             light
                             style={{ fontSize: "medium" }}
                           >
