@@ -33,15 +33,16 @@ class EmployeeTable extends Component {
     };
     await axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/tickets/all/${this.limit}/${this.state.currentPage}`,
+        `${process.env.REACT_APP_BASE_URL}/employees/emp/all/${this.limit}/${this.state.currentPage}`,
         config
       )
       .then((response) => {
+        console.log(response);
         let total = response.data.count;
         this.setState({
           pageCount: Math.ceil(total / this.limit),
         });
-        this.setState({ items: response.data.tickets });
+        this.setState({ items: response.data. });
         toast.success("Employee Fetched Successfully");
       })
       .catch((err) => {
@@ -56,7 +57,7 @@ class EmployeeTable extends Component {
     };
     try {
       let response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/tickets/all/${this.limit}/${currentPage}`,
+        `${process.env.REACT_APP_BASE_URL}/employees/emp/all/${this.limit}/${currentPage}`,
         config
       );
       let respdata = await response.data;
