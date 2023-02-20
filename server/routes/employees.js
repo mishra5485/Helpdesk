@@ -14,6 +14,17 @@ router.post("/register", async (req, res) => {
     return res.status(400).send(response.errorMessage);
   }
 
+  let lastEmployeeNumber;
+  try {
+    const lastEmployee = await CommonUser.findOne({
+      access_level: "employee",
+    }).sort({ employeeNumber: -1 });
+    if (lastEmployee) {
+      lastEmployeeNumber = lastEmployee.employeeNumber;
+      lastEmployeeNumber++;
+    }
+  } catch (ex) {}
+
   const _id = uuidv4();
   let { name, email, password, department_name } = req.body;
   email = email.toLowerCase();
@@ -28,6 +39,7 @@ router.post("/register", async (req, res) => {
     password,
     department_name,
     email,
+    employeeNumber: lastEmployeeNumber,
     access_level: "employee",
   });
   bcrypt.hash(password, saltRounds, async function (err, hash) {
@@ -60,15 +72,11 @@ router.get("/emp/all/:limit/:pageNumber", async (req, res) => {
     let limit = req.params.limit;
     let pageNumber = req.params.pageNumber;
     let skippedItems = pageNumber * limit;
-    let allUsers = await CommonUser.find({}).limit(limit).skip(skippedItems);
-    let allemp = allUsers.filter((e) => e.access_level === "employee");
-    let count = allemp.length;
-
-    const usersWithoutPassword = allemp.map((e) => {
-      const { password, ...userWithoutPassword } = e;
-      return userWithoutPassword;
-    });
-    res.send({ employees: allemp, count });
+    let employees = await CommonUser.find({ access_level: "employee" })
+      .limit(limit)
+      .skip(skippedItems);
+    let count = await CommonUser.countDocuments({ access_level: "employee" });
+    res.status(200).send({ employees, count });
   } catch (ex) {
     res.status(404).send("Unable to fetch employees");
   }
