@@ -41,17 +41,25 @@ router.post("/create-ticket", async (req, res) => {
 });
 
 router.get("/all/:limit/:pageNumber", auth, async (req, res) => {
-  let limit = req.params.limit;
-  let pageNumber = req.params.pageNumber;
-  let skippedItems = pageNumber * limit;
-  let tickets = await Ticket.find({}).limit(limit).skip(skippedItems);
-  let count = await Ticket.countDocuments({});
-  res.send({ tickets: tickets, count: count });
+  try {
+    let limit = req.params.limit;
+    let pageNumber = req.params.pageNumber;
+    let skippedItems = (pageNumber - 1) * limit;
+    let tickets = await Ticket.find({}).limit(limit).skip(skippedItems);
+    let count = await Ticket.countDocuments({});
+    res.send({ tickets: tickets, count: count });
+  } catch (ex) {
+    res.status(404).send("Unable to fetch tickets");
+  }
 });
 
 router.get("/:id", auth, async (req, res) => {
-  let ticket = await Ticket.findById(req.params.id);
-  res.send(ticket);
+  try {
+    let ticket = await Ticket.findById(req.params.id);
+    res.send(ticket);
+  } catch (ex) {
+    res.status(404).send("Unable to find ticket");
+  }
 });
 
 router.get("/all", auth, async (req, res) => {
