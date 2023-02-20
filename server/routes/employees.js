@@ -7,6 +7,7 @@ const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 const generateAuthToken = require("../common/utils");
+const getTimestamp = require("../common/utils");
 
 router.post("/register", async (req, res) => {
   const response = await validateEmployee(req.body);
@@ -32,7 +33,8 @@ router.post("/register", async (req, res) => {
   let employee = await CommonUser.findOne({ email: email });
   if (employee)
     return res.send("Employee already registered. Please login in!");
-
+  let createdAt = getTimestamp();
+  console.log(createdAt);
   employee = new CommonUser({
     _id,
     name,
@@ -40,6 +42,7 @@ router.post("/register", async (req, res) => {
     department_name,
     email,
     employeeNumber: lastEmployeeNumber,
+    createdAt,
     access_level: "employee",
   });
   bcrypt.hash(password, saltRounds, async function (err, hash) {
