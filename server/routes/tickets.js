@@ -44,7 +44,7 @@ router.get("/all/:limit/:pageNumber", auth, async (req, res) => {
   try {
     let limit = req.params.limit;
     let pageNumber = req.params.pageNumber;
-    let skippedItems = (pageNumber - 1) * limit;
+    let skippedItems = pageNumber * limit;
     let tickets = await Ticket.find({}).limit(limit).skip(skippedItems);
     let count = await Ticket.countDocuments({});
     res.send({ tickets: tickets, count: count });

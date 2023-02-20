@@ -57,7 +57,7 @@ router.get("/emp/all/:limit/:pageNumber", async (req, res) => {
   try {
     let limit = req.params.limit;
     let pageNumber = req.params.pageNumber;
-    let skippedItems = (pageNumber - 1) * limit;
+    let skippedItems = pageNumber * limit;
     let allUsers = await CommonUser.find({}).limit(limit).skip(skippedItems);
     let allemp = allUsers.filter((e) => e.access_level === "employee");
 
