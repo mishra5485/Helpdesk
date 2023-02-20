@@ -3,6 +3,11 @@ const Joi = require("joi");
 
 const userSchema = new mongoose.Schema({
   _id: { type: String },
+  employeeNumber: {
+    type: Number,
+    unique: true,
+    default: 100,
+  },
   name: { type: String },
   password: { type: String },
   access_level: { type: String },
