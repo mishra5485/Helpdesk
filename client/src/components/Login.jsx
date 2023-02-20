@@ -31,6 +31,7 @@ export default class Login extends Component {
       .post(`${process.env.REACT_APP_BASE_URL}/login`, data)
       .then((response) => {
         if (response.status === 200) {
+          console.log(response);
           toast.success("User LoggedIn Successfully");
           localStorage.setItem("username", response.data.username);
           localStorage.setItem("token", response.data.token);

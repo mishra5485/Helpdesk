@@ -9,11 +9,9 @@ import {
 import { Link } from "react-router-dom";
 import axios from "axios";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
-import AuthContext from "../context/AuthContext";
 import toast, { Toaster } from "react-hot-toast";
 
 class UserTickets extends Component {
-  static contextType = AuthContext;
   state = {
     items: [],
     currentpage: 0,
