@@ -12,7 +12,7 @@ import DashBoard from "./components/Admin/DashBoard";
 import TicketsTable from "./components/Admin/TicketsTable";
 import TicketInfo from "./components/Admin/TicketInfo";
 import EmployeeTable from "./components/Admin/EmployeeTable";
-import Employeeinfo from "./components/Admin/Employeeinfo";
+import EmployeeInfo from "./components/Admin/Employeeinfo";
 import PageNotFound from "./components/404Page";
 
 function App() {
@@ -33,7 +33,7 @@ function App() {
         <Route path="/admin/tickettable" component={TicketsTable} />
         <Route path="/admin/ticketinfo/:id" component={TicketInfo} />
         <Route path="/admin/employeetable" component={EmployeeTable} />
-        <Route path="/admin/employeeinfo/:id" component={Employeeinfo} />
+        <Route path="/admin/employeeinfo/:id" component={EmployeeInfo} />
         <Route path="*" component={PageNotFound} />
       </Switch>
     </>

@@ -6,12 +6,14 @@ import {
   MDBTableHead,
   MDBTableBody,
   MDBContainer,
+  MDBInput,
 } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import toast, { Toaster } from "react-hot-toast";
+import moment from "moment";
 
 class EmployeeTable extends Component {
   state = {
@@ -19,6 +21,7 @@ class EmployeeTable extends Component {
     currentpage: 0,
     pageCount: 0,
     bdcolor: "",
+    search: "",
   };
 
   limit = 5;
@@ -37,7 +40,6 @@ class EmployeeTable extends Component {
         config
       )
       .then((response) => {
-        console.log(response);
         let total = response.data.count;
         this.setState({
           pageCount: Math.ceil(total / this.limit),
@@ -62,24 +64,53 @@ class EmployeeTable extends Component {
       );
       let respdata = await response.data;
       toast.success("Employee Fetched Successfully");
-      return respdata.tickets;
+      return respdata.employees;
     } catch (error) {
       console.log(error);
     }
   };
 
   handlePageClick = async (data) => {
-    let currentPage = data.selected + 1;
+    let currentPage = data.selected;
     this.setState({ currentPage: currentPage });
     const ApiData = await this.fetchComments(currentPage);
     this.setState({ items: ApiData });
   };
 
+  deleteEmp = (empid) => {
+    try {
+      let response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/employees/emp/all/${this.limit}/${currentPage}`,
+        config
+      );
+      let respdata = await response.data;
+      toast.success("Employee Fetched Successfully");
+      return respdata.employees;
+    } catch (error) {
+      console.log(error);
+    }
+  };
   render() {
     return (
       <>
         <Nav />
         <Toaster position="top-right" />
+        <MDBContainer
+          fluid
+          style={{
+            display: "flex",
+            justifyContent: "end",
+            className: "m-2",
+          }}
+        >
+          <MDBInput
+            label="Search"
+            id="form1"
+            type="text"
+            style={{ maxWidth: "250px", marginRight: " 50px" }}
+            onChange={(e) => e.target.value}
+          />
+        </MDBContainer>
         <div className="table-responsive">
           <MDBContainer>
             <MDBTable bordered className="mt-5">
@@ -87,9 +118,9 @@ class EmployeeTable extends Component {
                 <tr>
                   <th scope="col">Employee.Id</th>
                   <th scope="col">Employee Name</th>
-                  <th scope="col">CreatedOn</th>
-                  <th scope="col">Department</th>
                   <th scope="col">Email-id</th>
+                  <th scope="col">Department</th>
+                  <th scope="col">CreatedOn</th>
                   <th scope="col">Action</th>
                 </tr>
               </MDBTableHead>
@@ -97,11 +128,13 @@ class EmployeeTable extends Component {
                 {this.state.items.map((item, key) => {
                   return (
                     <tr key={key}>
-                      <td>{`#${item.ticketNumber}`}</td>
+                      <td>{item.employeeNumber}</td>
                       <td>{item.name}</td>
-                      <td>{item.createdDate}</td>
+                      <td>{item.email}</td>
                       <td>{item.department_name}</td>
-                      <td>{item.status}</td>
+                      <td>
+                        {moment.unix(item.createdAt).format("MMMM Do YYYY")}
+                      </td>
 
                       <td>
                         <Link to={`/admin/employeeinfo/${item._id}`}>
@@ -112,14 +145,13 @@ class EmployeeTable extends Component {
                             <RemoveRedEyeOutlinedIcon />
                           </button>
                         </Link>
-                        <Link to={`/user/ticketinfo/${item._id}`}>
-                          <button
-                            className="btn btn-danger "
-                            style={{ marginRight: "8px" }}
-                          >
-                            <DeleteIcon />
-                          </button>
-                        </Link>
+                        <button
+                          onClick={() => this.deleteEmp(item._id)}
+                          className="btn btn-danger "
+                          style={{ marginRight: "8px" }}
+                        >
+                          <DeleteIcon />
+                        </button>
                       </td>
                     </tr>
                   );

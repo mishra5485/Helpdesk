@@ -98,7 +98,7 @@ class TicketsTable extends Component {
                 {this.state.items.map((item, key) => {
                   return (
                     <tr key={key}>
-                      <td>{`#${item.ticketNumber}`}</td>
+                      <td>{item.ticketNumber}</td>
                       <td>{item.subject}</td>
                       <td>{item.createdDate}</td>
                       <td>{item.department_name}</td>
