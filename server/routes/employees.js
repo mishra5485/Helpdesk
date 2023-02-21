@@ -114,4 +114,19 @@ router.post("/delete/:id", async (req, res) => {
   }
 });
 
+router.post("/update/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const filter = { _id: id, access_level: "employee" };
+    let emp = await CommonUser.findOneAndUpdate(filter, req.body);
+    if (!emp) {
+      res.status(500).send("Failed to update employee details");
+    } else {
+      res.status(200).send("Employee details updated sucessfully");
+    }
+  } catch (ex) {
+    res.status(500).send("Failed to update employee details");
+  }
+});
+
 module.exports = router;
