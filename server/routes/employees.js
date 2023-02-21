@@ -6,8 +6,8 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
-const generateAuthToken = require("../common/utils");
-const getTimestamp = require("../common/utils");
+// const generateAuthToken = require("../common/utils");
+// const getTimestamp = require("../common/utils");
 
 router.post("/register", async (req, res) => {
   const response = await validateEmployee(req.body);
@@ -142,6 +142,22 @@ router.post("/update/:id", async (req, res) => {
     }
   } catch (ex) {
     res.status(500).send("Failed to update employee details");
+  }
+});
+
+router.post("/search", async (req, res) => {
+  try {
+    let { keyword } = req.body;
+    const regexp = new RegExp(keyword, "i");
+    const result = await CommonUser.find({
+      $and: [
+        { $or: [{ employeeNumber: regexp }, { name: regexp }] },
+        { access_level: "employee" },
+      ],
+    });
+    res.status(200).send(result);
+  } catch (ex) {
+    res.status(500).send("Failed to search");
   }
 });
 

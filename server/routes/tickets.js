@@ -9,7 +9,7 @@ const express = require("express");
 const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
 const upload = require("../middleware/multer");
-const getTimestamp = require("../common/utils");
+// const getTimestamp = require("../common/utils");
 
 router.post("/create-ticket", async (req, res) => {
   const response = await validate(req.body);

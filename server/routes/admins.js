@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
-const generateAuthToken = require("../common/utils");
+// const generateAuthToken = require("../common/utils");
 
 router.post("/register", async (req, res) => {
   const response = await validateAdmin(req.body);

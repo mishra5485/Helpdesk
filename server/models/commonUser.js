@@ -4,7 +4,7 @@ const Joi = require("joi");
 const userSchema = new mongoose.Schema({
   _id: { type: String },
   employeeNumber: {
-    type: Number,
+    type: String,
     unique: true,
     default: 100,
     index: true,
