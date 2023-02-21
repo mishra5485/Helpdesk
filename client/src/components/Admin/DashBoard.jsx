@@ -6,7 +6,6 @@ export default class DashBoard extends Component {
   render() {
     return (
       <>
-        <Nav />
         <TicketsTable />
       </>
     );

@@ -9,8 +9,11 @@ import {
   MDBBtn,
   MDBCardFooter,
   MDBInputGroup,
+  MDBInput,
   MDBBadge,
 } from "mdb-react-ui-kit";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
+import Form from "react-bootstrap/Form";
 import axios from "axios";
 import { withRouter } from "react-router";
 import moment from "moment";
@@ -20,16 +23,16 @@ import toast, { Toaster } from "react-hot-toast";
 import ModalImage from "react-modal-image";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import MessageIcon from "@mui/icons-material/Message";
+import TextField from "@mui/material/TextField";
 
 class EmployeeInfo extends Component {
   state = {
-    ticketNumber: "",
-    userid: "",
-    subject: "",
-    body: "",
-    departmentname: "",
-    status: "",
-    CreatedAt: "",
+    empname: "",
+    empid: "",
+    empmail: "",
+    empdepartmentname: "",
+    empaccesslvl: "",
+    empCreatedAt: "",
     msg: "",
     file: null,
     resmsg: [],
@@ -49,18 +52,17 @@ class EmployeeInfo extends Component {
 
     try {
       let resp = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/tickets/${objid}`,
+        `${process.env.REACT_APP_BASE_URL}/employees/${objid}`,
         config
       );
       this.setState({
-        userid: resp.data.user_id,
-        TicketNumber: resp.data.ticketNumber,
-        subject: resp.data.subject,
-        body: resp.data.body,
-        departmentname: resp.data.department_name,
-        status: resp.data.status,
-        CreatedAt: resp.data.createdDate,
-        resmsg: resp.data.comments,
+        empid: resp.data.employeeNumber,
+        empname: resp.data.name,
+        empmail: resp.data.email,
+        empdepartmentname: resp.data.department_name,
+        empaccesslvl: resp.data.access_level,
+        empCreatedAt: resp.data.createdAt,
+        // resmsg: resp.data.comments,
       });
     } catch (err) {
       console.log(err);
@@ -128,6 +130,37 @@ class EmployeeInfo extends Component {
         toast.error("Try AfterSomeTime");
       });
   };
+
+  empUpdate = async (e) => {
+    e.preventDefault();
+    const objid = this.props.match.params.id;
+    console.log(objid);
+    const Usertoken = localStorage.getItem("token");
+
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+    const data = {
+      name: this.state.username,
+      department_name: this.state.department,
+    };
+
+    try {
+      await axios
+        .post(
+          `${process.env.REACT_APP_BASE_URL}/employees/update/${objid}`,
+          data,
+          config
+        )
+        .then((response) => {
+          console.log(response);
+          toast.success(response.data);
+          this.getData();
+        });
+    } catch (err) {
+      toast.error(err);
+    }
+  };
   render() {
     return (
       <>
@@ -154,7 +187,7 @@ class EmployeeInfo extends Component {
                               fontSize: "1.5rem",
                             }}
                           >
-                            TicketId:
+                            EmployeeId:
                           </MDBCol>
                           <MDBCol
                             size="4"
@@ -164,7 +197,7 @@ class EmployeeInfo extends Component {
                               textAlign: "start",
                             }}
                           >
-                            #{this.state.TicketNumber}
+                            {this.state.empid}
                           </MDBCol>
                         </MDBRow>
                       </MDBCol>
@@ -174,17 +207,37 @@ class EmployeeInfo extends Component {
                       <MDBCol size="6">
                         <MDBRow className="mt-3">
                           <MDBCol size="3" style={{ fontWeight: "bold" }}>
-                            CreatedOn:
+                            EmployeeName:
                           </MDBCol>
-                          <MDBCol size="6">{this.state.CreatedAt}</MDBCol>
+                          <MDBCol size="6">
+                            <Form.Control
+                              type="email"
+                              value={this.state.empname}
+                              onChange={(e) =>
+                                this.setState({ empname: e.target.value })
+                              }
+                            />
+                          </MDBCol>
                         </MDBRow>
                       </MDBCol>
                       <MDBCol size="6">
                         <MDBRow className="mt-3">
                           <MDBCol size="3" style={{ fontWeight: "bold" }}>
-                            AssignedTo:
+                            Department:
                           </MDBCol>
-                          <MDBCol size="6">{this.state.departmentname}</MDBCol>
+                          <MDBCol size="6">
+                            <Form.Select
+                              aria-label="Default select example"
+                              onChange={(e) =>
+                                this.setState({ empdepartment: e.target.value })
+                              }
+                            >
+                              <option> {this.state.empdepartmentname}</option>
+                              <option value="1">L1</option>
+                              <option value="2">L2</option>
+                              <option value="3">L3</option>
+                            </Form.Select>
+                          </MDBCol>
                         </MDBRow>
                       </MDBCol>
                     </MDBRow>
@@ -192,37 +245,40 @@ class EmployeeInfo extends Component {
                       <MDBCol size="6">
                         <MDBRow className="mt-3">
                           <MDBCol size="3" style={{ fontWeight: "bold" }}>
-                            Status:
+                            Email:
                           </MDBCol>
-                          <MDBCol size="6">{this.state.status}</MDBCol>
+                          <MDBCol size="6">{this.state.empmail}</MDBCol>
                         </MDBRow>
                       </MDBCol>
                       <MDBCol size="6">
                         <MDBRow className="mt-3">
                           <MDBCol size="3" style={{ fontWeight: "bold" }}>
-                            UserName:
+                            CreatedOn:
                           </MDBCol>
-                          <MDBCol size="6">{this.state.userid}</MDBCol>
+                          <MDBCol size="6">
+                            {moment
+                              .unix(this.state.empCreatedAt)
+                              .format("MMMM Do YYYY")}
+                          </MDBCol>
                         </MDBRow>
+                      </MDBCol>
+                    </MDBRow>
+                    <MDBRow
+                      className="mt-3 d-flex "
+                      style={{ justifyContent: "end" }}
+                    >
+                      <MDBCol size="2">
+                        <MDBBtn
+                          className="me-1"
+                          color="primary"
+                          onClick={this.empUpdate}
+                        >
+                          Update
+                        </MDBBtn>
                       </MDBCol>
                     </MDBRow>
                   </MDBContainer>
                 </MDBCardHeader>
-                <MDBContainer fluid>
-                  <MDBRow className="mt-3 d-flex p-2 ml-10">
-                    <MDBCol size="1" style={{ fontWeight: "bold" }}>
-                      Subject:
-                    </MDBCol>
-                    <MDBCol size="10">{this.state.subject}</MDBCol>
-                  </MDBRow>
-                  <MDBRow className="mt-3 d-flex p-2 ml-10">
-                    <MDBCol size="1" style={{ fontWeight: "bold" }}>
-                      Body:
-                    </MDBCol>
-                    <MDBCol size="10">{this.state.body}</MDBCol>
-                  </MDBRow>
-                </MDBContainer>
-                <hr />
                 <MDBCardBody>
                   {this.state.resmsg.map((elem, key) => {
                     return (

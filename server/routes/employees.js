@@ -59,9 +59,25 @@ router.get("/:id", async (req, res) => {
   try {
     let employee = await CommonUser.findById(req.params.id);
     if (employee.access_level === "employee") {
-      const { _id, name, department_name, email } = employee;
+      const {
+        _id,
+        name,
+        department_name,
+        email,
+        employeeNumber,
+        access_level,
+        createdAt,
+      } = employee;
       delete employee.password;
-      res.status(200).send({ _id, name, department_name, email });
+      res.status(200).send({
+        _id,
+        name,
+        department_name,
+        email,
+        employeeNumber,
+        access_level,
+        createdAt,
+      });
     }
   } catch (ex) {
     res

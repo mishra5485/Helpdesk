@@ -7,16 +7,29 @@ import {
   MDBTableBody,
   MDBContainer,
   MDBInput,
+  MDBBtn,
+  MDBModal,
+  MDBModalDialog,
+  MDBModalContent,
+  MDBModalHeader,
+  MDBModalTitle,
+  MDBModalBody,
+  MDBModalFooter,
 } from "mdb-react-ui-kit";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
+import Form from "react-bootstrap/Form";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import toast, { Toaster } from "react-hot-toast";
 import moment from "moment";
+import AddIcon from "@mui/icons-material/Add";
 
 class EmployeeTable extends Component {
   state = {
+    showNav: false,
+    modal: false,
     items: [],
     currentpage: 0,
     pageCount: 0,
@@ -25,10 +38,12 @@ class EmployeeTable extends Component {
   };
 
   limit = 5;
+  toggleShow = () => this.setState({ modal: !this.state.modal });
 
   componentDidMount() {
     this.getData();
   }
+
   getData = async () => {
     const Usertoken = localStorage.getItem("token");
     const config = {
@@ -41,6 +56,7 @@ class EmployeeTable extends Component {
       )
       .then((response) => {
         let total = response.data.count;
+        console.log(response);
         this.setState({
           pageCount: Math.ceil(total / this.limit),
         });
@@ -77,18 +93,48 @@ class EmployeeTable extends Component {
     this.setState({ items: ApiData });
   };
 
-  deleteEmp = (empid) => {
+  deleteEmp = async (empid) => {
     try {
-      let response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/employees/emp/all/${this.limit}/${currentPage}`,
-        config
+      let response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/employees/delete/${empid}`
       );
       let respdata = await response.data;
-      toast.success("Employee Fetched Successfully");
-      return respdata.employees;
+      toast.success("Employee deleted Successfully");
+      this.getData();
     } catch (error) {
       console.log(error);
     }
+  };
+
+  handleSubmit = async (e) => {
+    e.preventDefault();
+    const Usertoken = localStorage.getItem("token");
+
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+    const data = {
+      name: this.state.username,
+      password: this.state.password,
+      department_name: this.state.department,
+      email: this.state.email,
+    };
+
+    try {
+      await axios
+        .post(
+          `${process.env.REACT_APP_BASE_URL}/employees/register`,
+          data,
+          config
+        )
+        .then((response) => {
+          toast.success(response.data);
+          this.getData();
+        });
+    } catch (err) {
+      toast.error(err);
+    }
+    this.setState({ modal: false });
   };
   render() {
     return (
@@ -110,6 +156,7 @@ class EmployeeTable extends Component {
             style={{ maxWidth: "250px", marginRight: " 50px" }}
             onChange={(e) => e.target.value}
           />
+          <AddIcon onClick={this.toggleShow} />
         </MDBContainer>
         <div className="table-responsive">
           <MDBContainer>
@@ -180,6 +227,92 @@ class EmployeeTable extends Component {
             activeClassName={"active"}
           />
         </div>
+        <MDBModal
+          show={this.state.modal}
+          setShow={!this.state.modal}
+          tabIndex="-1"
+        >
+          <MDBModalDialog>
+            <Form onSubmit={this.handleSubmit}>
+              <MDBModalContent>
+                <MDBModalHeader>
+                  <MDBModalTitle>Create-Employee</MDBModalTitle>
+                  <MDBBtn
+                    className="btn-close"
+                    color="none"
+                    onClick={this.toggleShow}
+                  ></MDBBtn>
+                </MDBModalHeader>
+                <MDBModalBody>
+                  <FloatingLabel
+                    controlId="floatingInput"
+                    label="UserName"
+                    className="mb-3"
+                  >
+                    <Form.Control
+                      type="text"
+                      placeholder="name@example.com"
+                      autoComplete="off"
+                      onChange={(e) =>
+                        this.setState({ username: e.target.value })
+                      }
+                    />
+                  </FloatingLabel>
+                  <FloatingLabel
+                    controlId="floatingInput"
+                    label="Email address"
+                    className="mb-3"
+                  >
+                    <Form.Control
+                      type="email"
+                      placeholder="name@example.com"
+                      autoComplete="off"
+                      onChange={(e) => this.setState({ email: e.target.value })}
+                    />
+                  </FloatingLabel>
+                  <FloatingLabel
+                    controlId="floatingPassword"
+                    label="Password"
+                    className="mb-3"
+                  >
+                    <Form.Control
+                      type="password"
+                      placeholder="Password"
+                      autoComplete="off"
+                      onChange={(e) =>
+                        this.setState({ password: e.target.value })
+                      }
+                    />
+                  </FloatingLabel>
+                  <FloatingLabel
+                    controlId="floatingSelectGrid"
+                    label="Department"
+                  >
+                    <Form.Control
+                      as="select"
+                      required
+                      aria-label="Floating label select example"
+                      onChange={(e) =>
+                        this.setState({ department: e.target.value })
+                      }
+                    >
+                      <option>please select Department</option>
+                      <option value="L1">L1</option>
+                      <option value="L2">L2</option>
+                      <option value="L3">L3</option>
+                    </Form.Control>
+                  </FloatingLabel>
+                </MDBModalBody>
+                <MDBModalFooter>
+                  <MDBBtn color="secondary" onClick={this.toggleShow}>
+                    Close
+                  </MDBBtn>
+                  <MDBBtn>Submit</MDBBtn>
+                </MDBModalFooter>
+              </MDBModalContent>
+            </Form>
+          </MDBModalDialog>
+        </MDBModal>
       </>
     );
   }
