@@ -126,4 +126,17 @@ router.post("/comment", upload.single("avatar"), async (req, res) => {
   }
 });
 
+router.post("/search", async (req, res) => {
+  try {
+    let { keyword } = req.body;
+    const regexp = new RegExp(keyword, "i");
+    const result = await Ticket.find({
+      $or: [{ ticketNumber: regexp }, { subject: regexp }],
+    });
+    res.status(200).send(result);
+  } catch (ex) {
+    res.status(500).send("Failed to search");
+  }
+});
+
 module.exports = router;
