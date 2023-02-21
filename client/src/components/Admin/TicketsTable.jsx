@@ -6,6 +6,10 @@ import {
   MDBTableBody,
   MDBContainer,
   MDBBadge,
+  MDBBtn,
+  MDBInputGroup,
+  MDBRow,
+  MDBCol,
 } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -80,6 +84,30 @@ class TicketsTable extends Component {
       <>
         <Nav />
         <Toaster position="top-right" />
+        <MDBContainer fluid className="mt-3">
+          <MDBRow
+            style={{
+              display: "flex",
+              justifyContent: "end",
+              className: "m-2",
+            }}
+          >
+            <MDBCol size="3">
+              <MDBInputGroup className="mb-3" size="4">
+                <input
+                  className="form-control"
+                  placeholder="Search"
+                  type="text"
+                  value={this.state.search}
+                  onChange={(e) => this.setState({ search: e.target.value })}
+                />
+                <MDBBtn className="me-1" color="info" onClick={this.search}>
+                  Search
+                </MDBBtn>
+              </MDBInputGroup>
+            </MDBCol>
+          </MDBRow>
+        </MDBContainer>
         <div className="table-responsive">
           <MDBContainer>
             <MDBTable bordered className="mt-5">
@@ -165,10 +193,7 @@ class TicketsTable extends Component {
 
                       <td>
                         <Link to={`/admin/ticketinfo/${item._id}`}>
-                          <button
-                            className="btn btn-success "
-                            style={{ marginRight: "8px" }}
-                          >
+                          <button className="btn btn-secondary ">
                             <RemoveRedEyeOutlinedIcon />
                           </button>
                         </Link>

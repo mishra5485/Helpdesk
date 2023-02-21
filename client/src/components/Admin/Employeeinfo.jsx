@@ -9,10 +9,8 @@ import {
   MDBBtn,
   MDBCardFooter,
   MDBInputGroup,
-  MDBInput,
   MDBBadge,
 } from "mdb-react-ui-kit";
-import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import axios from "axios";
 import { withRouter } from "react-router";
@@ -23,7 +21,6 @@ import toast, { Toaster } from "react-hot-toast";
 import ModalImage from "react-modal-image";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import MessageIcon from "@mui/icons-material/Message";
-import TextField from "@mui/material/TextField";
 
 class EmployeeInfo extends Component {
   state = {
@@ -134,14 +131,13 @@ class EmployeeInfo extends Component {
   empUpdate = async (e) => {
     e.preventDefault();
     const objid = this.props.match.params.id;
-    console.log(objid);
     const Usertoken = localStorage.getItem("token");
 
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
     const data = {
-      name: this.state.username,
+      name: this.state.empname,
       department_name: this.state.department,
     };
 
@@ -153,9 +149,8 @@ class EmployeeInfo extends Component {
           config
         )
         .then((response) => {
-          console.log(response);
+          console.log(response.data);
           toast.success(response.data);
-          this.getData();
         });
     } catch (err) {
       toast.error(err);
@@ -211,7 +206,7 @@ class EmployeeInfo extends Component {
                           </MDBCol>
                           <MDBCol size="6">
                             <Form.Control
-                              type="email"
+                              type="text"
                               value={this.state.empname}
                               onChange={(e) =>
                                 this.setState({ empname: e.target.value })
