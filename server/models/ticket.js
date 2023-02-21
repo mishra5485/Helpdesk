@@ -29,15 +29,17 @@ const ticketSchema = new mongoose.Schema(
       required: true,
     },
     ticketNumber: {
-      type: Number,
+      type: String,
       unique: true,
       default: 100,
+      index: true,
     },
     subject: {
       type: String,
       required: true,
       minlength: 2,
       maxlength: 10240,
+      index: true,
     },
     body: {
       type: String,
