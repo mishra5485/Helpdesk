@@ -14,6 +14,7 @@ import {
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Nav from "./Nav";
+import Form from "react-bootstrap/Form";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -22,7 +23,7 @@ class TicketsTable extends Component {
     items: [],
     currentpage: 0,
     pageCount: 0,
-    bdcolor: "",
+    search: "",
   };
 
   limit = 5;
@@ -41,7 +42,6 @@ class TicketsTable extends Component {
         config
       )
       .then((response) => {
-        console.log(response);
         let total = response.data.count;
         this.setState({
           pageCount: Math.ceil(total / this.limit),
@@ -79,34 +79,61 @@ class TicketsTable extends Component {
     this.setState({ items: ApiData });
   };
 
+  search = async (e) => {
+    e.preventDefault();
+    const Usertoken = localStorage.getItem("token");
+
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+
+    const data = {
+      keyword: this.state.search,
+    };
+
+    try {
+      await axios
+        .post(`${process.env.REACT_APP_BASE_URL}/tickets/search`, data, config)
+        .then((response) => {
+          console.log(response.data);
+          this.setState({ items: response.data });
+          toast.success("Searched Successfully");
+        });
+    } catch (err) {
+      toast.error("Failed to Search");
+    }
+  };
+
   render() {
     return (
       <>
         <Nav />
         <Toaster position="top-right" />
         <MDBContainer fluid className="mt-3">
-          <MDBRow
-            style={{
-              display: "flex",
-              justifyContent: "end",
-              className: "m-2",
-            }}
-          >
-            <MDBCol size="3">
-              <MDBInputGroup className="mb-3" size="4">
-                <input
-                  className="form-control"
-                  placeholder="Search"
-                  type="text"
-                  value={this.state.search}
-                  onChange={(e) => this.setState({ search: e.target.value })}
-                />
-                <MDBBtn className="me-1" color="info" onClick={this.search}>
-                  Search
-                </MDBBtn>
-              </MDBInputGroup>
-            </MDBCol>
-          </MDBRow>
+          <Form onSubmit={this.search}>
+            <MDBRow
+              style={{
+                display: "flex",
+                justifyContent: "end",
+                className: "m-2",
+              }}
+            >
+              <MDBCol size="3">
+                <MDBInputGroup className="mb-3" size="4">
+                  <input
+                    className="form-control"
+                    placeholder="Search"
+                    type="text"
+                    value={this.state.search}
+                    onChange={(e) => this.setState({ search: e.target.value })}
+                  />
+                  <MDBBtn className="me-1" color="info">
+                    Search
+                  </MDBBtn>
+                </MDBInputGroup>
+              </MDBCol>
+            </MDBRow>
+          </Form>
         </MDBContainer>
         <div className="table-responsive">
           <MDBContainer>
