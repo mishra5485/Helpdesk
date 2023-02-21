@@ -6,6 +6,8 @@ import {
   MDBTableBody,
   MDBContainer,
   MDBBadge,
+  MDBRow,
+  MDBCol,
 } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -77,6 +79,30 @@ class UserTickets extends Component {
     return (
       <>
         <Toaster position="top-right" />
+        <MDBContainer fluid className="mt-3">
+          <MDBRow
+            style={{
+              display: "flex",
+              justifyContent: "end",
+              className: "m-2",
+            }}
+          >
+            <MDBCol size="3">
+              <MDBInputGroup className="mb-3" size="4">
+                <input
+                  className="form-control"
+                  placeholder="Search"
+                  type="text"
+                  value={this.state.search}
+                  onChange={(e) => this.setState({ search: e.target.value })}
+                />
+                <MDBBtn className="me-1" color="info" onClick={this.search}>
+                  Search
+                </MDBBtn>
+              </MDBInputGroup>
+            </MDBCol>
+          </MDBRow>
+        </MDBContainer>
         <div className="table-responsive">
           <MDBContainer>
             <MDBTable bordered className="mt-5">
