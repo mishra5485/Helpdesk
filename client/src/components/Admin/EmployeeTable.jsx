@@ -140,8 +140,34 @@ class EmployeeTable extends Component {
     this.setState({ modal: false });
   };
 
-  search = () => {
-    alert(this.state.search);
+  search = async (e) => {
+    e.preventDefault();
+    const Usertoken = localStorage.getItem("token");
+
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+
+    const data = {
+      keyword: this.state.search,
+    };
+
+    try {
+      await axios
+        .post(
+          `${process.env.REACT_APP_BASE_URL}/employees/search`,
+          config,
+          data
+        )
+        .then((response) => {
+          console.log(response);
+          // toast.success(response.data);
+          // this.getData();
+        });
+    } catch (err) {
+      // toast.error(err);
+      console.log(err);
+    }
   };
 
   render() {
@@ -150,37 +176,39 @@ class EmployeeTable extends Component {
         <Nav />
         <Toaster position="top-right" />
         <MDBContainer fluid className="mt-3">
-          <MDBRow
-            style={{
-              display: "flex",
-              justifyContent: "end",
-              className: "m-2",
-            }}
-          >
-            <MDBCol size="3">
-              <MDBInputGroup className="mb-3" size="4">
-                <input
-                  className="form-control"
-                  placeholder="Search"
-                  type="text"
-                  value={this.state.search}
-                  onChange={(e) => this.setState({ search: e.target.value })}
-                />
-                <MDBBtn
-                  className="me-1"
-                  color="info"
-                  onClick={() => this.search}
-                >
-                  Search
-                </MDBBtn>
-              </MDBInputGroup>
-            </MDBCol>
-            <MDBCol size="1">
-              <MDBBadge color="success" light onClick={this.toggleShow}>
-                <AddIcon />
-              </MDBBadge>
-            </MDBCol>
-          </MDBRow>
+          <Form onSubmit={this.search}>
+            <MDBRow
+              style={{
+                display: "flex",
+                justifyContent: "end",
+                className: "m-2",
+              }}
+            >
+              <MDBCol size="3">
+                <MDBInputGroup className="mb-3" size="4">
+                  <input
+                    className="form-control"
+                    placeholder="Search"
+                    type="text"
+                    value={this.state.search}
+                    onChange={(e) => this.setState({ search: e.target.value })}
+                  />
+                  <MDBBtn
+                    className="me-1"
+                    color="info"
+                    onClick={() => this.search}
+                  >
+                    Search
+                  </MDBBtn>
+                </MDBInputGroup>
+              </MDBCol>
+              <MDBCol size="1">
+                <MDBBadge color="success" light onClick={this.toggleShow}>
+                  <AddIcon />
+                </MDBBadge>
+              </MDBCol>
+            </MDBRow>
+          </Form>
         </MDBContainer>
         <div className="table-responsive">
           <MDBContainer>
