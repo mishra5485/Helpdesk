@@ -126,14 +126,20 @@ router.post("/comment", upload.single("avatar"), async (req, res) => {
   }
 });
 
-router.post("/search", async (req, res) => {
+router.post("/search/:limit/:pageNumber", async (req, res) => {
   try {
     let { keyword } = req.body;
-    const regexp = new RegExp(keyword, "i");
-    const result = await Ticket.find({
+    let limit = req.params.limit;
+    let pageNumber = req.params.pageNumber;
+    let skippedItems = pageNumber * limit;
+    let regexp = new RegExp(keyword, "i");
+    let tickets = await Ticket.find({
       $or: [{ ticketNumber: regexp }, { subject: regexp }],
-    });
-    res.status(200).send(result);
+    })
+      .limit(limit)
+      .skip(skippedItems);
+    let count = result.length;
+    res.status(200).send({ tickets: tickets, count: count });
   } catch (ex) {
     res.status(500).send("Failed to search");
   }
