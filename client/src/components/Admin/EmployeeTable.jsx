@@ -156,16 +156,13 @@ class EmployeeTable extends Component {
       await axios
         .post(
           `${process.env.REACT_APP_BASE_URL}/employees/search`,
-          config,
-          data
+          data,
+          config
         )
         .then((response) => {
-          console.log(response);
-          // toast.success(response.data);
-          // this.getData();
+          console.log(response.data);
         });
     } catch (err) {
-      // toast.error(err);
       console.log(err);
     }
   };
