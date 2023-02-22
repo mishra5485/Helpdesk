@@ -6,7 +6,6 @@ const userSchema = new mongoose.Schema({
   employeeNumber: {
     type: String,
     unique: true,
-    default: 100,
     index: true,
   },
   name: { type: String, index: true },
