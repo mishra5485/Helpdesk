@@ -32,17 +32,23 @@ import AddIcon from "@mui/icons-material/Add";
 class EmployeeTable extends Component {
   state = {
     showNav: false,
-    modal: false,
+    basicModal: false,
     items: [],
     currentpage: 0,
+    SearchcurrentPage: 0,
     pageCount: 0,
+    searchPageCount: 0,
     bdcolor: "",
     search: "",
+    searchPagination: false,
   };
 
   limit = 5;
 
-  toggleShow = () => this.setState({ modal: !this.state.modal });
+  toggleShow = () => {
+    this.setState({ basicModal: !this.state.basicModal });
+    console.log("calling");
+  };
 
   componentDidMount() {
     this.getData();
@@ -59,6 +65,7 @@ class EmployeeTable extends Component {
         config
       )
       .then((response) => {
+        console.log(response);
         let total = response.data.count;
         this.setState({
           pageCount: Math.ceil(total / this.limit),
@@ -96,19 +103,6 @@ class EmployeeTable extends Component {
     this.setState({ items: ApiData });
   };
 
-  deleteEmp = async (empid) => {
-    try {
-      let response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/employees/delete/${empid}`
-      );
-      let respdata = await response.data;
-      toast.success("Employee deleted Successfully");
-      this.getData();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   handleSubmit = async (e) => {
     e.preventDefault();
     const Usertoken = localStorage.getItem("token");
@@ -140,8 +134,23 @@ class EmployeeTable extends Component {
     this.setState({ modal: false });
   };
 
+  deleteEmp = async (empid) => {
+    try {
+      let response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/employees/delete/${empid}`
+      );
+      let respdata = await response.data;
+      toast.success("Employee deleted Successfully");
+      this.getData();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   search = async (e) => {
     e.preventDefault();
+    alert(this.state.search);
+    this.setState({ searchPagination: true });
     const Usertoken = localStorage.getItem("token");
 
     const config = {
@@ -152,19 +161,60 @@ class EmployeeTable extends Component {
       keyword: this.state.search,
     };
 
-    try {
-      await axios
-        .post(
-          `${process.env.REACT_APP_BASE_URL}/employees/search`,
-          data,
-          config
-        )
-        .then((response) => {
-          console.log(response.data);
+    await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/tickets/search/${this.limit}/${this.state.SearchcurrentPage}`,
+        data,
+        config
+      )
+      .then((response) => {
+        console.log(response);
+        let total = response.data.count;
+        this.setState({
+          searchPageCount: Math.ceil(total / this.limit),
         });
-    } catch (err) {
-      console.log(err);
+        this.setState({ items: response.data.ticket });
+        toast.success("Tickets Fetched Successfully");
+      })
+      .catch((err) => {
+        toast.error(err.response.data);
+      });
+  };
+
+  fetchSearchData = async (currentPage) => {
+    const Usertoken = localStorage.getItem("token");
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+    const data = {
+      keyword: this.state.search,
+    };
+    try {
+      let response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/tickets/search/${this.limit}/${currentPage}`,
+        data,
+        config
+      );
+      let respdata = await response.data;
+      toast.success("Tickets Fetched Successfully");
+      return respdata.ticket;
+    } catch (error) {
+      console.log(error);
     }
+  };
+
+  SearchhandlePageClick = async (data) => {
+    let currentPage = data.selected;
+    this.setState({ SearchcurrentPage: currentPage });
+    const ApiData = await this.fetchSearchData(currentPage);
+    this.setState({ items: ApiData });
+  };
+
+  reset = async (e) => {
+    e.preventDefault();
+    this.setState({ searchPagination: false });
+    toast.success("Resetting search");
+    this.getData();
   };
 
   render() {
@@ -194,13 +244,19 @@ class EmployeeTable extends Component {
                     className="me-1"
                     color="info"
                     onClick={() => this.search}
+                    style={{ cursor: "pointer" }}
                   >
                     Search
                   </MDBBtn>
                 </MDBInputGroup>
               </MDBCol>
               <MDBCol size="1">
-                <MDBBadge color="success" light onClick={this.toggleShow}>
+                <MDBBadge
+                  color="success"
+                  light
+                  onClick={this.toggleShow}
+                  style={{ cursor: "pointer" }}
+                >
                   <AddIcon />
                 </MDBBadge>
               </MDBCol>
@@ -209,7 +265,7 @@ class EmployeeTable extends Component {
         </MDBContainer>
         <div className="table-responsive">
           <MDBContainer>
-            <MDBTable bordered className="mt-5" responsive>
+            <MDBTable bordered className="mt-5">
               <MDBTableHead className="table-dark">
                 <tr>
                   <th scope="col">Employee.Id</th>
@@ -255,31 +311,52 @@ class EmployeeTable extends Component {
               </MDBTableBody>
             </MDBTable>
           </MDBContainer>
-
-          <ReactPaginate
-            previousLabel={"previous"}
-            nextLabel={"next"}
-            breakLabel={"..."}
-            pageCount={this.state.pageCount}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={2}
-            onPageChange={this.handlePageClick}
-            containerClassName={"pagination justify-content-center"}
-            pageClassName={"page-item"}
-            pageLinkClassName={"page-link"}
-            previousClassName={"page-item"}
-            previousLinkClassName={"page-link"}
-            nextClassName={"page-item"}
-            nextLinkClassName={"page-link"}
-            breakClassName={"page-item"}
-            breakLinkClassName={"page-link"}
-            activeClassName={"active"}
-          />
+          {this.state.searchPagination ? (
+            <ReactPaginate
+              previousLabel={"previous"}
+              nextLabel={"next"}
+              breakLabel={"..."}
+              pageCount={this.state.searchPageCount}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={2}
+              onPageChange={this.SearchhandlePageClick}
+              containerClassName={"pagination justify-content-center"}
+              pageClassName={"page-item"}
+              pageLinkClassName={"page-link"}
+              previousClassName={"page-item"}
+              previousLinkClassName={"page-link"}
+              nextClassName={"page-item"}
+              nextLinkClassName={"page-link"}
+              breakClassName={"page-item"}
+              breakLinkClassName={"page-link"}
+              activeClassName={"active"}
+            />
+          ) : (
+            <ReactPaginate
+              previousLabel={"previous"}
+              nextLabel={"next"}
+              breakLabel={"..."}
+              pageCount={this.state.pageCount}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={2}
+              onPageChange={this.handlePageClick}
+              containerClassName={"pagination justify-content-center"}
+              pageClassName={"page-item"}
+              pageLinkClassName={"page-link"}
+              previousClassName={"page-item"}
+              previousLinkClassName={"page-link"}
+              nextClassName={"page-item"}
+              nextLinkClassName={"page-link"}
+              breakClassName={"page-item"}
+              breakLinkClassName={"page-link"}
+              activeClassName={"active"}
+            />
+          )}
         </div>
-
+        <button onClick={this.toggleShow}>Click me</button>
         <MDBModal
-          show={this.state.modal}
-          setShow={!this.state.modal}
+          show={this.state.basicModal}
+          setShow={this.toggleShow}
           tabIndex="-1"
         >
           <MDBModalDialog>

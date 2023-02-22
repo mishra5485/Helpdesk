@@ -23,6 +23,7 @@ class TicketsTable extends Component {
   state = {
     items: [],
     currentpage: 0,
+    SearchcurrentPage: 0,
     pageCount: 0,
     searchPageCount: 0,
     search: "",
@@ -96,32 +97,43 @@ class TicketsTable extends Component {
       keyword: this.state.search,
     };
 
-    try {
-      await axios
-        .post(`${process.env.REACT_APP_BASE_URL}/tickets/search`, data, config)
-        .then((response) => {
-          console.log(response.data);
-          this.setState({ items: response.data });
-          toast.success("Searched Successfully");
+    await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/tickets/search/${this.limit}/${this.state.SearchcurrentPage}`,
+        data,
+        config
+      )
+      .then((response) => {
+        console.log(response);
+        let total = response.data.count;
+        this.setState({
+          searchPageCount: Math.ceil(total / this.limit),
         });
-    } catch (err) {
-      toast.error("Failed to Search");
-    }
+        this.setState({ items: response.data.ticket });
+        toast.success("Tickets Fetched Successfully");
+      })
+      .catch((err) => {
+        toast.error(err.response.data);
+      });
   };
 
-  fetchComments = async (currentPage) => {
+  fetchSearchData = async (currentPage) => {
     const Usertoken = localStorage.getItem("token");
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
+    const data = {
+      keyword: this.state.search,
+    };
     try {
-      let response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/tickets/all/${this.limit}/${currentPage}`,
+      let response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/tickets/search/${this.limit}/${currentPage}`,
+        data,
         config
       );
       let respdata = await response.data;
       toast.success("Tickets Fetched Successfully");
-      return respdata.tickets;
+      return respdata.ticket;
     } catch (error) {
       console.log(error);
     }
@@ -129,14 +141,18 @@ class TicketsTable extends Component {
 
   SearchhandlePageClick = async (data) => {
     let currentPage = data.selected;
-    this.setState({ currentPage: currentPage });
+    this.setState({ SearchcurrentPage: currentPage });
     const ApiData = await this.fetchSearchData(currentPage);
     this.setState({ items: ApiData });
   };
 
-  reset = async () => {
+  reset = async (e) => {
+    e.preventDefault();
     this.setState({ searchPagination: false });
+    toast.success("Resetting search");
+    this.getData();
   };
+
   render() {
     return (
       <>
@@ -151,7 +167,7 @@ class TicketsTable extends Component {
                 className: "m-2",
               }}
             >
-              <MDBCol size="3">
+              <MDBCol size="4">
                 <MDBInputGroup className="mb-3" size="4">
                   <input
                     className="form-control"
@@ -161,10 +177,20 @@ class TicketsTable extends Component {
                     value={this.state.search}
                     onChange={(e) => this.setState({ search: e.target.value })}
                   />
-                  <MDBBtn className="me-2" color="info" onSubmit={this.search}>
+                  <MDBBtn
+                    className="me-2"
+                    type="button"
+                    color="info"
+                    onClick={this.search}
+                  >
                     <SearchIcon />
                   </MDBBtn>
-                  <MDBBtn className="me-2" color="danger" onSubmit={this.reset}>
+                  <MDBBtn
+                    className="me-2"
+                    type="button"
+                    color="danger"
+                    onClick={this.reset}
+                  >
                     Reset
                   </MDBBtn>
                 </MDBInputGroup>
@@ -273,10 +299,10 @@ class TicketsTable extends Component {
               previousLabel={"previous"}
               nextLabel={"next"}
               breakLabel={"..."}
-              pageCount={this.state.pageCount}
+              pageCount={this.state.searchPageCount}
               marginPagesDisplayed={2}
               pageRangeDisplayed={2}
-              onPageChange={this.handlePageClick}
+              onPageChange={this.SearchhandlePageClick}
               containerClassName={"pagination justify-content-center"}
               pageClassName={"page-item"}
               pageLinkClassName={"page-link"}
@@ -296,7 +322,7 @@ class TicketsTable extends Component {
               pageCount={this.state.pageCount}
               marginPagesDisplayed={2}
               pageRangeDisplayed={2}
-              onPageChange={this.SaerchhandlePageClick}
+              onPageChange={this.handlePageClick}
               containerClassName={"pagination justify-content-center"}
               pageClassName={"page-item"}
               pageLinkClassName={"page-link"}
