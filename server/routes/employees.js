@@ -15,44 +15,46 @@ router.post("/register", async (req, res) => {
     return res.status(400).send(response.errorMessage);
   }
 
-  let lastEmployeeNumber;
-  try {
-    const lastEmployee = await CommonUser.findOne({
-      access_level: "employee",
-    }).sort({ employeeNumber: -1 });
-    if (lastEmployee) {
-      lastEmployeeNumber = lastEmployee.employeeNumber;
-      lastEmployeeNumber++;
-    }
-  } catch (ex) {}
-
   const _id = uuidv4();
   let { name, email, password, department_name } = req.body;
   email = email.toLowerCase();
 
-  let employee = await CommonUser.findOne({ email: email });
-  if (employee)
+  let employee = await CommonUser.findOne({ email: email, status: 1 });
+  if (employee) {
     return res.send("Employee already registered. Please login in!");
-  let createdAt = getTimestamp();
-  console.log(createdAt);
-  employee = new CommonUser({
-    _id,
-    name,
-    password,
-    department_name,
-    email,
-    employeeNumber: lastEmployeeNumber,
-    createdAt,
-    access_level: "employee",
-  });
-  bcrypt.hash(password, saltRounds, async function (err, hash) {
-    if (err) console.log(err);
-    employee.password = hash;
-    await employee.save();
-  });
+  } else {
+    let lastEmployeeNumber;
+    try {
+      const lastEmployee = await CommonUser.findOne({
+        access_level: "employee",
+      }).sort({ employeeNumber: -1 });
+      if (lastEmployee) {
+        lastEmployeeNumber = lastEmployee.employeeNumber;
+        lastEmployeeNumber++;
+      }
+    } catch (ex) {}
 
-  const token = generateAuthToken({ email });
-  res.status(200).header("x-auth-token", token).send(email.toLowerCase());
+    let createdAt = getTimestamp();
+    console.log(createdAt);
+    employee = new CommonUser({
+      _id,
+      name,
+      password,
+      department_name,
+      email,
+      employeeNumber: lastEmployeeNumber,
+      createdAt,
+      access_level: "employee",
+    });
+    bcrypt.hash(password, saltRounds, async function (err, hash) {
+      if (err) console.log(err);
+      employee.password = hash;
+      await employee.save();
+    });
+
+    const token = generateAuthToken({ email });
+    res.status(200).header("x-auth-token", token).send(email.toLowerCase());
+  }
 });
 
 router.get("/:id", async (req, res) => {
@@ -67,6 +69,7 @@ router.get("/:id", async (req, res) => {
         employeeNumber,
         access_level,
         createdAt,
+        status,
       } = employee;
       delete employee.password;
       res.status(200).send({
@@ -77,6 +80,7 @@ router.get("/:id", async (req, res) => {
         employeeNumber,
         access_level,
         createdAt,
+        status,
       });
     }
   } catch (ex) {
@@ -113,6 +117,7 @@ router.post("/delete/:id", async (req, res) => {
     const employee = await CommonUser.find({
       _id: id,
       access_level: "employee",
+      status: 1,
     });
     if (!employee || employee.length === 0) {
       res.status(500).send("Failed to delete employee");
@@ -121,7 +126,7 @@ router.post("/delete/:id", async (req, res) => {
         if (err) {
           res.send(err);
         } else {
-          res.status(200).send(docs);
+          res.status(200).send("Delete employee successfully");
         }
       });
     }
@@ -133,7 +138,7 @@ router.post("/delete/:id", async (req, res) => {
 router.post("/update/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const filter = { _id: id, access_level: "employee" };
+    const filter = { _id: id, access_level: "employee", status: 1 };
     let emp = await CommonUser.findOneAndUpdate(filter, req.body);
     if (!emp) {
       res.status(500).send("Failed to update employee details");
@@ -156,12 +161,14 @@ router.post("/search/:limit/:pageNumber", async (req, res) => {
       $and: [
         { $or: [{ employeeNumber: regexp }, { name: regexp }] },
         { access_level: "employee" },
+        { status: 1 },
       ],
     });
     const result = await CommonUser.find({
       $and: [
         { $or: [{ employeeNumber: regexp }, { name: regexp }] },
         { access_level: "employee" },
+        { status: 1 },
       ],
     })
       .limit(limit)
@@ -172,7 +179,5 @@ router.post("/search/:limit/:pageNumber", async (req, res) => {
     res.status(500).send("Failed to search");
   }
 });
-
-router.post("/delete/:id");
 
 module.exports = router;
