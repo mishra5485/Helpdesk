@@ -16,6 +16,7 @@ import axios from "axios";
 import Nav from "./Nav";
 import Form from "react-bootstrap/Form";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
+import SearchIcon from "@mui/icons-material/Search";
 import toast, { Toaster } from "react-hot-toast";
 
 class TicketsTable extends Component {
@@ -23,7 +24,9 @@ class TicketsTable extends Component {
     items: [],
     currentpage: 0,
     pageCount: 0,
+    searchPageCount: 0,
     search: "",
+    searchPagination: false,
   };
 
   limit = 5;
@@ -31,6 +34,7 @@ class TicketsTable extends Component {
   componentDidMount() {
     this.getData();
   }
+
   getData = async () => {
     const Usertoken = localStorage.getItem("token");
     const config = {
@@ -54,7 +58,7 @@ class TicketsTable extends Component {
       });
   };
 
-  fetchComments = async (currentPage) => {
+  fetchData = async (currentPage) => {
     const Usertoken = localStorage.getItem("token");
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
@@ -75,12 +79,13 @@ class TicketsTable extends Component {
   handlePageClick = async (data) => {
     let currentPage = data.selected;
     this.setState({ currentPage: currentPage });
-    const ApiData = await this.fetchComments(currentPage);
+    const ApiData = await this.fetchData(currentPage);
     this.setState({ items: ApiData });
   };
 
   search = async (e) => {
     e.preventDefault();
+    this.setState({ searchPagination: true });
     const Usertoken = localStorage.getItem("token");
 
     const config = {
@@ -104,13 +109,41 @@ class TicketsTable extends Component {
     }
   };
 
+  fetchComments = async (currentPage) => {
+    const Usertoken = localStorage.getItem("token");
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+    try {
+      let response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/tickets/all/${this.limit}/${currentPage}`,
+        config
+      );
+      let respdata = await response.data;
+      toast.success("Tickets Fetched Successfully");
+      return respdata.tickets;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  SearchhandlePageClick = async (data) => {
+    let currentPage = data.selected;
+    this.setState({ currentPage: currentPage });
+    const ApiData = await this.fetchSearchData(currentPage);
+    this.setState({ items: ApiData });
+  };
+
+  reset = async () => {
+    this.setState({ searchPagination: false });
+  };
   render() {
     return (
       <>
         <Nav />
         <Toaster position="top-right" />
         <MDBContainer fluid className="mt-3">
-          <Form onSubmit={this.search}>
+          <Form>
             <MDBRow
               style={{
                 display: "flex",
@@ -123,12 +156,16 @@ class TicketsTable extends Component {
                   <input
                     className="form-control"
                     placeholder="Search"
+                    style={{ height: "40px" }}
                     type="text"
                     value={this.state.search}
                     onChange={(e) => this.setState({ search: e.target.value })}
                   />
-                  <MDBBtn className="me-1" color="info">
-                    Search
+                  <MDBBtn className="me-2" color="info" onSubmit={this.search}>
+                    <SearchIcon />
+                  </MDBBtn>
+                  <MDBBtn className="me-2" color="danger" onSubmit={this.reset}>
+                    Reset
                   </MDBBtn>
                 </MDBInputGroup>
               </MDBCol>
@@ -231,26 +268,47 @@ class TicketsTable extends Component {
               </MDBTableBody>
             </MDBTable>
           </MDBContainer>
-
-          <ReactPaginate
-            previousLabel={"previous"}
-            nextLabel={"next"}
-            breakLabel={"..."}
-            pageCount={this.state.pageCount}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={2}
-            onPageChange={this.handlePageClick}
-            containerClassName={"pagination justify-content-center"}
-            pageClassName={"page-item"}
-            pageLinkClassName={"page-link"}
-            previousClassName={"page-item"}
-            previousLinkClassName={"page-link"}
-            nextClassName={"page-item"}
-            nextLinkClassName={"page-link"}
-            breakClassName={"page-item"}
-            breakLinkClassName={"page-link"}
-            activeClassName={"active"}
-          />
+          {this.state.searchPagination ? (
+            <ReactPaginate
+              previousLabel={"previous"}
+              nextLabel={"next"}
+              breakLabel={"..."}
+              pageCount={this.state.pageCount}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={2}
+              onPageChange={this.handlePageClick}
+              containerClassName={"pagination justify-content-center"}
+              pageClassName={"page-item"}
+              pageLinkClassName={"page-link"}
+              previousClassName={"page-item"}
+              previousLinkClassName={"page-link"}
+              nextClassName={"page-item"}
+              nextLinkClassName={"page-link"}
+              breakClassName={"page-item"}
+              breakLinkClassName={"page-link"}
+              activeClassName={"active"}
+            />
+          ) : (
+            <ReactPaginate
+              previousLabel={"previous"}
+              nextLabel={"next"}
+              breakLabel={"..."}
+              pageCount={this.state.pageCount}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={2}
+              onPageChange={this.SaerchhandlePageClick}
+              containerClassName={"pagination justify-content-center"}
+              pageClassName={"page-item"}
+              pageLinkClassName={"page-link"}
+              previousClassName={"page-item"}
+              previousLinkClassName={"page-link"}
+              nextClassName={"page-item"}
+              nextLinkClassName={"page-link"}
+              breakClassName={"page-item"}
+              breakLinkClassName={"page-link"}
+              activeClassName={"active"}
+            />
+          )}
         </div>
       </>
     );
