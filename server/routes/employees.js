@@ -31,11 +31,12 @@ router.post("/register", async (req, res) => {
       if (lastEmployee) {
         lastEmployeeNumber = lastEmployee.employeeNumber;
         lastEmployeeNumber++;
+      } else {
+        lastEmployeeNumber = 100;
       }
     } catch (ex) {}
 
     let createdAt = getTimestamp();
-    console.log(createdAt);
     employee = new CommonUser({
       _id,
       name,
