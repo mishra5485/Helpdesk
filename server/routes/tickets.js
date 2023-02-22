@@ -133,12 +133,16 @@ router.post("/search/:limit/:pageNumber", async (req, res) => {
     let pageNumber = req.params.pageNumber;
     let skippedItems = pageNumber * limit;
     const regexp = new RegExp(keyword, "i");
+    const countResult = await Ticket.find({
+      $or: [{ ticketNumber: regexp }, { subject: regexp }],
+    });
+    console.log(countResult);
     const result = await Ticket.find({
       $or: [{ ticketNumber: regexp }, { subject: regexp }],
     })
       .limit(limit)
       .skip(skippedItems);
-    let count = result.length;
+    let count = countResult.length;
     res.status(200).send({ ticket: result, count });
   } catch (ex) {
     res.status(500).send("Failed to search");

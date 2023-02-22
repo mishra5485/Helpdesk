@@ -152,6 +152,12 @@ router.post("/search/:limit/:pageNumber", async (req, res) => {
     let pageNumber = req.params.pageNumber;
     let skippedItems = pageNumber * limit;
     const regexp = new RegExp(keyword, "i");
+    const countResult = await CommonUser.find({
+      $and: [
+        { $or: [{ employeeNumber: regexp }, { name: regexp }] },
+        { access_level: "employee" },
+      ],
+    });
     const result = await CommonUser.find({
       $and: [
         { $or: [{ employeeNumber: regexp }, { name: regexp }] },
@@ -160,11 +166,13 @@ router.post("/search/:limit/:pageNumber", async (req, res) => {
     })
       .limit(limit)
       .skip(skippedItems);
-    let count = result.length;
+    let count = countResult.length;
     res.status(200).send({ employees: result, count });
   } catch (ex) {
     res.status(500).send("Failed to search");
   }
 });
+
+router.post("/delete/:id");
 
 module.exports = router;
