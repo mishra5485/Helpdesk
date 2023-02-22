@@ -145,17 +145,23 @@ router.post("/update/:id", async (req, res) => {
   }
 });
 
-router.post("/search", async (req, res) => {
+router.post("/search/:limit/:pageNumber", async (req, res) => {
   try {
     let { keyword } = req.body;
+    let limit = req.params.limit;
+    let pageNumber = req.params.pageNumber;
+    let skippedItems = pageNumber * limit;
     const regexp = new RegExp(keyword, "i");
     const result = await CommonUser.find({
       $and: [
         { $or: [{ employeeNumber: regexp }, { name: regexp }] },
         { access_level: "employee" },
       ],
-    });
-    res.status(200).send(result);
+    })
+      .limit(limit)
+      .skip(skippedItems);
+    let count = result.length;
+    res.status(200).send({ employees: result, count });
   } catch (ex) {
     res.status(500).send("Failed to search");
   }
