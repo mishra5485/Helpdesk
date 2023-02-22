@@ -18,25 +18,28 @@ router.post("/register", async (req, res) => {
   let { name, email, password } = req.body;
   email = email.toLowerCase();
 
-  let user = await CommonUser.findOne({ email: email });
-  if (user)
-    return res.status(403).send("User already registered. Please login in!");
+  let user = await CommonUser.findOne({ email: email, status: 1 });
+  if (user) {
+    return res.status(403).send("Already registered. Please login in!");
+  } else {
+    let createdAt = getTimestamp();
+    user = new CommonUser({
+      _id,
+      name,
+      email,
+      password,
+      createdAt,
+      access_level: "user",
+    });
+    bcrypt.hash(password, saltRounds, async function (err, hash) {
+      if (err) console.log(err);
+      user.password = hash;
+      await user.save();
+    });
 
-  user = new CommonUser({
-    _id,
-    name,
-    email,
-    password,
-    access_level: "user",
-  });
-  bcrypt.hash(password, saltRounds, async function (err, hash) {
-    if (err) console.log(err);
-    user.password = hash;
-    await user.save();
-  });
-
-  const token = generateAuthToken({ email });
-  res.status(200).header("x-auth-token", token).send(email.toLowerCase());
+    const token = generateAuthToken({ email });
+    res.status(200).header("x-auth-token", token).send(email.toLowerCase());
+  }
 });
 
 module.exports = router;
