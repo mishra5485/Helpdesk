@@ -101,6 +101,7 @@ class EmployeeTable extends Component {
 
   handleSubmit = async (e) => {
     e.preventDefault();
+    this.handleClose();
     const Usertoken = localStorage.getItem("token");
 
     const config = {
@@ -145,7 +146,6 @@ class EmployeeTable extends Component {
 
   search = async (e) => {
     e.preventDefault();
-    alert(this.state.search);
     this.setState({ searchPagination: true });
     const Usertoken = localStorage.getItem("token");
 
@@ -159,7 +159,7 @@ class EmployeeTable extends Component {
 
     await axios
       .post(
-        `${process.env.REACT_APP_BASE_URL}/tickets/search/${this.limit}/${this.state.SearchcurrentPage}`,
+        `${process.env.REACT_APP_BASE_URL}/employees/search/${this.limit}/${this.state.SearchcurrentPage}`,
         data,
         config
       )
@@ -169,7 +169,7 @@ class EmployeeTable extends Component {
         this.setState({
           searchPageCount: Math.ceil(total / this.limit),
         });
-        this.setState({ items: response.data.ticket });
+        this.setState({ items: response.data.employees });
         toast.success("Tickets Fetched Successfully");
       })
       .catch((err) => {
@@ -187,13 +187,13 @@ class EmployeeTable extends Component {
     };
     try {
       let response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/tickets/search/${this.limit}/${currentPage}`,
+        `${process.env.REACT_APP_BASE_URL}/employees/search/${this.limit}/${currentPage}`,
         data,
         config
       );
       let respdata = await response.data;
       toast.success("Tickets Fetched Successfully");
-      return respdata.ticket;
+      return respdata.employees;
     } catch (error) {
       console.log(error);
     }
@@ -352,7 +352,7 @@ class EmployeeTable extends Component {
         <Modal show={this.state.showModal} onHide={this.handleClose}>
           <Form>
             <Modal.Header closeButton>
-              <Modal.Title>My Modal</Modal.Title>
+              <Modal.Title>Create Employee</Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <FloatingLabel

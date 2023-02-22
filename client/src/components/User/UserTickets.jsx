@@ -187,7 +187,6 @@ class UserTickets extends Component {
                           </MDBBadge>
                         )}
                       </td>
-
                       <td>
                         <Link to={`/user/ticketinfo/${item._id}`}>
                           <button
