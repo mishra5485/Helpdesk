@@ -22,6 +22,7 @@ import {
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import { Link } from "react-router-dom";
+import { Button, Modal } from "react-bootstrap";
 import axios from "axios";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -32,7 +33,7 @@ import AddIcon from "@mui/icons-material/Add";
 class EmployeeTable extends Component {
   state = {
     showNav: false,
-    basicModal: false,
+    showModal: false,
     items: [],
     currentpage: 0,
     SearchcurrentPage: 0,
@@ -45,9 +46,12 @@ class EmployeeTable extends Component {
 
   limit = 5;
 
-  toggleShow = () => {
-    this.setState({ basicModal: !this.state.basicModal });
-    console.log("calling");
+  handleClose = () => {
+    this.setState({ showModal: false });
+  };
+
+  handleShow = () => {
+    this.setState({ showModal: true });
   };
 
   componentDidMount() {
@@ -65,7 +69,6 @@ class EmployeeTable extends Component {
         config
       )
       .then((response) => {
-        console.log(response);
         let total = response.data.count;
         this.setState({
           pageCount: Math.ceil(total / this.limit),
@@ -254,7 +257,7 @@ class EmployeeTable extends Component {
                 <MDBBadge
                   color="success"
                   light
-                  onClick={this.toggleShow}
+                  onClick={this.handleShow}
                   style={{ cursor: "pointer" }}
                 >
                   <AddIcon />
@@ -353,93 +356,82 @@ class EmployeeTable extends Component {
             />
           )}
         </div>
-        <button onClick={this.toggleShow}>Click me</button>
-        <MDBModal
-          show={this.state.basicModal}
-          setShow={this.toggleShow}
-          tabIndex="-1"
-        >
-          <MDBModalDialog>
-            <Form onSubmit={this.handleSubmit}>
-              <MDBModalContent>
-                <MDBModalHeader>
-                  <MDBModalTitle>Create-Employee</MDBModalTitle>
-                  <MDBBtn
-                    className="btn-close"
-                    color="none"
-                    onClick={this.toggleShow}
-                  ></MDBBtn>
-                </MDBModalHeader>
-                <MDBModalBody>
-                  <FloatingLabel
-                    controlId="floatingInput"
-                    label="UserName"
-                    className="mb-3"
-                  >
-                    <Form.Control
-                      type="text"
-                      placeholder="name@example.com"
-                      autoComplete="off"
-                      onChange={(e) =>
-                        this.setState({ username: e.target.value })
-                      }
-                    />
-                  </FloatingLabel>
-                  <FloatingLabel
-                    controlId="floatingInput"
-                    label="Email address"
-                    className="mb-3"
-                  >
-                    <Form.Control
-                      type="email"
-                      placeholder="name@example.com"
-                      autoComplete="off"
-                      onChange={(e) => this.setState({ email: e.target.value })}
-                    />
-                  </FloatingLabel>
-                  <FloatingLabel
-                    controlId="floatingPassword"
-                    label="Password"
-                    className="mb-3"
-                  >
-                    <Form.Control
-                      type="password"
-                      placeholder="Password"
-                      autoComplete="off"
-                      onChange={(e) =>
-                        this.setState({ password: e.target.value })
-                      }
-                    />
-                  </FloatingLabel>
-                  <FloatingLabel
-                    controlId="floatingSelectGrid"
-                    label="Department"
-                  >
-                    <Form.Control
-                      as="select"
-                      required
-                      aria-label="Floating label select example"
-                      onChange={(e) =>
-                        this.setState({ department: e.target.value })
-                      }
-                    >
-                      <option>please select Department</option>
-                      <option value="L1">L1</option>
-                      <option value="L2">L2</option>
-                      <option value="L3">L3</option>
-                    </Form.Control>
-                  </FloatingLabel>
-                </MDBModalBody>
-                <MDBModalFooter>
-                  <MDBBtn color="secondary" onClick={this.toggleShow}>
-                    Close
-                  </MDBBtn>
-                  <MDBBtn>Submit</MDBBtn>
-                </MDBModalFooter>
-              </MDBModalContent>
-            </Form>
-          </MDBModalDialog>
-        </MDBModal>
+        <Modal show={this.state.showModal} onHide={this.handleClose}>
+          <Form>
+            <Modal.Header closeButton>
+              <Modal.Title>My Modal</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <FloatingLabel
+                controlId="floatingInput"
+                label="UserName"
+                className="mb-3"
+              >
+                <Form.Control
+                  type="text"
+                  placeholder="name@example.com"
+                  autoComplete="off"
+                  onChange={(e) => this.setState({ username: e.target.value })}
+                />
+              </FloatingLabel>
+              <FloatingLabel
+                controlId="floatingInput"
+                label="Email address"
+                className="mb-3"
+              >
+                <Form.Control
+                  type="email"
+                  placeholder="name@example.com"
+                  autoComplete="off"
+                  onChange={(e) => this.setState({ email: e.target.value })}
+                />
+              </FloatingLabel>
+              <FloatingLabel
+                controlId="floatingPassword"
+                label="Password"
+                className="mb-3"
+              >
+                <Form.Control
+                  type="password"
+                  placeholder="Password"
+                  autoComplete="off"
+                  onChange={(e) => this.setState({ password: e.target.value })}
+                />
+              </FloatingLabel>
+              <FloatingLabel controlId="floatingSelectGrid" label="Department">
+                <Form.Control
+                  as="select"
+                  required
+                  aria-label="Floating label select example"
+                  onChange={(e) =>
+                    this.setState({ department: e.target.value })
+                  }
+                >
+                  <option>please select Department</option>
+                  <option value="L1">L1</option>
+                  <option value="L2">L2</option>
+                  <option value="L3">L3</option>
+                </Form.Control>
+              </FloatingLabel>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                type="button"
+                onClick={this.handleClose}
+              >
+                Close
+              </Button>
+              <Button
+                variant="primary"
+                type="button"
+                onClick={this.handleSubmit}
+              >
+                Save Changes
+              </Button>
+            </Modal.Footer>
+          </Form>
+        </Modal>
       </>
     );
   }
