@@ -8,6 +8,8 @@ import {
   MDBBadge,
   MDBRow,
   MDBCol,
+  MDBInputGroup,
+  MDBBtn,
 } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -185,7 +187,6 @@ class UserTickets extends Component {
                           </MDBBadge>
                         )}
                       </td>
-                      <td>{item.status}</td>
 
                       <td>
                         <Link to={`/user/ticketinfo/${item._id}`}>

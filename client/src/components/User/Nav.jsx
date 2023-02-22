@@ -9,16 +9,9 @@ import {
   MDBNavbarItem,
   MDBNavbarLink,
   MDBCollapse,
-  MDBBtn,
-  MDBModal,
-  MDBModalDialog,
-  MDBModalContent,
-  MDBModalHeader,
-  MDBModalTitle,
-  MDBModalBody,
-  MDBModalFooter,
 } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
+import { Button, Modal } from "react-bootstrap";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import axios from "axios";
@@ -30,7 +23,7 @@ export default class Nav extends Component {
     super();
     this.state = {
       showNav: false,
-      modal: false,
+      showModal: false,
       Subject: "",
       Body: "",
       Department: "",
@@ -38,7 +31,13 @@ export default class Nav extends Component {
     };
   }
 
-  toggleShow = () => this.setState({ modal: !this.state.modal });
+  handleClose = () => {
+    this.setState({ showModal: false });
+  };
+
+  handleShow = () => {
+    this.setState({ showModal: true });
+  };
 
   handleSubmit = async (e) => {
     e.preventDefault();
@@ -96,7 +95,7 @@ export default class Nav extends Component {
             <MDBCollapse navbar show={this.state.showNav}>
               <MDBNavbarNav style={{ justifyContent: "end" }}>
                 <MDBNavbarItem>
-                  <MDBNavbarLink onClick={this.toggleShow}>
+                  <MDBNavbarLink onClick={this.handleShow}>
                     Create Ticket
                   </MDBNavbarLink>
                 </MDBNavbarItem>
@@ -119,7 +118,7 @@ export default class Nav extends Component {
             </MDBCollapse>
           </MDBContainer>
         </MDBNavbar>
-        <MDBModal
+        {/* <MDBModal
           show={this.state.modal}
           setShow={!this.state.modal}
           tabIndex="-1"
@@ -135,54 +134,7 @@ export default class Nav extends Component {
                     onClick={this.toggleShow}
                   ></MDBBtn>
                 </MDBModalHeader>
-                <MDBModalBody>
-                  <FloatingLabel
-                    controlId="floatingTextarea1"
-                    label="Subject"
-                    className="mb-3"
-                  >
-                    <Form.Control
-                      as="textarea"
-                      required
-                      placeholder="Leave a comment here"
-                      style={{ height: "60px", resize: "none" }}
-                      onChange={(e) =>
-                        this.setState({ Subject: e.target.value })
-                      }
-                    />
-                  </FloatingLabel>
-                  <FloatingLabel
-                    controlId="floatingTextarea2"
-                    label="Body"
-                    className="mb-3"
-                  >
-                    <Form.Control
-                      as="textarea"
-                      required
-                      placeholder="Leave a comment here"
-                      style={{ height: "150px", resize: "none" }}
-                      onChange={(e) => this.setState({ Body: e.target.value })}
-                    />
-                  </FloatingLabel>
-                  <FloatingLabel
-                    controlId="floatingSelectGrid"
-                    label="Department"
-                  >
-                    <Form.Control
-                      as="select"
-                      required
-                      aria-label="Floating label select example"
-                      onChange={(e) =>
-                        this.setState({ Department: e.target.value })
-                      }
-                    >
-                      <option>please select Department</option>
-                      <option value="L1">L1</option>
-                      <option value="L2">L2</option>
-                      <option value="L3">L3</option>
-                    </Form.Control>
-                  </FloatingLabel>
-                </MDBModalBody>
+                <MDBModalBody></MDBModalBody>
                 <MDBModalFooter>
                   <MDBBtn color="secondary" onClick={this.toggleShow}>
                     Close
@@ -192,7 +144,73 @@ export default class Nav extends Component {
               </MDBModalContent>
             </Form>
           </MDBModalDialog>
-        </MDBModal>
+        </MDBModal> */}
+        <Modal show={this.state.showModal} onHide={this.handleClose}>
+          <Form>
+            <Modal.Header closeButton>
+              <Modal.Title>Create-Ticket</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <FloatingLabel
+                controlId="floatingTextarea1"
+                label="Subject"
+                className="mb-3"
+              >
+                <Form.Control
+                  as="textarea"
+                  required
+                  placeholder="Leave a comment here"
+                  style={{ height: "60px", resize: "none" }}
+                  onChange={(e) => this.setState({ Subject: e.target.value })}
+                />
+              </FloatingLabel>
+              <FloatingLabel
+                controlId="floatingTextarea2"
+                label="Body"
+                className="mb-3"
+              >
+                <Form.Control
+                  as="textarea"
+                  required
+                  placeholder="Leave a comment here"
+                  style={{ height: "150px", resize: "none" }}
+                  onChange={(e) => this.setState({ Body: e.target.value })}
+                />
+              </FloatingLabel>
+              <FloatingLabel controlId="floatingSelectGrid" label="Department">
+                <Form.Control
+                  as="select"
+                  required
+                  aria-label="Floating label select example"
+                  onChange={(e) =>
+                    this.setState({ Department: e.target.value })
+                  }
+                >
+                  <option>please select Department</option>
+                  <option value="L1">L1</option>
+                  <option value="L2">L2</option>
+                  <option value="L3">L3</option>
+                </Form.Control>
+              </FloatingLabel>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                type="button"
+                onClick={this.handleClose}
+              >
+                Close
+              </Button>
+              <Button
+                variant="primary"
+                type="button"
+                onClick={this.handleSubmit}
+              >
+                Save Changes
+              </Button>
+            </Modal.Footer>
+          </Form>
+        </Modal>
       </>
     );
   }

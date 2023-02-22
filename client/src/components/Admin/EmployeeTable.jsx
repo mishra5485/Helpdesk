@@ -11,13 +11,6 @@ import {
   MDBInputGroup,
   MDBRow,
   MDBCol,
-  MDBModal,
-  MDBModalDialog,
-  MDBModalContent,
-  MDBModalHeader,
-  MDBModalTitle,
-  MDBModalBody,
-  MDBModalFooter,
 } from "mdb-react-ui-kit";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
