@@ -26,7 +26,10 @@ import AddIcon from "@mui/icons-material/Add";
 class EmployeeTable extends Component {
   state = {
     showNav: false,
-    showModal: false,
+    empModal: false,
+    delModal: false,
+    promptres: false,
+    deleteId: "",
     items: [],
     currentpage: 0,
     SearchcurrentPage: 0,
@@ -40,11 +43,15 @@ class EmployeeTable extends Component {
   limit = 5;
 
   handleClose = () => {
-    this.setState({ showModal: false });
+    this.setState({ empModal: false });
   };
 
   handleShow = () => {
-    this.setState({ showModal: true });
+    this.setState({ empModal: true });
+  };
+
+  handleDelShow = () => {
+    this.setState({ delModal: true });
   };
 
   componentDidMount() {
@@ -131,19 +138,6 @@ class EmployeeTable extends Component {
     this.setState({ modal: false });
   };
 
-  deleteEmp = async (empid) => {
-    try {
-      let response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/employees/delete/${empid}`
-      );
-      let respdata = await response.data;
-      toast.success("Employee deleted Successfully");
-      this.getData();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   search = async (e) => {
     e.preventDefault();
     this.setState({ searchPagination: true });
@@ -213,6 +207,41 @@ class EmployeeTable extends Component {
     this.getData();
   };
 
+  handleDelClose = (e) => {
+    e.preventDefault();
+    this.setState({ delModal: false });
+  };
+
+  deleteEmp = async (empid) => {
+    this.setState({ delModal: true });
+    this.setState({ deleteId: empid });
+  };
+
+  handleDelResp = async (e) => {
+    e.preventDefault();
+    this.setState({ delModal: false });
+    try {
+      let response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/employees/delete/${this.state.deleteId}`
+      );
+      let respdata = await response.data;
+      toast.success("Employee deleted Successfully");
+      this.getData();
+      this.setState({ deleteId: "" });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  reset = async (e) => {
+    e.preventDefault();
+    this.setState({ searchPagination: false });
+    this.setState({ search: "" });
+    toast.success("Resetting search");
+
+    this.getData();
+  };
+
   render() {
     return (
       <>
@@ -237,12 +266,20 @@ class EmployeeTable extends Component {
                     onChange={(e) => this.setState({ search: e.target.value })}
                   />
                   <MDBBtn
-                    className="me-1"
+                    className="me-2"
                     color="info"
                     onClick={() => this.search}
                     style={{ cursor: "pointer" }}
                   >
                     Search
+                  </MDBBtn>
+                  <MDBBtn
+                    className="me-2"
+                    type="button"
+                    color="danger"
+                    onClick={this.reset}
+                  >
+                    Reset
                   </MDBBtn>
                 </MDBInputGroup>
               </MDBCol>
@@ -349,7 +386,7 @@ class EmployeeTable extends Component {
             />
           )}
         </div>
-        <Modal show={this.state.showModal} onHide={this.handleClose}>
+        <Modal show={this.state.empModal} onHide={this.handleClose}>
           <Form>
             <Modal.Header closeButton>
               <Modal.Title>Create Employee</Modal.Title>
@@ -424,6 +461,27 @@ class EmployeeTable extends Component {
               </Button>
             </Modal.Footer>
           </Form>
+        </Modal>
+        <Modal show={this.state.delModal} onHide={this.handleDelClose}>
+          <Modal.Body>Are you Sure!!! you want to delete</Modal.Body>
+          <Modal.Footer>
+            <form>
+              <Button
+                className="m-2"
+                variant="primary"
+                onClick={this.handleDelResp}
+              >
+                Yes
+              </Button>
+              <Button
+                variant="secondary"
+                className="m-2"
+                onClick={this.handleDelClose}
+              >
+                No
+              </Button>
+            </form>
+          </Modal.Footer>
         </Modal>
       </>
     );
