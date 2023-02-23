@@ -45,15 +45,21 @@ class EmployeeInfo extends Component {
         `${process.env.REACT_APP_BASE_URL}/employees/${objid}`,
         config
       );
-      this.setState({
-        empid: resp.data.employeeNumber,
-        empname: resp.data.name,
-        empmail: resp.data.email,
-        empdepartmentname: resp.data.department_name,
-        empaccesslvl: resp.data.access_level,
-        empCreatedAt: resp.data.createdAt,
-        // resmsg: resp.data.comments,
-      });
+      if (resp.status === 200) {
+        this.setState({
+          empid: resp.data.employeeNumber,
+          empname: resp.data.name,
+          empmail: resp.data.email,
+          empdepartmentname: resp.data.department_name,
+          empaccesslvl: resp.data.access_level,
+          empCreatedAt: resp.data.createdAt,
+        });
+        toast.success("Ticket Fetched Successfully");
+      } else {
+        if (resp.status == 404) {
+          toast.error(resp.data);
+        }
+      }
     } catch (err) {
       console.log(err);
     }
@@ -80,8 +86,13 @@ class EmployeeInfo extends Component {
           config
         )
         .then((response) => {
-          console.log(response.data);
-          toast.success(response.data);
+          if (response.status === 200) {
+            toast.success(response.data);
+          } else {
+            if (response.status === 500) {
+              toast.error(response.data);
+            }
+          }
         });
     } catch (err) {
       toast.error(err);

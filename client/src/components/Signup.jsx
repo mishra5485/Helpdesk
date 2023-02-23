@@ -34,15 +34,20 @@ export default class Signup extends Component {
     await axios
       .post(`${process.env.REACT_APP_BASE_URL}/users/register`, data)
       .then((response) => {
-        console.log(response.data);
-        toast.success("Registered Successfully");
-        localStorage.setItem("username", response.data.username);
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("access", response.data.access);
+        if (response.status === 200) {
+          toast.success("Registered Successfully");
+        } else {
+          if (response.status === 403) {
+            toast.error(response.data);
+          } else {
+            if (response.status === 400) {
+              toast.error(response.data);
+            }
+          }
+        }
       })
       .catch((err) => {
-        // console.log(err.response.data);
-        toast.error(err.response.data);
+        console.log(err);
       });
   };
   render() {

@@ -69,19 +69,25 @@ class EmployeeTable extends Component {
         config
       )
       .then((response) => {
-        let total = response.data.count;
-        this.setState({
-          pageCount: Math.ceil(total / this.limit),
-        });
-        this.setState({ items: response.data.employees });
-        toast.success("Employee Fetched Successfully");
+        if (response.status === 200) {
+          let total = response.data.count;
+          this.setState({
+            pageCount: Math.ceil(total / this.limit),
+          });
+          this.setState({ items: response.data.employees });
+          toast.success("Employee Fetched Successfully");
+        } else {
+          if (response.status === 404) {
+            toast.error(response.data);
+          }
+        }
       })
       .catch((err) => {
-        toast.error(err.response.data);
+        console.log(err);
       });
   };
 
-  fetchComments = async (currentPage) => {
+  fetchData = async (currentPage) => {
     const Usertoken = localStorage.getItem("token");
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
@@ -102,7 +108,7 @@ class EmployeeTable extends Component {
   handlePageClick = async (data) => {
     let currentPage = data.selected;
     this.setState({ currentPage: currentPage });
-    const ApiData = await this.fetchComments(currentPage);
+    const ApiData = await this.fetchData(currentPage);
     this.setState({ items: ApiData });
   };
 
@@ -129,11 +135,13 @@ class EmployeeTable extends Component {
           config
         )
         .then((response) => {
-          toast.success(response.data);
-          this.getData();
+          if (response.status === 200) {
+            toast.success("Employee Created SuccessFully");
+            this.getData();
+          }
         });
     } catch (err) {
-      toast.error(err);
+      console.log(err);
     }
     this.setState({ modal: false });
   };
@@ -167,7 +175,7 @@ class EmployeeTable extends Component {
         toast.success("Tickets Fetched Successfully");
       })
       .catch((err) => {
-        toast.error(err.response.data);
+        console.log(err);
       });
   };
 

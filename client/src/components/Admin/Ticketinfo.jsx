@@ -52,16 +52,23 @@ class TicketInfo extends Component {
         `${process.env.REACT_APP_BASE_URL}/tickets/${objid}`,
         config
       );
-      this.setState({
-        userid: resp.data.user_id,
-        TicketNumber: resp.data.ticketNumber,
-        subject: resp.data.subject,
-        body: resp.data.body,
-        departmentname: resp.data.department_name,
-        status: resp.data.status,
-        CreatedAt: resp.data.createdDate,
-        resmsg: resp.data.comments,
-      });
+      if (resp.status === 200) {
+        this.setState({
+          userid: resp.data.user_id,
+          TicketNumber: resp.data.ticketNumber,
+          subject: resp.data.subject,
+          body: resp.data.body,
+          departmentname: resp.data.department_name,
+          status: resp.data.status,
+          CreatedAt: resp.data.createdDate,
+          resmsg: resp.data.comments,
+        });
+        toast.success("Ticket Fetched Successfully");
+      } else {
+        if (resp.status == 404) {
+          toast.error(resp.data);
+        }
+      }
     } catch (err) {
       console.log(err);
     }
@@ -86,23 +93,23 @@ class TicketInfo extends Component {
       .then((response) => {
         if (response.status === 200) {
           toast.success("Msg sent successfully");
+        } else {
+          if (response.status === 400) {
+            toast.error(response.data);
+          }
         }
         this.getdata(objid);
         this.setState({ msg: "" });
       })
       .catch((err) => {
         console.log(err);
-        toast.error("Invalid response");
       });
   };
 
   handleFileSubmit = async (e) => {
-    console.log("hello");
     e.preventDefault();
     const objid = this.props.match.params.id;
-
     const Usertoken = localStorage.getItem("token");
-
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
@@ -121,8 +128,10 @@ class TicketInfo extends Component {
         config
       )
       .then((res) => {
-        toast.success("File Sent Successfully");
-        this.getdata(objid);
+        if (res.status === 200) {
+          toast.success("File Sent Successfully");
+          this.getdata(objid);
+        }
       })
       .catch((err) => {
         toast.error("Try AfterSomeTime");

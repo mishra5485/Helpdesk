@@ -47,15 +47,21 @@ class TicketsTable extends Component {
         config
       )
       .then((response) => {
-        let total = response.data.count;
-        this.setState({
-          pageCount: Math.ceil(total / this.limit),
-        });
-        this.setState({ items: response.data.tickets });
-        toast.success("Tickets Fetched Successfully");
+        if (response.status === 200) {
+          let total = response.data.count;
+          this.setState({
+            pageCount: Math.ceil(total / this.limit),
+          });
+          this.setState({ items: response.data.tickets });
+          toast.success("Tickets Fetched Successfully");
+        } else {
+          if (response.status === 404) {
+            toast.error(response.data);
+          }
+        }
       })
       .catch((err) => {
-        toast.error(err.response.data);
+        console.log(err);
       });
   };
 
@@ -104,16 +110,21 @@ class TicketsTable extends Component {
         config
       )
       .then((response) => {
-        console.log(response);
-        let total = response.data.count;
-        this.setState({
-          searchPageCount: Math.ceil(total / this.limit),
-        });
-        this.setState({ items: response.data.ticket });
-        toast.success("Tickets Fetched Successfully");
+        if (response.status === 200) {
+          let total = response.data.count;
+          this.setState({
+            searchPageCount: Math.ceil(total / this.limit),
+          });
+          this.setState({ items: response.data.ticket });
+          toast.success("Tickets Fetched Successfully");
+        } else {
+          if (response.status === 500) {
+            toast.error(response.data);
+          }
+        }
       })
       .catch((err) => {
-        toast.error(err.response.data);
+        console.log(err);
       });
   };
 

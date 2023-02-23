@@ -63,11 +63,16 @@ export default class Nav extends Component {
           config
         )
         .then((response) => {
-          console.log(response);
-          toast.success(response.data);
+          if (response.status === 200) {
+            toast.success(response.data);
+          } else {
+            if (response.status === 400) {
+              toast.error(response.data);
+            }
+          }
         });
     } catch (err) {
-      toast.error(err);
+      console.log(err);
     }
     this.setState({ modal: false });
   };
@@ -118,33 +123,6 @@ export default class Nav extends Component {
             </MDBCollapse>
           </MDBContainer>
         </MDBNavbar>
-        {/* <MDBModal
-          show={this.state.modal}
-          setShow={!this.state.modal}
-          tabIndex="-1"
-        >
-          <MDBModalDialog>
-            <Form onSubmit={this.handleSubmit}>
-              <MDBModalContent>
-                <MDBModalHeader>
-                  <MDBModalTitle>Create-Ticket</MDBModalTitle>
-                  <MDBBtn
-                    className="btn-close"
-                    color="none"
-                    onClick={this.toggleShow}
-                  ></MDBBtn>
-                </MDBModalHeader>
-                <MDBModalBody></MDBModalBody>
-                <MDBModalFooter>
-                  <MDBBtn color="secondary" onClick={this.toggleShow}>
-                    Close
-                  </MDBBtn>
-                  <MDBBtn>Submit</MDBBtn>
-                </MDBModalFooter>
-              </MDBModalContent>
-            </Form>
-          </MDBModalDialog>
-        </MDBModal> */}
         <Modal show={this.state.showModal} onHide={this.handleClose}>
           <Form>
             <Modal.Header closeButton>

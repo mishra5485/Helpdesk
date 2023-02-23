@@ -35,10 +35,14 @@ export default class Login extends Component {
           localStorage.setItem("username", response.data.username);
           localStorage.setItem("token", response.data.token);
           localStorage.setItem("access", response.data.access_level);
+        } else {
+          if (response.status === 403) {
+            toast.error(response.data);
+          }
         }
       })
       .catch((err) => {
-        toast.error(err.response.data);
+        console.log(err);
       });
   };
 
