@@ -30,11 +30,14 @@ export default class Login extends Component {
     await axios
       .post(`${process.env.REACT_APP_BASE_URL}/login`, data)
       .then((response) => {
+        console.log(response);
         if (response.status === 200) {
           toast.success("User LoggedIn Successfully");
           localStorage.setItem("username", response.data.username);
           localStorage.setItem("token", response.data.token);
           localStorage.setItem("access", response.data.access_level);
+          localStorage.setItem("id", response.data.user_id);
+          localStorage.setItem("departmentname", response.data.department_name);
         } else {
           if (response.status === 403) {
             toast.error(response.data);
@@ -42,7 +45,7 @@ export default class Login extends Component {
         }
       })
       .catch((err) => {
-        console.log(err);
+        toast.error("Invalid Email Address and Password");
       });
   };
 
@@ -102,6 +105,7 @@ export default class Login extends Component {
                       label="Password"
                       id="formControl"
                       type="password"
+                      autoComplete="off"
                       size="lg"
                       required="true"
                       value={this.state.password}

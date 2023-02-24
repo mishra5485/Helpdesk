@@ -140,7 +140,7 @@ class TicketInfo extends Component {
   render() {
     return (
       <>
-        <Toaster position="top-right" />
+        <Toaster position="top-center" />
         <Nav />
         <MDBContainer
           fluid

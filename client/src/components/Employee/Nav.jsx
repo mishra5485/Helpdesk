@@ -104,6 +104,16 @@ export default class Nav extends Component {
                     Create Ticket
                   </MDBNavbarLink>
                 </MDBNavbarItem>
+                <MDBNavbarItem>
+                  <MDBNavbarLink>
+                    <Link to="/employee/tickets">My Department-Tickets</Link>
+                  </MDBNavbarLink>
+                </MDBNavbarItem>
+                <MDBNavbarItem>
+                  <MDBNavbarLink>
+                    <Link to="/employee/mytickets/:id">My-Tickets</Link>
+                  </MDBNavbarLink>
+                </MDBNavbarItem>
                 <MDBNavbarItem
                   style={{ display: "flex", alignItems: "center" }}
                 >

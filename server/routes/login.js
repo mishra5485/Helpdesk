@@ -19,6 +19,7 @@ router.post("/login", async (req, res) => {
         username: user.name,
         token: token,
         access_level: user.access_level,
+        department_name: user.department_name,
       });
     }
   });

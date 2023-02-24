@@ -12,11 +12,12 @@ import {
   MDBBtn,
 } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
+import Nav from "./Nav";
 import axios from "axios";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import toast, { Toaster } from "react-hot-toast";
 
-class UserTickets extends Component {
+class MyTickets extends Component {
   state = {
     items: [],
     currentpage: 0,
@@ -29,22 +30,28 @@ class UserTickets extends Component {
   componentDidMount() {
     this.getData();
   }
+
   getData = async () => {
     const Usertoken = localStorage.getItem("token");
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
+    const data = {
+      department_name: "L2",
+    };
     await axios
-      .get(
-        `${process.env.REACT_APP_BASE_URL}/tickets/all/${this.limit}/${this.state.currentPage}`,
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/tickets/department/${this.limit}/${this.state.currentPage}`,
+        data,
         config
       )
       .then((response) => {
+        console.log(response.data);
         let total = response.data.count;
         this.setState({
           pageCount: Math.ceil(total / this.limit),
         });
-        this.setState({ items: response.data.tickets });
+        this.setState({ items: response.data.ticket });
         toast.success("Tickets Fetched Successfully");
       })
       .catch((err) => {
@@ -57,14 +64,19 @@ class UserTickets extends Component {
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
+    const data = {
+      department_name: "L2",
+    };
     try {
-      let response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/tickets/all/${this.limit}/${currentPage}`,
+      let response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/tickets/department/${this.limit}/${currentPage}`,
+        data,
         config
       );
       let respdata = await response.data;
+      console.log(respdata);
       toast.success("Tickets Fetched Successfully");
-      return respdata.tickets;
+      return respdata.ticket;
     } catch (error) {
       console.log(error);
     }
@@ -81,6 +93,7 @@ class UserTickets extends Component {
     return (
       <>
         <Toaster position="top-center" />
+        <Nav />
         <MDBContainer fluid className="mt-3">
           <MDBRow
             style={{
@@ -188,7 +201,7 @@ class UserTickets extends Component {
                         )}
                       </td>
                       <td>
-                        <Link to={`/user/ticketinfo/${item._id}`}>
+                        <Link to={`/employee/Myticketinfo/${item._id}`}>
                           <button
                             className="btn btn-success "
                             style={{ marginRight: "8px" }}
@@ -229,4 +242,4 @@ class UserTickets extends Component {
   }
 }
 
-export default UserTickets;
+export default MyTickets;

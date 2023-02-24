@@ -254,7 +254,7 @@ class EmployeeTable extends Component {
     return (
       <>
         <Nav />
-        <Toaster position="top-right" />
+        <Toaster position="top-center" />
         <MDBContainer fluid className="mt-3">
           <Form onSubmit={this.search}>
             <MDBRow
@@ -271,6 +271,7 @@ class EmployeeTable extends Component {
                     placeholder="Search"
                     type="text"
                     value={this.state.search}
+                    required="true"
                     onChange={(e) => this.setState({ search: e.target.value })}
                   />
                   <MDBBtn

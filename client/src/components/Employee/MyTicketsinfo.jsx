@@ -16,12 +16,13 @@ import { withRouter } from "react-router";
 import moment from "moment";
 import SendIcon from "@mui/icons-material/Send";
 import Nav from "./Nav";
+import Form from "react-bootstrap/Form";
 import toast, { Toaster } from "react-hot-toast";
 import ModalImage from "react-modal-image";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import MessageIcon from "@mui/icons-material/Message";
 
-class TicketInfo extends Component {
+class MyTicketsinfo extends Component {
   state = {
     ticketNumber: "",
     userid: "",
@@ -180,7 +181,7 @@ class TicketInfo extends Component {
                               textAlign: "start",
                             }}
                           >
-                            #{this.state.TicketNumber}
+                            {this.state.TicketNumber}
                           </MDBCol>
                         </MDBRow>
                       </MDBCol>
@@ -220,6 +221,81 @@ class TicketInfo extends Component {
                           </MDBCol>
                           <MDBCol size="6">{this.state.userid}</MDBCol>
                         </MDBRow>
+                      </MDBCol>
+                    </MDBRow>
+                    <MDBRow between className="mt-3">
+                      <MDBCol size="6">
+                        <MDBRow className="mt-3">
+                          <MDBCol size="3" style={{ fontWeight: "bold" }}>
+                            Priority:
+                          </MDBCol>
+                          <MDBCol size="6">
+                            <Form.Select
+                              aria-label="Default select example"
+                              onChange={(e) =>
+                                this.setState({ empdepartment: e.target.value })
+                              }
+                            >
+                              <option>Low</option>
+                              <option value="1">Medium</option>
+                              <option value="2">High</option>
+                            </Form.Select>
+                          </MDBCol>
+                        </MDBRow>
+                      </MDBCol>
+                      <MDBCol size="6">
+                        <MDBRow className="mt-3">
+                          <MDBCol size="3" style={{ fontWeight: "bold" }}>
+                            Status:
+                          </MDBCol>
+                          <MDBCol size="6">
+                            <Form.Select
+                              aria-label="Default select example"
+                              onChange={(e) =>
+                                this.setState({ empdepartment: e.target.value })
+                              }
+                            >
+                              <option> Open</option>
+                              <option value="1">In Progress</option>
+                              <option value="2">Resolved</option>
+                            </Form.Select>
+                          </MDBCol>
+                        </MDBRow>
+                      </MDBCol>
+                    </MDBRow>
+                    <MDBRow between className="mt-3">
+                      <MDBCol size="6">
+                        <MDBRow className="mt-3">
+                          <MDBCol size="3" style={{ fontWeight: "bold" }}>
+                            Transfer:
+                          </MDBCol>
+                          <MDBCol size="6">
+                            <Form.Select
+                              aria-label="Default select example"
+                              onChange={(e) =>
+                                this.setState({ empdepartment: e.target.value })
+                              }
+                            >
+                              <option> L1</option>
+                              <option value="1">L2</option>
+                              <option value="2">L3</option>
+                            </Form.Select>
+                          </MDBCol>
+                        </MDBRow>
+                      </MDBCol>
+                    </MDBRow>
+                    <MDBRow
+                      className="mt-3 d-flex "
+                      style={{ justifyContent: "end" }}
+                    >
+                      <MDBCol size="2">
+                        <MDBBtn
+                          className="me-1"
+                          color="primary"
+                          onClick={this.empUpdate}
+                        >
+                          Update
+                        </MDBBtn>
                       </MDBCol>
                     </MDBRow>
                   </MDBContainer>
@@ -407,4 +483,4 @@ class TicketInfo extends Component {
   }
 }
 
-export default withRouter(TicketInfo);
+export default withRouter(MyTicketsinfo);

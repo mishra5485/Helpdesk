@@ -33,7 +33,7 @@ export default class Nav extends Component {
   render() {
     return (
       <>
-        <Toaster position="top-right" />
+        <Toaster position="top-center" />
         <MDBNavbar expand="lg" light bgColor="light">
           <MDBContainer fluid>
             <MDBNavbarBrand>SlashRtc</MDBNavbarBrand>
