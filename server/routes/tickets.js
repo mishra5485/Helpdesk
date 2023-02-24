@@ -149,4 +149,32 @@ router.post("/search/:limit/:pageNumber", async (req, res) => {
   }
 });
 
+router.post("/department/:limit/:pageNumber", async (req, res) => {
+  try {
+    let limit = req.params.limit;
+    let pageNumber = req.params.pageNumber;
+    let skippedItems = pageNumber * limit;
+    const countResult = await Ticket.find(req.body);
+    const result = await Ticket.find(req.body).limit(limit).skip(skippedItems);
+    let count = countResult.length;
+    res.status(200).send({ ticket: result, count });
+  } catch (ex) {
+    res.status(500).send("Failed to search");
+  }
+});
+
+router.post("all/mytickets/:limit/:pageNumber", async (req, res) => {
+  try {
+    let limit = req.params.limit;
+    let pageNumber = req.params.pageNumber;
+    let skippedItems = pageNumber * limit;
+    const countResult = await Ticket.find(req.body);
+    const result = await Ticket.find(req.body).limit(limit).skip(skippedItems);
+    let count = countResult.length;
+    res.status(200).send({ ticket: result, count });
+  } catch (ex) {
+    res.status(500).send("Failed to search");
+  }
+});
+
 module.exports = router;
