@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { CommonUser, validateEmployee } = require("../models/commonUser");
+const { validateResetPassword } = require("../middleware/validator");
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
@@ -178,6 +179,38 @@ router.post("/search/:limit/:pageNumber", async (req, res) => {
     res.status(200).send({ employees: result, count });
   } catch (ex) {
     res.status(500).send("Failed to search");
+  }
+});
+
+router.post("/reset/password/:id", async (req, res) => {
+  const response = await validateResetPassword(req.body);
+  if (response.error) {
+    return res.status(400).send(response.errorMessage);
+  }
+
+  try {
+    const { id } = req.params;
+    const { current_password, new_password } = req.body;
+    const user = await CommonUser.findById(id);
+    if (!user) return res.status(403).send("Unable to fetch employee details");
+
+    bcrypt.compare(current_password, user.password, function (err, result) {
+      if (!result) return res.status(403).send("Invalid password");
+      else {
+        bcrypt.hash(new_password, saltRounds, async function (err, hash) {
+          if (err) return res.send(err);
+          const filter = { _id: id };
+          const update = { password: hash };
+          let u = await CommonUser.findById(id);
+          let doc = await CommonUser.findOneAndUpdate(filter, update, {
+            new: true,
+          });
+          res.status(200).send({ "Updated password successfully": doc });
+        });
+      }
+    });
+  } catch {
+    res.status(500).send("Failed to update password");
   }
 });
 
