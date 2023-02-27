@@ -69,6 +69,10 @@ const ticketSchema = new mongoose.Schema(
       type: String,
       default: moment().format("MMM Do YYYY"),
     },
+    assigned: {
+      type: String,
+      default: null,
+    },
     comments: [commentSchema],
   },
   { timestamps: true }
