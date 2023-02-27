@@ -214,4 +214,10 @@ router.post("/reset/password/:id", async (req, res) => {
   }
 });
 
+router.get("/employee/profile/:id", async (req, res) => {
+  const { id } = req.params;
+  const employee = await CommonUser.findById(id);
+  res.send(employee);
+});
+
 module.exports = router;
