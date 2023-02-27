@@ -4,6 +4,7 @@ const {
   validate,
   validateMessageType,
   validateImageType,
+  validateUpdate,
 } = require("../middleware/validator");
 const express = require("express");
 const router = express.Router();
@@ -174,6 +175,38 @@ router.post("all/mytickets/:limit/:pageNumber", async (req, res) => {
     res.status(200).send({ ticket: result, count });
   } catch (ex) {
     res.status(500).send("Failed to search");
+  }
+});
+
+router.post("/update/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await validateUpdate(req.body);
+    if (response.error) {
+      return res.status(400).send(response.errorMessage);
+    }
+
+    const filter = { _id: id };
+    let emp = await Ticket.findOneAndUpdate(filter, req.body);
+    if (!emp) {
+      res.status(500).send("Failed to update ticket details");
+    } else {
+      res.status(200).send("Ticket details updated sucessfully");
+    }
+  } catch (ex) {
+    res.status(500).send("Failed to update ticket details error");
+  }
+});
+
+router.post("/claim/:id", async (req, res) => {
+  try {
+    const { assigned } = req.body;
+    const { id } = req.params;
+    const filter = { _id: id };
+    let emp = await Ticket.findOneAndUpdate(filter, assigned);
+    res.status(200).send(emp);
+  } catch {
+    res.status(500).send("unable to assign ticket");
   }
 });
 
