@@ -183,12 +183,12 @@ router.post("/search/:limit/:pageNumber", async (req, res) => {
 });
 
 router.post("/reset/password/:id", async (req, res) => {
-  const response = await validateResetPassword(req.body);
-  if (response.error) {
-    return res.status(400).send(response.errorMessage);
-  }
-
   try {
+    const response = await validateResetPassword(req.body);
+    if (response.error) {
+      return res.status(400).send(response.errorMessage);
+    }
+
     const { id } = req.params;
     const { current_password, new_password } = req.body;
     const user = await CommonUser.findById(id);
@@ -215,9 +215,13 @@ router.post("/reset/password/:id", async (req, res) => {
 });
 
 router.get("/employee/profile/:id", async (req, res) => {
-  const { id } = req.params;
-  const employee = await CommonUser.findById(id);
-  res.send(employee);
+  try {
+    const { id } = req.params;
+    const employee = await CommonUser.findById(id);
+    res.send(employee);
+  } catch {
+    res.send("Unable to fetch details");
+  }
 });
 
 module.exports = router;
