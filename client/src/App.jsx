@@ -23,6 +23,7 @@ import EmployeeTicketinfo from "./components/Employee/EmployeeTicketinfo";
 import MyTickets from "./components/Employee/MyTickets";
 import MyTicketsinfo from "./components/Employee/MyTicketsinfo";
 import EmployeeTickets from "./components/Employee/EmployeeTickets";
+import Reset from "./components/Employee/Reset";
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
         />
         <Route path="/employee/mytickets/:id" component={MyTickets} />
         <Route path="/employee/Myticketinfo/:id" component={MyTicketsinfo} />
+        <Route path="/reset/:token" component={Reset} />
         <Route path="*" component={PageNotFound} />
       </Switch>
     </>
