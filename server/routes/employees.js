@@ -232,20 +232,24 @@ router.get("/employee/profile/:id", async (req, res) => {
 
 // Handle the form submission and send the password reset email
 router.post("/forgot", (req, res) => {
+  let email = req.body.email;
+  email = email.toLowerCase();
+  console.log(email);
   // Generate a random token using crypto library
+
   crypto.randomBytes(20, (err, buf) => {
     if (err) {
       console.log(err);
-      return res.redirect("/forgot");
+      return res.status(400).send("failed1");
     }
 
     const token = buf.toString("hex");
 
     // Find the user with the given email address in the database
-    CommonUser.findOne({ email: req.body.email }, (err, user) => {
+    CommonUser.findOne({ email }, (err, user) => {
       if (!user) {
-        req.flash("error", "No account with that email address exists.");
-        return res.redirect("/forgot");
+        // req.flash("error", "No account with that email address exists.");
+        return res.status(400).send("failed2");
       }
 
       // Save the token and expiration time in the user document
@@ -256,7 +260,7 @@ router.post("/forgot", (req, res) => {
       user.save((err) => {
         if (err) {
           console.log(err);
-          return res.redirect("/forgot");
+          return res.status(400).send("failed3");
         }
 
         // Send the password reset email using nodemailer library
@@ -279,7 +283,7 @@ router.post("/forgot", (req, res) => {
             console.log("Failed to send email", error.response.body)
           );
 
-        res.send("Email sent");
+        res.status(200).send("Email sent");
       });
     });
   });

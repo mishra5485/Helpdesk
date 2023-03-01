@@ -140,25 +140,19 @@ export default class Profile extends Component {
     };
     try {
       let resp = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/employees/forgot`,
+        `http://localhost:5000/employees/forgot`,
         data,
         config
       );
-      console.log(resp);
-      // if (resp.status === 200) {
-      //   toast.success(resp.data);
-      //   this.handleClose();
-      // } else {
-      //   if (resp.status === 403) {
-      //     toast.error(resp.data);
-      //   } else {
-      //     if (resp.status === 400) {
-      //       toast.error(resp.data);
-      //     }
-      //   }
-      // }
+
+      if (resp.status === 200) {
+        toast.success("Email sent successfully ");
+        this.setState({ forget: false });
+        this.setState({ forgetemail: "" });
+      }
     } catch (err) {
       console.log(err);
+      toast.error("Failed Try After Sometime");
     }
   };
 
