@@ -20,18 +20,18 @@ export default class Login extends Component {
     success: false,
   };
 
-  handleCallbackResponse = () => {};
-  componentDidMount() {
-    google.accounts.id.initialize({
-      client_id:
-        "214010166124-urdkbn0993d2f8h950voub3cmfdkgbfd.apps.googleusercontent.com",
-      callback: this.handleCallbackResponse,
-    });
-    google.accounts.id.renderButton(document.getElementById("signInDiv"), {
-      theme: "outline",
-      size: "large",
-    });
-  }
+  // handleCallbackResponse = () => {};
+  // componentDidMount() {
+  //   google.accounts.id.initialize({
+  //     client_id:
+  //       "214010166124-urdkbn0993d2f8h950voub3cmfdkgbfd.apps.googleusercontent.com",
+  //     callback: this.handleCallbackResponse,
+  //   });
+  //   google.accounts.id.renderButton(document.getElementById("signInDiv"), {
+  //     theme: "outline",
+  //     size: "large",
+  //   });
+  // }
   handlesubmit = async (e) => {
     const data = {
       email: this.state.email,

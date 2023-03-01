@@ -10,6 +10,7 @@ import {
   MDBCardImage,
   MDBTypography,
   MDBIcon,
+  MDBInput,
 } from "mdb-react-ui-kit";
 import axios from "axios";
 import moment from "moment";
@@ -36,6 +37,8 @@ export default class Profile extends Component {
     password: "",
     newpassword: "",
     cnewpassword: "",
+    forgetemail: "",
+    forget: false,
   };
 
   componentDidMount() {
@@ -123,6 +126,39 @@ export default class Profile extends Component {
       }
     } else {
       toast.error("Confirm Password and New password must be same");
+    }
+  };
+
+  handleForget = async (e) => {
+    e.preventDefault();
+    const Usertoken = localStorage.getItem("token");
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+    const data = {
+      email: this.state.forgetemail,
+    };
+    try {
+      let resp = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/employees/forgot`,
+        data,
+        config
+      );
+      console.log(resp);
+      // if (resp.status === 200) {
+      //   toast.success(resp.data);
+      //   this.handleClose();
+      // } else {
+      //   if (resp.status === 403) {
+      //     toast.error(resp.data);
+      //   } else {
+      //     if (resp.status === 400) {
+      //       toast.error(resp.data);
+      //     }
+      //   }
+      // }
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -230,7 +266,51 @@ export default class Profile extends Component {
                               Reset Password
                             </button>
                           </MDBCol>
+                          <MDBCol size="6" className="mb-3">
+                            <button
+                              type="button"
+                              class="btn btn-primary"
+                              onClick={() =>
+                                this.setState({ forget: !this.state.forget })
+                              }
+                            >
+                              Forget Password
+                            </button>
+                          </MDBCol>
                         </MDBRow>
+
+                        {this.state.forget ? (
+                          <>
+                            <form onSubmit={this.handleForget}>
+                              <MDBRow className="pt-1 d-flex ">
+                                <MDBCol size="6">
+                                  <MDBInput
+                                    wrapperClass="mb-4 w-100"
+                                    label="Email"
+                                    id="formControl"
+                                    type="email"
+                                    autoComplete="off"
+                                    size="lg"
+                                    required="true"
+                                    value={this.state.forgetemail}
+                                    onChange={(e) =>
+                                      this.setState({
+                                        forgetemail: e.target.value,
+                                      })
+                                    }
+                                  />
+                                </MDBCol>
+                              </MDBRow>
+                              <MDBRow className="pt-1">
+                                <MDBCol>
+                                  <button type="submit" class="btn btn-primary">
+                                    Send Email
+                                  </button>
+                                </MDBCol>
+                              </MDBRow>
+                            </form>
+                          </>
+                        ) : null}
 
                         <div className="d-flex justify-content-start mt-5">
                           <a href="#!">
