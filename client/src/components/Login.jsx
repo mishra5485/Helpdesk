@@ -12,6 +12,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import Logo from "../images/logo.svg";
 import toast, { Toaster } from "react-hot-toast";
+import jwt_decode from "jwt-decode";
 
 export default class Login extends Component {
   state = {
@@ -20,18 +21,23 @@ export default class Login extends Component {
     success: false,
   };
 
-  // handleCallbackResponse = () => {};
-  // componentDidMount() {
-  //   google.accounts.id.initialize({
-  //     client_id:
-  //       "214010166124-urdkbn0993d2f8h950voub3cmfdkgbfd.apps.googleusercontent.com",
-  //     callback: this.handleCallbackResponse,
-  //   });
-  //   google.accounts.id.renderButton(document.getElementById("signInDiv"), {
-  //     theme: "outline",
-  //     size: "large",
-  //   });
-  // }
+  handleCallbackResponse = (response) => {
+    localStorage.setItem("token", response.credential);
+    const userobj = jwt_decode(response.credential);
+    console.log(userobj);
+  };
+  componentDidMount() {
+    const google = window.google;
+    google.accounts.id.initialize({
+      client_id:
+        "214010166124-urdkbn0993d2f8h950voub3cmfdkgbfd.apps.googleusercontent.com",
+      callback: this.handleCallbackResponse,
+    });
+    google.accounts.id.renderButton(document.getElementById("signInDiv"), {
+      theme: "outline",
+      size: "large",
+    });
+  }
   handlesubmit = async (e) => {
     const data = {
       email: this.state.email,
@@ -57,6 +63,7 @@ export default class Login extends Component {
         }
       })
       .catch((err) => {
+        console.log(err);
         toast.error("Invalid Email Address and Password");
       });
   };
@@ -128,7 +135,7 @@ export default class Login extends Component {
                     <MDBBtn size="lg" type="submit">
                       SignIn
                     </MDBBtn>
-                    <MDBBtn size="lg" type="submit" id="signInDiv"></MDBBtn>
+                    <div id="signInDiv"></div>
                     <div>
                       <p className="mt-5">
                         Don't have an account?

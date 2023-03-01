@@ -8,6 +8,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
+const auth = require("../middleware/auth");
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 const generateAuthToken = require("../common/utils");
@@ -220,7 +221,7 @@ router.post("/reset/password/:id", async (req, res) => {
   }
 });
 
-router.get("/employee/profile/:id", async (req, res) => {
+router.get("/employee/profile/:id", auth, async (req, res) => {
   try {
     const { id } = req.params;
     const employee = await CommonUser.findById(id);
@@ -289,23 +290,23 @@ router.post("/forgot", (req, res) => {
   });
 });
 
-router.get("/reset/:token", (req, res) => {
-  CommonUser.findOne(
-    {
-      resetPasswordToken: req.params.token,
-      resetPasswordExpires: { $gt: Date.now() },
-    },
-    (err, user) => {
-      if (!user) {
-        return res.send({
-          error: "Password reset token is invalid or has expired.",
-        });
-      }
+// router.get("/reset/:token", (req, res) => {
+//   CommonUser.findOne(
+//     {
+//       resetPasswordToken: req.params.token,
+//       resetPasswordExpires: { $gt: Date.now() },
+//     },
+//     (err, user) => {
+//       if (!user) {
+//         return res.send({
+//           error: "Password reset token is invalid or has expired.",
+//         });
+//       }
 
-      res.status(200).send("Token verified");
-    }
-  );
-});
+//       res.status(200).send("Token verified");
+//     }
+//   );
+// });
 
 // Handle the password reset form submission
 router.post("/reset/:token", async (req, res) => {
@@ -355,7 +356,7 @@ router.post("/reset/:token", async (req, res) => {
             console.log("Failed to send email", error.response.body)
           );
 
-        res.send("Email sent");
+        res.status(200).send("Email sent");
       }
     );
   } catch {

@@ -83,6 +83,7 @@ export default class Profile extends Component {
   handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
   handleClose = () => {
     this.setState({ showModal: false });
   };
