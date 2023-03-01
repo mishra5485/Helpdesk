@@ -351,7 +351,6 @@ class EmployeeTicketinfo extends Component {
                                         {moment
                                           .unix(elem.createdAt)
                                           .format("MMMM Do YYYY")}
-                                        {/* .format("MMMM Do YYYY, h:mm:ss a")} */}
                                       </p>
                                     </div>
                                   </>
