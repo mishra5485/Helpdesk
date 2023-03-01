@@ -17,7 +17,7 @@ import axios from "axios";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import toast, { Toaster } from "react-hot-toast";
 
-class MyTickets extends Component {
+class Alltickets extends Component {
   state = {
     items: [],
     currentpage: 0,
@@ -40,22 +40,18 @@ class MyTickets extends Component {
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
-    const data = {
-      department_name: "L2",
-    };
+
     await axios
-      .post(
-        `${process.env.REACT_APP_BASE_URL}/tickets/department/${this.limit}/${this.state.currentPage}`,
-        data,
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/tickets/all/${this.limit}/${this.state.currentPage}`,
         config
       )
       .then((response) => {
-        console.log(response.data);
         let total = response.data.count;
         this.setState({
           pageCount: Math.ceil(total / this.limit),
         });
-        this.setState({ items: response.data.ticket });
+        this.setState({ items: response.data.tickets });
         toast.success("Tickets Fetched Successfully");
       })
       .catch((err) => {
@@ -68,19 +64,14 @@ class MyTickets extends Component {
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
-    const data = {
-      department_name: "L2",
-    };
     try {
-      let response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/tickets/department/${this.limit}/${currentPage}`,
-        data,
+      let response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/tickets/all/${this.limit}/${currentPage}`,
         config
       );
       let respdata = await response.data;
-      console.log(respdata);
       toast.success("Tickets Fetched Successfully");
-      return respdata.ticket;
+      return respdata.tickets;
     } catch (error) {
       console.log(error);
     }
@@ -141,7 +132,6 @@ class MyTickets extends Component {
         config
       );
       let respdata = await response.data;
-      console.log(respdata);
       toast.success("Tickets Fetched Successfully");
       return respdata.ticket;
     } catch (error) {
@@ -268,7 +258,7 @@ class MyTickets extends Component {
                         )}
                       </td>
                       <td>
-                        <Link to={`/employee/Myticketinfo/${item._id}`}>
+                        <Link to={`/employee/Employeeticketinfo/${item._id}`}>
                           <button
                             className="btn btn-success "
                             style={{ marginRight: "8px" }}
@@ -331,4 +321,4 @@ class MyTickets extends Component {
   }
 }
 
-export default MyTickets;
+export default Alltickets;

@@ -118,6 +118,26 @@ async function validateResetPassword(body) {
   }
 }
 
+async function validateUpdate(comment) {
+  console.log(comment);
+  let error = false;
+
+  const schema = Joi.object({
+    status: Joi.string().required(),
+    priority: Joi.string().required(),
+    department_name: Joi.string().required(),
+  });
+
+  try {
+    const value = await schema.validateAsync(comment);
+    return { error, value };
+  } catch (err) {
+    error = true;
+    let errorMessage = err.details[0].message;
+    return { error, errorMessage };
+  }
+}
+
 exports.validate = validateTicket;
 exports.validateMessageType = validateMessageType;
 exports.validateImageType = validateImageType;
