@@ -16,6 +16,8 @@ const userSchema = new mongoose.Schema({
   email: { type: String },
   createdAt: { type: String },
   status: { type: Number, required: true, default: 1 },
+  resetPasswordToken: { type: String, default: "" },
+  resetPasswordExpires: { type: String, default: "" },
 });
 
 const CommonUser = mongoose.model("AllUser", userSchema);
