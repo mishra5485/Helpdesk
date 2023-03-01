@@ -311,6 +311,7 @@ router.post("/forgot", (req, res) => {
 // Handle the password reset form submission
 router.post("/reset/:token", async (req, res) => {
   try {
+    const password = req.body.new_password;
     const response = await validateResetPassword(req.body);
     if (response.error) {
       return res.status(400).send(response.errorMessage);
@@ -332,7 +333,7 @@ router.post("/reset/:token", async (req, res) => {
         user.resetPasswordToken = undefined;
         user.resetPasswordExpires = undefined;
 
-        bcrypt.hash(user.password, saltRounds, async function (err, hash) {
+        bcrypt.hash(password, saltRounds, async function (err, hash) {
           if (err) console.log(err);
           user.password = hash;
           await user.save();
