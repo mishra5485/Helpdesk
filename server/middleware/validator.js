@@ -100,7 +100,7 @@ async function validateUpdate(comment) {
   }
 }
 
-async function validateResetPassword(body) {
+async function validateForgotPassword(body) {
   let error = false;
 
   const schema = Joi.object({
@@ -118,8 +118,26 @@ async function validateResetPassword(body) {
   }
 }
 
+async function validateResetPassword(body) {
+  let error = false;
+
+  const schema = Joi.object({
+    new_password: Joi.string().required(),
+  });
+
+  try {
+    const value = await schema.validateAsync(body);
+    return { error, value };
+  } catch (err) {
+    error = true;
+    let errorMessage = err.details[0].message;
+    return { error, errorMessage };
+  }
+}
+
 exports.validate = validateTicket;
 exports.validateMessageType = validateMessageType;
 exports.validateImageType = validateImageType;
 exports.validateUpdate = validateUpdate;
+exports.validateResetPassword = validateForgotPassword;
 exports.validateResetPassword = validateResetPassword;
