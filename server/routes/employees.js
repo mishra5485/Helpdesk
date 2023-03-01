@@ -285,8 +285,6 @@ router.post("/forgot", (req, res) => {
   });
 });
 
-// c
-
 router.get("/reset/:token", (req, res) => {
   CommonUser.findOne(
     {
