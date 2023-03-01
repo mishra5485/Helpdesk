@@ -65,6 +65,7 @@ export default class Nav extends Component {
         .then((response) => {
           if (response.status === 200) {
             toast.success(response.data);
+            this.handleClose();
           } else {
             if (response.status === 400) {
               toast.error(response.data);
@@ -111,24 +112,31 @@ export default class Nav extends Component {
                 </MDBNavbarItem>
                 <MDBNavbarItem>
                   <MDBNavbarLink>
+                    <Link to="/employee/alltickets">All-Tickets</Link>
+                  </MDBNavbarLink>
+                </MDBNavbarItem>
+                <MDBNavbarItem>
+                  <MDBNavbarLink>
                     <Link to="/employee/mytickets/:id">My-Tickets</Link>
                   </MDBNavbarLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem
                   style={{ display: "flex", alignItems: "center" }}
                 >
-                  <MDBNavbarLink>{`${localStorage.getItem(
-                    "username"
-                  )}`}</MDBNavbarLink>
                   <PersonIcon />
                 </MDBNavbarItem>
                 <MDBNavbarItem>
                   <MDBNavbarLink>
-                    <Link to="/" onClick={this.handleLogout}>
-                      LogOut
+                    <Link to="/employee/profile">
+                      {`${localStorage.getItem("username")}`}
                     </Link>
                   </MDBNavbarLink>
                 </MDBNavbarItem>
+                <MDBNavbarLink>
+                  <Link to="/" onClick={this.handleLogout}>
+                    LogOut
+                  </Link>
+                </MDBNavbarLink>
               </MDBNavbarNav>
             </MDBCollapse>
           </MDBContainer>

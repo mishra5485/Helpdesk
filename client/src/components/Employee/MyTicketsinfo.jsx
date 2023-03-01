@@ -29,6 +29,7 @@ class MyTicketsinfo extends Component {
     subject: "",
     body: "",
     departmentname: "",
+    priority: "",
     status: "",
     CreatedAt: "",
     msg: "",
@@ -53,6 +54,7 @@ class MyTicketsinfo extends Component {
         `${process.env.REACT_APP_BASE_URL}/tickets/${objid}`,
         config
       );
+      console.log(resp.data);
       if (resp.status === 200) {
         this.setState({
           userid: resp.data.user_id,
@@ -60,6 +62,7 @@ class MyTicketsinfo extends Component {
           subject: resp.data.subject,
           body: resp.data.body,
           departmentname: resp.data.department_name,
+          priority: resp.data.priority,
           status: resp.data.status,
           CreatedAt: resp.data.createdDate,
           resmsg: resp.data.comments,
@@ -145,6 +148,56 @@ class MyTicketsinfo extends Component {
         console.log(err);
       });
   };
+
+  empUpdate = async (e) => {
+    e.preventDefault();
+    console.log({
+      department: this.state.department_name,
+      status: this.state.status,
+      priority: this.state.priority,
+    });
+
+    const objid = this.props.match.params.id;
+    console.log(objid);
+
+    const Usertoken = localStorage.getItem("token");
+
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+
+    const data = {
+      department_name: this.state.departmentname,
+      status: this.state.status,
+      priority: this.state.priority,
+    };
+    console.log(data);
+
+    await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/tickets/update/${objid}`,
+        data,
+        config
+      )
+
+      .then((response) => {
+        if (response.status === 200) {
+          toast.success("employee detail updated");
+        } else {
+          if (response.status === 400) {
+            toast.error(response.data);
+          } else {
+            if (response.status === 500) {
+              toast.error(response.data);
+            }
+          }
+        }
+      })
+      .catch((err) => {
+        toast.error("Invalid response");
+      });
+  };
+
   render() {
     return (
       <>
@@ -233,12 +286,12 @@ class MyTicketsinfo extends Component {
                             <Form.Select
                               aria-label="Default select example"
                               onChange={(e) =>
-                                this.setState({ empdepartment: e.target.value })
+                                this.setState({ priority: e.target.value })
                               }
                             >
                               <option>Low</option>
-                              <option value="1">Medium</option>
-                              <option value="2">High</option>
+                              <option>Medium</option>
+                              <option>High</option>
                             </Form.Select>
                           </MDBCol>
                         </MDBRow>
@@ -252,12 +305,12 @@ class MyTicketsinfo extends Component {
                             <Form.Select
                               aria-label="Default select example"
                               onChange={(e) =>
-                                this.setState({ empdepartment: e.target.value })
+                                this.setState({ status: e.target.value })
                               }
                             >
                               <option> Open</option>
-                              <option value="1">In Progress</option>
-                              <option value="2">Resolved</option>
+                              <option>In Progress</option>
+                              <option>Resolved</option>
                             </Form.Select>
                           </MDBCol>
                         </MDBRow>
@@ -273,12 +326,14 @@ class MyTicketsinfo extends Component {
                             <Form.Select
                               aria-label="Default select example"
                               onChange={(e) =>
-                                this.setState({ empdepartment: e.target.value })
+                                this.setState({
+                                  departmentname: e.target.value,
+                                })
                               }
                             >
                               <option> L1</option>
-                              <option value="1">L2</option>
-                              <option value="2">L3</option>
+                              <option>L2</option>
+                              <option>L3</option>
                             </Form.Select>
                           </MDBCol>
                         </MDBRow>
@@ -366,7 +421,6 @@ class MyTicketsinfo extends Component {
                                       {moment
                                         .unix(elem.createdAt)
                                         .format("MMMM Do YYYY")}
-                                      {/* .format("MMMM Do YYYY, h:mm:ss a")} */}
                                     </p>
                                   </>
                                 ) : (
@@ -384,7 +438,6 @@ class MyTicketsinfo extends Component {
                                         {moment
                                           .unix(elem.createdAt)
                                           .format("MMMM Do YYYY")}
-                                        {/* .format("MMMM Do YYYY, h:mm:ss a")} */}
                                       </p>
                                     </div>
                                   </>

@@ -18,12 +18,13 @@ import { Switch, Route } from "react-router-dom";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
 import PageNotFound from "./components/404Page";
-import DashBoard from "./components/Employee/DashBoard";
 import EmployeeTicketinfo from "./components/Employee/EmployeeTicketinfo";
 import MyTickets from "./components/Employee/MyTickets";
+import Alltickets from "./components/Employee/Alltickets";
 import MyTicketsinfo from "./components/Employee/MyTicketsinfo";
 import EmployeeTickets from "./components/Employee/EmployeeTickets";
 import Reset from "./components/Employee/Reset";
+import Profile from "./components/Employee/Profile";
 
 function App() {
   return (
@@ -51,6 +52,8 @@ function App() {
         <Route exact path="/" component={Login} />
         <Route path="/signup" component={Signup} />
         <Route path="/employee/tickets" component={EmployeeTickets} />
+        <Route path="/employee/profile" component={Profile} />
+        <Route path="/employee/alltickets" component={Alltickets} />
         <Route
           path="/employee/Employeeticketinfo/:id"
           component={EmployeeTicketinfo}

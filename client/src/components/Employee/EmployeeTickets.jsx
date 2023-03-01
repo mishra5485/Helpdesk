@@ -23,13 +23,18 @@ class EmployeeTickets extends Component {
     currentpage: 0,
     pageCount: 0,
     bdcolor: "",
+    search: "",
+    searchPagination: false,
+    searchPageCount: 0,
+    SearchcurrentPage: 0,
   };
 
-  limit = 5;
+  limit = 15;
 
   componentDidMount() {
     this.getData();
   }
+
   getData = async () => {
     const Usertoken = localStorage.getItem("token");
     const config = {
@@ -45,7 +50,6 @@ class EmployeeTickets extends Component {
         config
       )
       .then((response) => {
-        console.log(response.data);
         let total = response.data.count;
         this.setState({
           pageCount: Math.ceil(total / this.limit),
@@ -85,6 +89,68 @@ class EmployeeTickets extends Component {
     let currentPage = data.selected;
     this.setState({ currentPage: currentPage });
     const ApiData = await this.fetchComments(currentPage);
+    this.setState({ items: ApiData });
+  };
+
+  search = async (e) => {
+    e.preventDefault();
+    this.setState({ searchPagination: true });
+    const Usertoken = localStorage.getItem("token");
+
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+
+    const data = {
+      keyword: this.state.search,
+    };
+
+    await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/tickets/search/${this.limit}/${this.state.SearchcurrentPage}`,
+        data,
+        config
+      )
+      .then((response) => {
+        console.log(response);
+        let total = response.data.count;
+        this.setState({
+          searchPageCount: Math.ceil(total / this.limit),
+        });
+        this.setState({ items: response.data.ticket });
+        toast.success("Tickets Fetched Successfully");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  fetchSearchData = async (currentPage) => {
+    const Usertoken = localStorage.getItem("token");
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+    const data = {
+      keyword: this.state.search,
+    };
+    try {
+      let response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/employees/search/${this.limit}/${currentPage}`,
+        data,
+        config
+      );
+      let respdata = await response.data;
+      toast.success("Tickets Fetched Successfully");
+      return respdata.ticket;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  SearchhandlePageClick = async (data) => {
+    let currentPage = data.selected;
+    this.setState({ SearchcurrentPage: currentPage });
+    const ApiData = await this.fetchSearchData(currentPage);
     this.setState({ items: ApiData });
   };
 
@@ -216,25 +282,47 @@ class EmployeeTickets extends Component {
             </MDBTable>
           </MDBContainer>
 
-          <ReactPaginate
-            previousLabel={"previous"}
-            nextLabel={"next"}
-            breakLabel={"..."}
-            pageCount={this.state.pageCount}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={2}
-            onPageChange={this.handlePageClick}
-            containerClassName={"pagination justify-content-center"}
-            pageClassName={"page-item"}
-            pageLinkClassName={"page-link"}
-            previousClassName={"page-item"}
-            previousLinkClassName={"page-link"}
-            nextClassName={"page-item"}
-            nextLinkClassName={"page-link"}
-            breakClassName={"page-item"}
-            breakLinkClassName={"page-link"}
-            activeClassName={"active"}
-          />
+          {this.state.searchPagination ? (
+            <ReactPaginate
+              previousLabel={"previous"}
+              nextLabel={"next"}
+              breakLabel={"..."}
+              pageCount={this.state.searchPageCount}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={2}
+              onPageChange={this.SearchhandlePageClick}
+              containerClassName={"pagination justify-content-center"}
+              pageClassName={"page-item"}
+              pageLinkClassName={"page-link"}
+              previousClassName={"page-item"}
+              previousLinkClassName={"page-link"}
+              nextClassName={"page-item"}
+              nextLinkClassName={"page-link"}
+              breakClassName={"page-item"}
+              breakLinkClassName={"page-link"}
+              activeClassName={"active"}
+            />
+          ) : (
+            <ReactPaginate
+              previousLabel={"previous"}
+              nextLabel={"next"}
+              breakLabel={"..."}
+              pageCount={this.state.pageCount}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={2}
+              onPageChange={this.handlePageClick}
+              containerClassName={"pagination justify-content-center"}
+              pageClassName={"page-item"}
+              pageLinkClassName={"page-link"}
+              previousClassName={"page-item"}
+              previousLinkClassName={"page-link"}
+              nextClassName={"page-item"}
+              nextLinkClassName={"page-link"}
+              breakClassName={"page-item"}
+              breakLinkClassName={"page-link"}
+              activeClassName={"active"}
+            />
+          )}
         </div>
       </>
     );

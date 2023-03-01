@@ -210,4 +210,24 @@ router.post("/claim/:id", async (req, res) => {
   }
 });
 
+router.post("/update/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await validateUpdate(req.body);
+    if (response.error) {
+      return res.status(400).send(response.errorMessage);
+    }
+    const filter = id;
+    let emp = await Ticket.findByIdAndUpdate(filter, req.body);
+
+    if (!emp) {
+      res.status(500).send("Failed to update employee details");
+    } else {
+      res.status(200).send("Employee details updated sucessfully");
+    }
+  } catch (ex) {
+    res.status(500).send("Failed to update employee details error");
+  }
+});
+
 module.exports = router;
