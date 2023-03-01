@@ -15,8 +15,6 @@ const getTimestamp = require("../common/utils");
 var crypto = require("crypto");
 // const nodemailer = require("nodemailer");
 const sgMail = require("@sendgrid/mail");
-const API_KEY =
-  "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";
 
 router.post("/register", async (req, res) => {
   const response = await validateEmployee(req.body);
@@ -262,11 +260,11 @@ router.post("/forgot", (req, res) => {
         }
 
         // Send the password reset email using nodemailer library
-        sgMail.setApiKey(API_KEY);
+        sgMail.setApiKey(process.env.API_KEY);
 
         const mailOptions = {
           to: user.email,
-          from: "amit.slashrtc@gmail.com",
+          from: process.env.SENDGRID_EMAIL,
           subject: "Node.js Password Reset",
           text: `You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n
             Please click on the following link, or paste it into your browser to complete the process:\n\n
@@ -338,11 +336,11 @@ router.post("/reset/:token", async (req, res) => {
         });
 
         // Send a confirmation email to the user
-        sgMail.setApiKey(API_KEY);
+        sgMail.setApiKey(process.env.API_KEY);
 
         const mailOptions = {
           to: user.email,
-          from: "amit.slashrtc@gmail.com",
+          from: process.env.SENDGRID_EMAIL,
           subject: "Node.js Password Changed",
           text: `Hello ${user.name},\n\n
       This is a confirmation that the password for your account ${user.email} has been changed.\n`,
