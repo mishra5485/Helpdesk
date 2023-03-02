@@ -29,6 +29,7 @@ router.post("/create-ticket", async (req, res) => {
 
   const _id = uuidv4();
   const { subject, body, user_id, department_name } = req.body;
+  console.log(user_id);
   let ticket = new Ticket({
     _id,
     subject,
