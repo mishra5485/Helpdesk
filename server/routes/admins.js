@@ -42,4 +42,15 @@ router.post("/register", async (req, res) => {
   }
 });
 
+router.get("/admin/profile/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const admin = await CommonUser.findById(id);
+    if (!admin) return res.send("Unable to find user");
+    res.send(admin);
+  } catch {
+    res.send("Unable to fetch details");
+  }
+});
+
 module.exports = router;
