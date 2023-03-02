@@ -60,6 +60,7 @@ router.post("/registerwithgoogle", async (req, res) => {
       email,
       picture,
       createdAt,
+      ssoLogin: true,
       access_level: "user",
     });
     await user.save();
@@ -68,5 +69,18 @@ router.post("/registerwithgoogle", async (req, res) => {
     res.status(200).header("x-auth-token", token).send(email.toLowerCase());
   }
 });
+
+// =================================================================================
+router.get("/user/profile/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await CommonUser.findById(id);
+    if (!user) return res.send("Unable to find user");
+    res.send(user);
+  } catch {
+    res.send("Unable to fetch details");
+  }
+});
+// =================================================================================
 
 module.exports = router;
