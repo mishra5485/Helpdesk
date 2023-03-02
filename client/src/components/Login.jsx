@@ -22,6 +22,7 @@ export default class Login extends Component {
   };
 
   handleCallbackResponse = (response) => {
+    console.log(response.credential);
     localStorage.setItem("token", response.credential);
     const userobj = jwt_decode(response.credential);
     console.log(userobj);

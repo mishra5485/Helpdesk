@@ -170,6 +170,7 @@ router.post("all/mytickets/:limit/:pageNumber", async (req, res) => {
     let pageNumber = req.params.pageNumber;
     let skippedItems = pageNumber * limit;
     const countResult = await Ticket.find(req.body);
+    console.log(countResult);
     const result = await Ticket.find(req.body).limit(limit).skip(skippedItems);
     let count = countResult.length;
     res.status(200).send({ ticket: result, count });
