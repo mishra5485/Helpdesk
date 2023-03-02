@@ -290,24 +290,6 @@ router.post("/forgot", (req, res) => {
   });
 });
 
-// router.get("/reset/:token", (req, res) => {
-//   CommonUser.findOne(
-//     {
-//       resetPasswordToken: req.params.token,
-//       resetPasswordExpires: { $gt: Date.now() },
-//     },
-//     (err, user) => {
-//       if (!user) {
-//         return res.send({
-//           error: "Password reset token is invalid or has expired.",
-//         });
-//       }
-
-//       res.status(200).send("Token verified");
-//     }
-//   );
-// });
-
 // Handle the password reset form submission
 router.post("/reset/:token", async (req, res) => {
   try {
