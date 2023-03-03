@@ -12,9 +12,9 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import Logo from "../images/logo.svg";
 import toast, { Toaster } from "react-hot-toast";
-import jwt_decode from "jwt-decode";
+import { withRouter } from "../withRouter";
 
-export default class Signup extends Component {
+class Signup extends Component {
   constructor() {
     super();
     this.state = {
@@ -29,26 +29,27 @@ export default class Signup extends Component {
     const data = {
       token: ssotoken,
     };
-    await axios
-      .post(`${process.env.REACT_APP_BASE_URL}/users/registerwithgoogle`, data)
-      .then((response) => {
-        console.log(response);
-        if (response.status === 200) {
-          toast.success("Registered Successfully");
-        } else {
-          if (response.status === 403) {
-            toast.error(response.data);
-          } else {
-            if (response.status === 400) {
-              toast.error(response.data);
-            }
-          }
+    console.log(data);
+
+    try {
+      let resp = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/users/registerwithgoogle`,
+        data
+      );
+      if (resp.status === 200) {
+        toast.success(resp.data);
+        this.props.navigate("/");
+      } else {
+        if (resp.status === 403) {
+          toast.error(resp.data);
         }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      }
+    } catch (err) {
+      toast.error("Already registered. Please login in!");
+      console.log(err);
+    }
   };
+
   componentDidMount() {
     const google = window.google;
     google.accounts.id.initialize({
@@ -199,3 +200,4 @@ export default class Signup extends Component {
     );
   }
 }
+export default withRouter(Signup);
