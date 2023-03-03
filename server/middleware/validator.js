@@ -139,5 +139,5 @@ exports.validate = validateTicket;
 exports.validateMessageType = validateMessageType;
 exports.validateImageType = validateImageType;
 exports.validateUpdate = validateUpdate;
-exports.validateResetPassword = validateForgotPassword;
+exports.validateForgotPassword = validateForgotPassword;
 exports.validateResetPassword = validateResetPassword;
