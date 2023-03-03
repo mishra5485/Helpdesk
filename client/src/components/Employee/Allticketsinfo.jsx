@@ -18,7 +18,7 @@ import toast, { Toaster } from "react-hot-toast";
 import ModalImage from "react-modal-image";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import MessageIcon from "@mui/icons-material/Message";
-import { withRouter } from "../../withRouter";
+import { withRouter } from "../withRouter";
 
 class Allticketsinfo extends Component {
   state = {
@@ -75,7 +75,7 @@ class Allticketsinfo extends Component {
 
   handlesubmit = async (e) => {
     e.preventDefault();
-    const objid = this.props.match.params.id;
+    const objid = this.props.params.id;
     const Usertoken = localStorage.getItem("token");
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
@@ -108,7 +108,7 @@ class Allticketsinfo extends Component {
 
   handleFileSubmit = async (e) => {
     e.preventDefault();
-    const objid = this.props.match.params.id;
+    const objid = this.props.params.id;
 
     const Usertoken = localStorage.getItem("token");
 
