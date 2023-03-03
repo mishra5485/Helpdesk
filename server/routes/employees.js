@@ -13,6 +13,10 @@ const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 const generateAuthToken = require("../common/utils");
 const getTimestamp = require("../common/utils");
+var crypto = require("crypto");
+// const nodemailer = require("nodemailer");
+const sgMail = require("@sendgrid/mail");
+const upload = require("../middleware/multer");
 
 router.post("/register", async (req, res) => {
   const response = await validateEmployee(req.body);
@@ -232,6 +236,23 @@ router.get("/employee/profile/:id", async (req, res) => {
   } catch {
     res.send("Unable to fetch details");
   }
+});
+
+router.post("/profile/image/:id", upload.single("avatar"), async (req, res) => {
+  const file = req.file;
+  const content = file.filename;
+  const { id } = req.params;
+  if (!file || !id)
+    return res.status(500).send("Please provide id and picture");
+  let employee = await CommonUser.find({
+    $and: [{ _id: id }, { access_level: "employee" }],
+  });
+  if (!employee) {
+    return res.send("Can't find employee id");
+  }
+  await CommonUser.updateOne({ _id: id }, { picture: content });
+  employee = await CommonUser.findById(id);
+  res.send(employee);
 });
 
 // Handle the form submission and send the password reset email
