@@ -10,7 +10,7 @@ import {
   MDBNavbarLink,
   MDBCollapse,
 } from "mdb-react-ui-kit";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { Button, Modal } from "react-bootstrap";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
@@ -48,11 +48,12 @@ export default class Nav extends Component {
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
+    const userid = localStorage.getItem("id");
     const data = {
       subject: this.state.Subject,
       body: this.state.Body,
       department_name: this.state.Department,
-      user_id: 21,
+      user_id: userid,
     };
 
     try {
@@ -82,6 +83,16 @@ export default class Nav extends Component {
     toast.success("Logout Successfully");
   };
 
+  activeStyle = {
+    background: "lightblue",
+    color: "black",
+    padding: "10px",
+    borderRadius: "10px",
+  };
+
+  linkstyle = {
+    color: "black",
+  };
   render() {
     return (
       <>
@@ -107,16 +118,21 @@ export default class Nav extends Component {
                 <MDBNavbarItem
                   style={{ display: "flex", alignItems: "center" }}
                 >
-                  <MDBNavbarLink>{`${localStorage.getItem(
-                    "username"
-                  )}`}</MDBNavbarLink>
-                  <PersonIcon />
+                  <NavLink
+                    style={({ isActive }) =>
+                      isActive ? this.activeStyle : this.linkstyle
+                    }
+                    to="/user/profile"
+                  >
+                    <PersonIcon />
+                    {`${localStorage.getItem("username")}`}
+                  </NavLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
                   <MDBNavbarLink>
-                    <Link to="/" onClick={this.handleLogout}>
+                    <NavLink to="/" onClick={this.handleLogout}>
                       LogOut
-                    </Link>
+                    </NavLink>
                   </MDBNavbarLink>
                 </MDBNavbarItem>
               </MDBNavbarNav>

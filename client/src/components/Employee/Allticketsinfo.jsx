@@ -12,16 +12,15 @@ import {
   MDBBadge,
 } from "mdb-react-ui-kit";
 import axios from "axios";
-import { withRouter } from "react-router";
 import moment from "moment";
 import SendIcon from "@mui/icons-material/Send";
-import Nav from "./Nav";
 import toast, { Toaster } from "react-hot-toast";
 import ModalImage from "react-modal-image";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import MessageIcon from "@mui/icons-material/Message";
+import { withRouter } from "../../withRouter";
 
-class TicketInfo extends Component {
+class Allticketsinfo extends Component {
   state = {
     ticketNumber: "",
     userid: "",
@@ -37,7 +36,7 @@ class TicketInfo extends Component {
   };
 
   componentDidMount() {
-    const objid = this.props.match.params.id;
+    const objid = this.props.params.id;
     this.getdata(objid);
   }
 
@@ -144,11 +143,39 @@ class TicketInfo extends Component {
         console.log(err);
       });
   };
+
+  ClaimTicket = async (e) => {
+    const objid = this.props.params.id;
+    const Usertoken = localStorage.getItem("token");
+    const UserId = localStorage.getItem("id");
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+    const data = {
+      Assigned: UserId,
+    };
+    try {
+      let resp = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/tickets/claim/${objid}`,
+        data,
+        config
+      );
+      if (resp.status === 200) {
+        toast.success("Ticket Claimed Successfully ");
+      } else {
+        if (resp.status === 404) {
+          toast.error(resp.data);
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   render() {
     return (
       <>
         <Toaster position="top-center" />
-        <Nav />
         <MDBContainer
           fluid
           className="py-5"
@@ -237,6 +264,20 @@ class TicketInfo extends Component {
                     </MDBCol>
                     <MDBCol size="10">{this.state.body}</MDBCol>
                   </MDBRow>
+                  <MDBRow
+                    className="mt-3 d-flex "
+                    style={{ justifyContent: "end" }}
+                  >
+                    <MDBCol size="2">
+                      <MDBBtn
+                        className="me-1"
+                        color="primary"
+                        onClick={this.ClaimTicket}
+                      >
+                        Claim
+                      </MDBBtn>
+                    </MDBCol>
+                  </MDBRow>
                 </MDBContainer>
                 <hr />
                 <MDBCardBody>
@@ -290,7 +331,6 @@ class TicketInfo extends Component {
                                       {moment
                                         .unix(elem.createdAt)
                                         .format("MMMM Do YYYY")}
-                                      {/* .format("MMMM Do YYYY, h:mm:ss a")} */}
                                     </p>
                                   </>
                                 ) : (
@@ -308,7 +348,6 @@ class TicketInfo extends Component {
                                         {moment
                                           .unix(elem.createdAt)
                                           .format("MMMM Do YYYY")}
-                                        {/* .format("MMMM Do YYYY, h:mm:ss a")} */}
                                       </p>
                                     </div>
                                   </>
@@ -407,4 +446,4 @@ class TicketInfo extends Component {
   }
 }
 
-export default withRouter(TicketInfo);
+export default withRouter(Allticketsinfo);

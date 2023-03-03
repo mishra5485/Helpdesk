@@ -12,7 +12,6 @@ import {
   MDBBtn,
 } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
-import Nav from "./Nav";
 import axios from "axios";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import toast, { Toaster } from "react-hot-toast";
@@ -47,6 +46,7 @@ class Alltickets extends Component {
         config
       )
       .then((response) => {
+        console.log(response.data);
         let total = response.data.count;
         this.setState({
           pageCount: Math.ceil(total / this.limit),
@@ -55,6 +55,7 @@ class Alltickets extends Component {
         toast.success("Tickets Fetched Successfully");
       })
       .catch((err) => {
+        console.log(err);
         toast.error(err.response.data);
       });
   };
@@ -150,7 +151,6 @@ class Alltickets extends Component {
     return (
       <>
         <Toaster position="top-center" />
-        <Nav />
         <MDBContainer fluid className="mt-3">
           <MDBRow
             style={{
@@ -258,7 +258,7 @@ class Alltickets extends Component {
                         )}
                       </td>
                       <td>
-                        <Link to={`/employee/Employeeticketinfo/${item._id}`}>
+                        <Link to={`/employee/allticketsinfo/${item._id}`}>
                           <button
                             className="btn btn-success "
                             style={{ marginRight: "8px" }}

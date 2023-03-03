@@ -9,8 +9,12 @@ import {
   MDBNavbarItem,
   MDBNavbarLink,
   MDBCollapse,
+  MDBDropdown,
+  MDBDropdownToggle,
+  MDBDropdownMenu,
+  MDBDropdownItem,
 } from "mdb-react-ui-kit";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { Button, Modal } from "react-bootstrap";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
@@ -83,6 +87,17 @@ export default class Nav extends Component {
     toast.success("Logout Successfully");
   };
 
+  activeStyle = {
+    background: "lightblue",
+    color: "black",
+    padding: "10px",
+    borderRadius: "10px",
+  };
+
+  linkstyle = {
+    color: "black",
+  };
+
   render() {
     return (
       <>
@@ -107,36 +122,74 @@ export default class Nav extends Component {
                 </MDBNavbarItem>
                 <MDBNavbarItem>
                   <MDBNavbarLink>
-                    <Link to="/employee/tickets">My Department-Tickets</Link>
+                    <NavLink
+                      style={({ isActive }) =>
+                        isActive ? this.activeStyle : this.linkstyle
+                      }
+                      to="/employee/departmenttickets"
+                    >
+                      My Department-Tickets
+                    </NavLink>
                   </MDBNavbarLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
                   <MDBNavbarLink>
-                    <Link to="/employee/alltickets">All-Tickets</Link>
+                    <NavLink
+                      style={({ isActive }) =>
+                        isActive ? this.activeStyle : this.linkstyle
+                      }
+                      to="/employee/alltickets"
+                    >
+                      All-Tickets
+                    </NavLink>
                   </MDBNavbarLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
                   <MDBNavbarLink>
-                    <Link to="/employee/mytickets/:id">My-Tickets</Link>
+                    <NavLink
+                      style={({ isActive }) =>
+                        isActive ? this.activeStyle : this.linkstyle
+                      }
+                      to="/employee/mytickets"
+                    >
+                      My-Tickets
+                    </NavLink>
                   </MDBNavbarLink>
                 </MDBNavbarItem>
-                <MDBNavbarItem
-                  style={{ display: "flex", alignItems: "center" }}
-                >
-                  <PersonIcon />
-                </MDBNavbarItem>
+
                 <MDBNavbarItem>
-                  <MDBNavbarLink>
-                    <Link to="/employee/profile">
-                      {`${localStorage.getItem("username")}`}
-                    </Link>
-                  </MDBNavbarLink>
+                  <MDBDropdown>
+                    <MDBDropdownToggle
+                      tag="a"
+                      className="nav-link"
+                      role="button"
+                    >
+                      Profile & LogOut
+                    </MDBDropdownToggle>
+                    <MDBDropdownMenu>
+                      <MDBDropdownItem link>
+                        <NavLink
+                          style={({ isActive }) =>
+                            isActive ? this.activeStyle : this.linkstyle
+                          }
+                          to="/employee/profile"
+                          // style={{
+                          //   display: "flex",
+                          //   alignItems: "center",
+                          // }}
+                        >
+                          <PersonIcon />
+                          {`${localStorage.getItem("username")}`}
+                        </NavLink>
+                      </MDBDropdownItem>
+                      <MDBDropdownItem link>
+                        <NavLink to="/" onClick={this.handleLogout}>
+                          LogOut
+                        </NavLink>
+                      </MDBDropdownItem>
+                    </MDBDropdownMenu>
+                  </MDBDropdown>
                 </MDBNavbarItem>
-                <MDBNavbarLink>
-                  <Link to="/" onClick={this.handleLogout}>
-                    LogOut
-                  </Link>
-                </MDBNavbarLink>
               </MDBNavbarNav>
             </MDBCollapse>
           </MDBContainer>

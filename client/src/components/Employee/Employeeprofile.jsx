@@ -25,7 +25,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Button, Modal } from "react-bootstrap";
 
 import "./Profile.css";
-export default class Profile extends Component {
+export default class EmployeeProfile extends Component {
   state = {
     showModal: false,
     showpassword: false,
@@ -161,7 +161,6 @@ export default class Profile extends Component {
     return (
       <>
         <Toaster position="top-center" />
-        <Nav />
         <section className="vh-100" style={{ backgroundColor: "#f4f5f7" }}>
           <MDBContainer className="py-2 h-100">
             <MDBRow className="justify-content-center align-items-center h-100">

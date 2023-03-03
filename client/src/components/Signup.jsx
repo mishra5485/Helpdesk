@@ -12,6 +12,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import Logo from "../images/logo.svg";
 import toast, { Toaster } from "react-hot-toast";
+import jwt_decode from "jwt-decode";
 
 export default class Signup extends Component {
   constructor() {
@@ -21,6 +22,44 @@ export default class Signup extends Component {
       email: "",
       password: "",
     };
+  }
+
+  handleCallbackResponse = async (response) => {
+    const ssotoken = response.credential;
+    const data = {
+      token: ssotoken,
+    };
+    await axios
+      .post(`${process.env.REACT_APP_BASE_URL}/users/registerwithgoogle`, data)
+      .then((response) => {
+        console.log(response);
+        if (response.status === 200) {
+          toast.success("Registered Successfully");
+        } else {
+          if (response.status === 403) {
+            toast.error(response.data);
+          } else {
+            if (response.status === 400) {
+              toast.error(response.data);
+            }
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  componentDidMount() {
+    const google = window.google;
+    google.accounts.id.initialize({
+      client_id:
+        "214010166124-urdkbn0993d2f8h950voub3cmfdkgbfd.apps.googleusercontent.com",
+      callback: this.handleCallbackResponse,
+    });
+    google.accounts.id.renderButton(document.getElementById("signInDiv"), {
+      theme: "outline",
+      size: "large",
+    });
   }
 
   handlesubmit = async (e) => {
@@ -129,6 +168,19 @@ export default class Signup extends Component {
                       }
                     />
                     <MDBBtn size="lg">SignUp</MDBBtn>
+                    <div
+                      style={{
+                        margin: "auto",
+                        marginTop: "15px",
+                        fontWeight: "Bold",
+                      }}
+                    >
+                      OR
+                    </div>
+                    <div
+                      id="signInDiv"
+                      style={{ margin: "auto", marginTop: "15px" }}
+                    ></div>
                     <div>
                       <p className="mt-5  ">
                         Already have an account??
