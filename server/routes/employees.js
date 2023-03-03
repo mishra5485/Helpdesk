@@ -44,6 +44,7 @@ router.post("/register", async (req, res) => {
       }
     } catch (ex) {}
 
+    console.log(req.body);
     let createdAt = getTimestamp();
     employee = new CommonUser({
       _id,
@@ -190,6 +191,7 @@ router.post("/search/:limit/:pageNumber", async (req, res) => {
 });
 
 router.post("/reset/password/:id", async (req, res) => {
+  console.log("current_password");
   try {
     const response = await validateForgotPassword(req.body);
     if (response.error) {
@@ -221,10 +223,14 @@ router.post("/reset/password/:id", async (req, res) => {
   }
 });
 
-router.get("/employee/profile/:id", auth, async (req, res) => {
+router.get("/employee/profile/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const employee = await CommonUser.findById(id);
+    const employee = await CommonUser.find({
+      $and: [{ _id: id }, { access_level: "employee" }],
+    });
+    if (!employee || employee.length == 0)
+      return res.send("Unable to find employee. Please provide valid id");
     res.send(employee);
   } catch {
     res.send("Unable to fetch details");

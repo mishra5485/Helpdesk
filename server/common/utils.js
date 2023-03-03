@@ -10,10 +10,6 @@ module.exports = generateAuthToken = (data) => {
   return token;
 };
 
-module.exports = getTimestamp = () => {
-  return (unixTimestamp = Math.ceil(moment().valueOf() / 1000));
-};
-
 module.exports = verifyGoogleJWT = async (token) => {
   const ticket = await client.verifyIdToken({
     idToken: token,
@@ -23,4 +19,8 @@ module.exports = verifyGoogleJWT = async (token) => {
   const payload = ticket.getPayload();
   const userid = payload["sub"];
   return { payload, userid };
+};
+
+module.exports = getTimestamp = () => {
+  return (unixTimestamp = Math.ceil(moment().valueOf() / 1000));
 };
