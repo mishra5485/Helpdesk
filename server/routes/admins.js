@@ -45,8 +45,10 @@ router.post("/register", async (req, res) => {
 router.get("/admin/profile/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const admin = await CommonUser.findById(id);
-    if (!admin) return res.send("Unable to find user");
+    const admin = await CommonUser.find({
+      $and: [{ _id: id }, { access_level: "admin" }],
+    });
+    if (!admin || admin.length == 0) return res.send("Unable to find admin");
     res.send(admin);
   } catch {
     res.send("Unable to fetch details");
