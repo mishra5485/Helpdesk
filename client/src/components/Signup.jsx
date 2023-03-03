@@ -12,8 +12,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import Logo from "../images/logo.svg";
 import toast, { Toaster } from "react-hot-toast";
-import { withRouter } from "../withRouter";
-
+import { withRouter } from "./withRouter";
 class Signup extends Component {
   constructor() {
     super();

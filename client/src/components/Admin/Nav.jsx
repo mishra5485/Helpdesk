@@ -82,6 +82,18 @@ export default class Nav extends Component {
                     </NavLink>
                   </MDBNavbarLink>
                 </MDBNavbarItem>
+                <MDBNavbarItem>
+                  <MDBNavbarLink>
+                    <NavLink
+                      style={({ isActive }) =>
+                        isActive ? this.activeStyle : this.linkstyle
+                      }
+                      to="/admin/departments"
+                    >
+                      Departments
+                    </NavLink>
+                  </MDBNavbarLink>
+                </MDBNavbarItem>
                 <MDBNavbarItem
                   style={{ display: "flex", alignItems: "center" }}
                 >
@@ -97,9 +109,9 @@ export default class Nav extends Component {
                 </MDBNavbarItem>
                 <MDBNavbarItem>
                   <MDBNavbarLink>
-                    <Link to="/" onClick={this.handleLogout}>
+                    <NavLink to="/" onClick={this.handleLogout}>
                       LogOut
-                    </Link>
+                    </NavLink>
                   </MDBNavbarLink>
                 </MDBNavbarItem>
               </MDBNavbarNav>

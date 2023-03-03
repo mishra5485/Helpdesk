@@ -13,9 +13,6 @@ const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 const generateAuthToken = require("../common/utils");
 const getTimestamp = require("../common/utils");
-var crypto = require("crypto");
-// const nodemailer = require("nodemailer");
-const sgMail = require("@sendgrid/mail");
 
 router.post("/register", async (req, res) => {
   const response = await validateEmployee(req.body);

@@ -9,9 +9,9 @@ import {
   MDBInput,
 } from "mdb-react-ui-kit";
 import axios from "axios";
-import Logo from "../../images/logo.svg";
+import Logo from "../images/logo.svg";
 import toast, { Toaster } from "react-hot-toast";
-import { withRouter } from "react-router";
+import { withRouter } from "./withRouter";
 
 class Reset extends Component {
   state = {
@@ -21,22 +21,19 @@ class Reset extends Component {
 
   handlesubmit = async (e) => {
     if (this.state.password === this.state.cpassword) {
-      const token = this.props.match.params.token;
+      const token = this.props.params.token;
       const data = {
         new_password: this.state.cpassword,
       };
       e.preventDefault();
 
       await axios
-        .post(
-          `${process.env.REACT_APP_BASE_URL}/employees/reset/${token}`,
-          data
-        )
+        .post(`${process.env.REACT_APP_BASE_URL}/reset/${token}`, data)
         .then((response) => {
           console.log(response);
           if (response.status === 200) {
             toast.success("Password Updated Successfully");
-            window.href = "/employee/Profile";
+            // window.href = "/employee/Profile";
           }
         })
         .catch((err) => {

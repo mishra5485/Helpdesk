@@ -3,6 +3,10 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const verifyGoogleJWT = require("../common/utils");
+var crypto = require("crypto");
+// const nodemailer = require("nodemailer");
+const sgMail = require("@sendgrid/mail");
+const saltRounds = 10;
 
 router.post("/login", async (req, res) => {
   let { email, password } = req.body;
@@ -121,11 +125,13 @@ router.post("/forgot", (req, res) => {
 router.post("/reset/:token", async (req, res) => {
   try {
     const password = req.body.new_password;
-    const response = await validateResetPassword(req.body);
-    if (response.error) {
-      return res.status(400).send(response.errorMessage);
-    }
-
+    if (!password) return res.status(401).send("Password is required");
+    // const response = await validateResetPassword(req.body);
+    // console.log(response);
+    // if (response.error) {
+    //   return res.status(400).send(response.errorMessage);
+    // }
+    // console.log(typeof password);
     CommonUser.findOne(
       {
         resetPasswordToken: req.params.token,

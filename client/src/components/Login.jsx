@@ -12,13 +12,15 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import Logo from "../images/logo.svg";
 import toast, { Toaster } from "react-hot-toast";
-import { withRouter } from "../withRouter";
+import { withRouter } from "./withRouter";
 
 class Login extends Component {
   state = {
     email: "",
     password: "",
     success: false,
+    forget: false,
+    forgetemail: "",
   };
 
   handleCallbackResponse = async (response) => {
@@ -61,6 +63,7 @@ class Login extends Component {
       size: "large",
     });
   }
+
   handlesubmit = async (e) => {
     const data = {
       email: this.state.email,
@@ -91,6 +94,25 @@ class Login extends Component {
       });
   };
 
+  handleForget = async (e) => {
+    e.preventDefault();
+    const data = {
+      email: this.state.forgetemail,
+    };
+    try {
+      let resp = await axios.post(`http://localhost:5000/forgot`, data);
+
+      if (resp.status === 200) {
+        toast.success("Email sent successfully ");
+        this.setState({ forget: false });
+        this.setState({ forgetemail: "" });
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed Try After Sometime");
+    }
+  };
+
   render() {
     return (
       <>
@@ -104,33 +126,33 @@ class Login extends Component {
             height: "100vh",
           }}
         >
-          <form onSubmit={this.handlesubmit}>
-            <MDBRow className="d-flex justify-content-center align-items-center h-100">
-              <MDBCol col="12">
-                <MDBCard
-                  className="bg-dark my-5 mx-auto"
-                  style={{ borderRadius: "1rem", maxWidth: "500px" }}
+          <MDBRow className="d-flex justify-content-center align-items-center h-100">
+            <MDBCol col="12">
+              <MDBCard
+                className="bg-dark my-5 mx-auto"
+                style={{ borderRadius: "1rem", maxWidth: "500px" }}
+              >
+                <MDBCardBody
+                  className="p-5 w-100 d-flex flex-column"
+                  style={{ backgroundColor: "whitesmoke" }}
                 >
-                  <MDBCardBody
-                    className="p-5 w-100 d-flex flex-column"
-                    style={{ backgroundColor: "whitesmoke" }}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      marginBottom: "15px",
+                    }}
                   >
-                    <div
+                    <img
+                      src={Logo}
+                      alt="Logo"
                       style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        marginBottom: "15px",
+                        width: "190px",
                       }}
-                    >
-                      <img
-                        src={Logo}
-                        alt="Logo"
-                        style={{
-                          width: "190px",
-                        }}
-                      />
-                    </div>
-                    <h2 className="fw-md mb-4 fs-3 text-center">Sign in</h2>
+                    />
+                  </div>
+                  <h2 className="fw-md mb-4 fs-3 text-center">Sign in</h2>
+                  <form onSubmit={this.handlesubmit}>
                     <MDBInput
                       wrapperClass="mb-4 w-100"
                       label="Email address"
@@ -160,30 +182,66 @@ class Login extends Component {
                     </MDBBtn>
                     <div
                       style={{
-                        margin: "auto",
-                        marginTop: "15px",
-                        fontWeight: "Bold",
+                        margin: "10px",
+                        fontWeight: "500",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => {
+                        this.setState({ forget: !this.state.forget });
                       }}
                     >
-                      OR
+                      <p>Forget Password!!</p>
                     </div>
-                    <div
-                      id="signInDiv"
-                      style={{ margin: "auto", marginTop: "15px" }}
-                    ></div>
-                    <div>
-                      <p className="mt-5">
-                        Don't have an account?
-                        <Link to="/signup" className="text-dark-50 fw-bold">
-                          SignUp
-                        </Link>
-                      </p>
-                    </div>
-                  </MDBCardBody>
-                </MDBCard>
-              </MDBCol>
-            </MDBRow>
-          </form>
+                  </form>
+                  {this.state.forget ? (
+                    <>
+                      <form onSubmit={this.handleForget}>
+                        <MDBRow className="pt-1 d-flex ">
+                          <MDBCol size="12">
+                            <MDBInput
+                              wrapperClass="mb-4 w-100"
+                              label="Email"
+                              id="formControl"
+                              type="email"
+                              autoComplete="off"
+                              size="lg"
+                              required="true"
+                              value={this.state.forgetemail}
+                              onChange={(e) =>
+                                this.setState({
+                                  forgetemail: e.target.value,
+                                })
+                              }
+                            />
+                          </MDBCol>
+                        </MDBRow>
+                        <MDBRow className="pt-1">
+                          <MDBCol>
+                            <button type="submit" class="btn btn-primary">
+                              Reset
+                            </button>
+                          </MDBCol>
+                        </MDBRow>
+                      </form>
+                    </>
+                  ) : null}
+
+                  <div
+                    id="signInDiv"
+                    style={{ margin: "auto", marginTop: "15px" }}
+                  ></div>
+                  <div>
+                    <p className="mt-5">
+                      Don't have an account?
+                      <Link to="/signup" className="text-dark-50 fw-bold">
+                        SignUp
+                      </Link>
+                    </p>
+                  </div>
+                </MDBCardBody>
+              </MDBCard>
+            </MDBCol>
+          </MDBRow>
         </MDBContainer>
       </>
     );
