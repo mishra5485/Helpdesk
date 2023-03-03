@@ -12,7 +12,6 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import Logo from "../images/logo.svg";
 import toast, { Toaster } from "react-hot-toast";
-import jwt_decode from "jwt-decode";
 import { withRouter } from "../withRouter";
 
 class Login extends Component {
@@ -22,10 +21,32 @@ class Login extends Component {
     success: false,
   };
 
-  handleCallbackResponse = (response) => {
+  handleCallbackResponse = async (response) => {
     const ssotoken = response.credential;
-    console.log(ssotoken);
-    // localStorage.setItem("token", response.credential);
+    const data = {
+      token: ssotoken,
+    };
+    console.log(data);
+
+    try {
+      let resp = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/loginwithgoogle`,
+        data
+      );
+      if (resp.status === 200) {
+        console.log(resp);
+
+        // localStorage.setItem("");
+        this.props.navigate("/user/usertickets");
+      } else {
+        if (resp.status === 403) {
+          toast.error(resp.data);
+        }
+      }
+    } catch (err) {
+      toast.error("User not registered. Please sign-up with Google first");
+      console.log(err);
+    }
   };
 
   componentDidMount() {
