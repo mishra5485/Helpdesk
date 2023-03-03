@@ -160,7 +160,6 @@ class MyTickets extends Component {
     return (
       <>
         <Toaster position="top-center" />
-        <Nav />
         <MDBContainer fluid className="mt-3">
           <MDBRow
             style={{
@@ -268,7 +267,7 @@ class MyTickets extends Component {
                         )}
                       </td>
                       <td>
-                        <Link to={`/employee/Myticketinfo/${item._id}`}>
+                        <Link to={`/employee/myticketsinfo/${item._id}`}>
                           <button
                             className="btn btn-success "
                             style={{ marginRight: "8px" }}

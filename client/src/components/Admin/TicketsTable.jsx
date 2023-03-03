@@ -167,7 +167,6 @@ class TicketsTable extends Component {
   render() {
     return (
       <>
-        <Nav />
         <Toaster position="top-center" />
         <MDBContainer fluid className="mt-3">
           <Form>

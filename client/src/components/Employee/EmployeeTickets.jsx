@@ -12,7 +12,6 @@ import {
   MDBBtn,
 } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
-import Nav from "./Nav";
 import axios from "axios";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import toast, { Toaster } from "react-hot-toast";
@@ -40,8 +39,9 @@ class EmployeeTickets extends Component {
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
+    const department = localStorage.getItem("departmentname");
     const data = {
-      department_name: "L2",
+      department_name: department,
     };
     await axios
       .post(
@@ -158,7 +158,6 @@ class EmployeeTickets extends Component {
     return (
       <>
         <Toaster position="top-center" />
-        <Nav />
         <MDBContainer fluid className="mt-3">
           <MDBRow
             style={{
@@ -177,7 +176,7 @@ class EmployeeTickets extends Component {
                   onChange={(e) => this.setState({ search: e.target.value })}
                 />
                 <MDBBtn className="me-1" color="info" onClick={this.search}>
-                  Search
+                  > Search
                 </MDBBtn>
               </MDBInputGroup>
             </MDBCol>
@@ -266,7 +265,9 @@ class EmployeeTickets extends Component {
                         )}
                       </td>
                       <td>
-                        <Link to={`/employee/Employeeticketinfo/${item._id}`}>
+                        <Link
+                          to={`/employee/departmentticketsinfo/${item._id}`}
+                        >
                           <button
                             className="btn btn-success "
                             style={{ marginRight: "8px" }}

@@ -48,7 +48,7 @@ const ticketSchema = new mongoose.Schema(
       maxlength: 102400,
     },
     user_id: {
-      type: Number,
+      type: String,
       required: true,
     },
     department_name: {

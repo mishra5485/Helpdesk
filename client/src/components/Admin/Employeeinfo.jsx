@@ -10,10 +10,9 @@ import {
 } from "mdb-react-ui-kit";
 import Form from "react-bootstrap/Form";
 import axios from "axios";
-import { withRouter } from "react-router";
 import moment from "moment";
-import Nav from "./Nav";
 import toast, { Toaster } from "react-hot-toast";
+import { withRouter } from "../../withRouter";
 
 class EmployeeInfo extends Component {
   state = {
@@ -30,7 +29,7 @@ class EmployeeInfo extends Component {
   };
 
   componentDidMount() {
-    const objid = this.props.match.params.id;
+    const objid = this.props.params.id;
     this.getdata(objid);
   }
 
@@ -67,7 +66,7 @@ class EmployeeInfo extends Component {
 
   empUpdate = async (e) => {
     e.preventDefault();
-    const objid = this.props.match.params.id;
+    const objid = this.props.params.id;
     const Usertoken = localStorage.getItem("token");
 
     const config = {
@@ -103,7 +102,6 @@ class EmployeeInfo extends Component {
     return (
       <>
         <Toaster position="top-center" />
-        <Nav />
         <MDBContainer
           fluid
           className="py-5"

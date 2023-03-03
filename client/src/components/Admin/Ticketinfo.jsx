@@ -12,14 +12,13 @@ import {
   MDBBadge,
 } from "mdb-react-ui-kit";
 import axios from "axios";
-import { withRouter } from "react-router";
 import moment from "moment";
 import SendIcon from "@mui/icons-material/Send";
-import Nav from "./Nav";
 import toast, { Toaster } from "react-hot-toast";
 import ModalImage from "react-modal-image";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import MessageIcon from "@mui/icons-material/Message";
+import { withRouter } from "../../withRouter";
 
 class TicketInfo extends Component {
   state = {
@@ -37,7 +36,7 @@ class TicketInfo extends Component {
   };
 
   componentDidMount() {
-    const objid = this.props.match.params.id;
+    const objid = this.props.params.id;
     this.getdata(objid);
   }
 
@@ -76,7 +75,7 @@ class TicketInfo extends Component {
 
   handlesubmit = async (e) => {
     e.preventDefault();
-    const objid = this.props.match.params.id;
+    const objid = this.props.params.id;
     const Usertoken = localStorage.getItem("token");
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
@@ -108,7 +107,7 @@ class TicketInfo extends Component {
 
   handleFileSubmit = async (e) => {
     e.preventDefault();
-    const objid = this.props.match.params.id;
+    const objid = this.props.params.id;
     const Usertoken = localStorage.getItem("token");
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
@@ -141,7 +140,6 @@ class TicketInfo extends Component {
     return (
       <>
         <Toaster position="top-center" />
-        <Nav />
         <MDBContainer
           fluid
           className="py-5"

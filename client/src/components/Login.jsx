@@ -13,8 +13,9 @@ import { Link } from "react-router-dom";
 import Logo from "../images/logo.svg";
 import toast, { Toaster } from "react-hot-toast";
 import jwt_decode from "jwt-decode";
+import { withRouter } from "../withRouter";
 
-export default class Login extends Component {
+class Login extends Component {
   state = {
     email: "",
     password: "",
@@ -22,10 +23,11 @@ export default class Login extends Component {
   };
 
   handleCallbackResponse = (response) => {
-    localStorage.setItem("token", response.credential);
-    const userobj = jwt_decode(response.credential);
-    console.log(userobj);
+    const ssotoken = response.credential;
+    console.log(ssotoken);
+    // localStorage.setItem("token", response.credential);
   };
+
   componentDidMount() {
     const google = window.google;
     google.accounts.id.initialize({
@@ -50,12 +52,12 @@ export default class Login extends Component {
       .then((response) => {
         console.log(response);
         if (response.status === 200) {
-          toast.success("User LoggedIn Successfully");
           localStorage.setItem("username", response.data.username);
           localStorage.setItem("token", response.data.token);
           localStorage.setItem("access", response.data.access_level);
           localStorage.setItem("id", response.data.user_id);
           localStorage.setItem("departmentname", response.data.department_name);
+          this.props.navigate("/employee/alltickets");
         } else {
           if (response.status === 403) {
             toast.error(response.data);
@@ -135,7 +137,19 @@ export default class Login extends Component {
                     <MDBBtn size="lg" type="submit">
                       SignIn
                     </MDBBtn>
-                    <div id="signInDiv"></div>
+                    <div
+                      style={{
+                        margin: "auto",
+                        marginTop: "15px",
+                        fontWeight: "Bold",
+                      }}
+                    >
+                      OR
+                    </div>
+                    <div
+                      id="signInDiv"
+                      style={{ margin: "auto", marginTop: "15px" }}
+                    ></div>
                     <div>
                       <p className="mt-5">
                         Don't have an account?
@@ -154,3 +168,5 @@ export default class Login extends Component {
     );
   }
 }
+
+export default withRouter(Login);

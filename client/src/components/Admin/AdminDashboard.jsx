@@ -1,13 +1,13 @@
 import React, { Component } from "react";
+import { Outlet } from "react-router-dom";
 import Nav from "./Nav";
-import UserTickets from "./UserTickets";
 
-export default class DashBoard extends Component {
+export default class AdminDashboard extends Component {
   render() {
     return (
       <>
         <Nav />
-        <UserTickets />
+        <Outlet />
       </>
     );
   }
