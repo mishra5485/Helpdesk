@@ -29,6 +29,7 @@ router.post("/create-ticket", async (req, res) => {
 
   const _id = uuidv4();
   const { subject, body, user_id, department_name } = req.body;
+  console.log(user_id);
   let ticket = new Ticket({
     _id,
     subject,
@@ -170,6 +171,7 @@ router.post("all/mytickets/:limit/:pageNumber", async (req, res) => {
     let pageNumber = req.params.pageNumber;
     let skippedItems = pageNumber * limit;
     const countResult = await Ticket.find(req.body);
+    console.log(countResult);
     const result = await Ticket.find(req.body).limit(limit).skip(skippedItems);
     let count = countResult.length;
     res.status(200).send({ ticket: result, count });

@@ -7,6 +7,7 @@ const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 const generateAuthToken = require("../common/utils");
+const verifyGoogleJWT = require("../common/utils");
 
 router.post("/register", async (req, res) => {
   const response = await validateEndUser(req.body);
@@ -41,5 +42,45 @@ router.post("/register", async (req, res) => {
     res.status(200).header("x-auth-token", token).send(email.toLowerCase());
   }
 });
+
+router.post("/registerwithgoogle", async (req, res) => {
+  const { token } = req.body;
+  let { payload } = await verifyGoogleJWT(token);
+  const _id = uuidv4();
+  let { name, email, picture } = payload;
+
+  let user = await CommonUser.findOne({ email: email, status: 1 });
+  if (user) {
+    return res.status(403).send("Already registered. Please login in!");
+  } else {
+    let createdAt = getTimestamp();
+    user = new CommonUser({
+      _id,
+      name,
+      email,
+      picture,
+      createdAt,
+      ssoLogin: true,
+      access_level: "user",
+    });
+    await user.save();
+
+    const token = generateAuthToken({ email });
+    res.status(200).header("x-auth-token", token).send(email.toLowerCase());
+  }
+});
+
+// =================================================================================
+router.get("/user/profile/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await CommonUser.findById(id);
+    if (!user) return res.send("Unable to find user");
+    res.send(user);
+  } catch {
+    res.send("Unable to fetch details");
+  }
+});
+// =================================================================================
 
 module.exports = router;

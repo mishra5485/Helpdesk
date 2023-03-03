@@ -10,14 +10,16 @@ const userSchema = new mongoose.Schema({
   },
   name: { type: String, index: true },
   password: { type: String },
+  picture: { type: String },
+  ssoLogin: { type: Boolean, default: false },
   access_level: { type: String },
   token: { type: String },
   department_name: { type: String },
   email: { type: String },
   createdAt: { type: String },
   status: { type: Number, required: true, default: 1 },
-  resetPasswordToken: { type: String, default: "" },
-  resetPasswordExpires: { type: String, default: "" },
+  resetPasswordToken: { type: String, default: undefined },
+  resetPasswordExpires: { type: String, default: undefined },
 });
 
 const CommonUser = mongoose.model("AllUser", userSchema);
