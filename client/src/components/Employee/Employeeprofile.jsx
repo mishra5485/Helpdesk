@@ -57,13 +57,15 @@ export default class EmployeeProfile extends Component {
         `${process.env.REACT_APP_BASE_URL}/employees/employee/profile/${userid}`,
         config
       );
+      // console.log(resp.data.employeeNumber);
+      console.log(resp.data[0]);
       if (resp.status === 200) {
         this.setState({
-          id: resp.data.employeeNumber,
-          name: resp.data.name,
-          department: resp.data.department_name,
-          email: resp.data.email,
-          joiningdate: resp.data.createdAt,
+          id: resp.data[0].employeeNumber,
+          name: resp.data[0].name,
+          department: resp.data[0].department_name,
+          email: resp.data[0].email,
+          joiningdate: resp.data[0].createdAt,
         });
         toast.success("Employee Details Fetched Successfully ");
       } else {

@@ -158,6 +158,20 @@ export default class Nav extends Component {
                 </MDBNavbarItem>
 
                 <MDBNavbarItem>
+                  <MDBNavbarLink>
+                    <NavLink
+                      style={({ isActive }) =>
+                        isActive ? this.activeStyle : this.linkstyle
+                      }
+                      to="/employee/profile"
+                    >
+                      <PersonIcon />
+                      {`${localStorage.getItem("username")}`}
+                    </NavLink>
+                  </MDBNavbarLink>
+                </MDBNavbarItem>
+
+                <MDBNavbarItem>
                   <MDBDropdown>
                     <MDBDropdownToggle
                       tag="a"
@@ -173,10 +187,6 @@ export default class Nav extends Component {
                             isActive ? this.activeStyle : this.linkstyle
                           }
                           to="/employee/profile"
-                          // style={{
-                          //   display: "flex",
-                          //   alignItems: "center",
-                          // }}
                         >
                           <PersonIcon />
                           {`${localStorage.getItem("username")}`}
