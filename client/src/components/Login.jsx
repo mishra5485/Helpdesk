@@ -81,7 +81,16 @@ class Login extends Component {
           localStorage.setItem("access", response.data.access_level);
           localStorage.setItem("id", response.data.user_id);
           localStorage.setItem("departmentname", response.data.department_name);
-          this.props.navigate("/employee/alltickets");
+
+          if (response.data.access_level === "user") {
+            this.props.navigate("/user/usertickets");
+          } else {
+            if (response.data.access_level === "employee") {
+              this.props.navigate("/employee/alltickets");
+            } else {
+              this.props.navigate("/admin/ticketstable");
+            }
+          }
         } else {
           if (response.status === 403) {
             toast.error(response.data);

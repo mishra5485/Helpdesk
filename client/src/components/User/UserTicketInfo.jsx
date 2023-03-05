@@ -51,6 +51,7 @@ class UserTicketInfo extends Component {
         `${process.env.REACT_APP_BASE_URL}/tickets/${objid}`,
         config
       );
+      console.log(resp);
       if (resp.status === 200) {
         this.setState({
           userid: resp.data.user_id,
@@ -61,6 +62,7 @@ class UserTicketInfo extends Component {
           status: resp.data.status,
           CreatedAt: resp.data.createdDate,
           resmsg: resp.data.comments,
+          priority: resp.data.priority,
         });
         toast.success("Ticket Fetched Successfully ");
       } else {
@@ -143,6 +145,7 @@ class UserTicketInfo extends Component {
         console.log(err);
       });
   };
+
   render() {
     return (
       <>
@@ -216,7 +219,19 @@ class UserTicketInfo extends Component {
                           <MDBCol size="3" style={{ fontWeight: "bold" }}>
                             UserName:
                           </MDBCol>
-                          <MDBCol size="6">{this.state.userid}</MDBCol>
+                          <MDBCol size="6">
+                            {localStorage.getItem("username")}
+                          </MDBCol>
+                        </MDBRow>
+                      </MDBCol>
+                    </MDBRow>
+                    <MDBRow between className="mt-3">
+                      <MDBCol size="6">
+                        <MDBRow className="mt-3">
+                          <MDBCol size="3" style={{ fontWeight: "bold" }}>
+                            Priority:
+                          </MDBCol>
+                          <MDBCol size="6">{this.state.priority}</MDBCol>
                         </MDBRow>
                       </MDBCol>
                     </MDBRow>
@@ -263,7 +278,7 @@ class UserTicketInfo extends Component {
                                     <ModalImage
                                       small={`http://localhost:5000/uploads/${elem.content}`}
                                       large={`http://localhost:5000/uploads/${elem.content}`}
-                                      hideZoom={false}
+                                      hideZoom={true}
                                     />
                                     <p className="small mb-1 text-muted">
                                       {moment
@@ -306,7 +321,6 @@ class UserTicketInfo extends Component {
                                         {moment
                                           .unix(elem.createdAt)
                                           .format("MMMM Do YYYY")}
-                                        {/* .format("MMMM Do YYYY, h:mm:ss a")} */}
                                       </p>
                                     </div>
                                   </>

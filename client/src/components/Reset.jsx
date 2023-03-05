@@ -32,14 +32,16 @@ class Reset extends Component {
         .then((response) => {
           console.log(response);
           if (response.status === 200) {
+            this.props.navigate("/");
             toast.success("Password Updated Successfully");
-            // window.href = "/employee/Profile";
           }
         })
         .catch((err) => {
           console.log(err);
         });
-    } else toast.error("Password and Confirm Password must same");
+    } else {
+      toast.error("Password and Confirm Password must same");
+    }
   };
 
   render() {

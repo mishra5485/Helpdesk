@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import toast, { Toaster } from "react-hot-toast";
+import Form from "react-bootstrap/Form";
 
 class EmployeeTickets extends Component {
   state = {
@@ -28,7 +29,7 @@ class EmployeeTickets extends Component {
     SearchcurrentPage: 0,
   };
 
-  limit = 15;
+  limit = 5;
 
   componentDidMount() {
     this.getData();
@@ -154,33 +155,56 @@ class EmployeeTickets extends Component {
     this.setState({ items: ApiData });
   };
 
+  reset = async (e) => {
+    e.preventDefault();
+    this.setState({ searchPagination: false });
+    toast.success("Resetting search");
+    this.getData();
+  };
+
   render() {
     return (
       <>
         <Toaster position="top-center" />
         <MDBContainer fluid className="mt-3">
-          <MDBRow
-            style={{
-              display: "flex",
-              justifyContent: "end",
-              className: "m-2",
-            }}
-          >
-            <MDBCol size="3">
-              <MDBInputGroup className="mb-3" size="4">
-                <input
-                  className="form-control"
-                  placeholder="Search"
-                  type="text"
-                  value={this.state.search}
-                  onChange={(e) => this.setState({ search: e.target.value })}
-                />
-                <MDBBtn className="me-1" color="info" onClick={this.search}>
-                  > Search
-                </MDBBtn>
-              </MDBInputGroup>
-            </MDBCol>
-          </MDBRow>
+          <Form onSubmit={this.search}>
+            <MDBRow
+              style={{
+                display: "flex",
+                justifyContent: "end",
+                className: "m-2",
+              }}
+            >
+              <MDBCol size="3">
+                <MDBInputGroup className="mb-3" size="4">
+                  <input
+                    className="form-control"
+                    placeholder="Search"
+                    type="text"
+                    value={this.state.search}
+                    required="true"
+                    onChange={(e) => this.setState({ search: e.target.value })}
+                  />
+                  <MDBBtn
+                    className="me-2"
+                    color="info"
+                    onClick={() => this.search}
+                    style={{ cursor: "pointer" }}
+                  >
+                    Search
+                  </MDBBtn>
+                  <MDBBtn
+                    className="me-2"
+                    type="button"
+                    color="danger"
+                    onClick={this.reset}
+                  >
+                    Reset
+                  </MDBBtn>
+                </MDBInputGroup>
+              </MDBCol>
+            </MDBRow>
+          </Form>
         </MDBContainer>
         <div className="table-responsive">
           <MDBContainer>

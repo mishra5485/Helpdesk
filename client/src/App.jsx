@@ -6,22 +6,18 @@ import Login from "./components/Login";
 import PageNotFound from "./components/404Page";
 import Reset from "./components/Reset";
 
-// import UserDashBoard from "./components/User/UserDashboard";
-// import UserTicketInfo from "./components/User/UserTicketInfo";
-// import UserTickets from "./components/User/UserTickets";
-// import UserProfile from "./components/User/UserProfile";
-// import UserDashBoard from "./components/User/UserDashboard";
-// import UserTicketInfo from "./components/User/UserTicketInfo";
-// import UserTickets from "./components/User/UserTickets";
-// import UserProfile from "./components/User/UserProfile";
+import UserDashBoard from "./components/User/UserDashboard";
+import UserTicketInfo from "./components/User/UserTicketInfo";
+import UserTickets from "./components/User/UserTickets";
+import UserProfile from "./components/User/UserProfile";
 
-// import AdminDashboard from "./components/Admin/AdminDashboard";
-// import TicketsTable from "./components/Admin/TicketsTable";
-// import TicketInfo from "./components/Admin/Ticketinfo";
-// import EmployeeTable from "./components/Admin/EmployeeTable";
-// import EmployeeInfo from "./components/Admin/Employeeinfo";
-// import AdminProfile from "./components/Admin/AdminProfile";
-// import Departments from "./components/Admin/Departments";
+import AdminDashboard from "./components/Admin/AdminDashboard";
+import TicketsTable from "./components/Admin/TicketsTable";
+import TicketInfo from "./components/Admin/Ticketinfo";
+import EmployeeTable from "./components/Admin/EmployeeTable";
+import EmployeeInfo from "./components/Admin/Employeeinfo";
+import AdminProfile from "./components/Admin/AdminProfile";
+import Departments from "./components/Admin/Departments";
 
 import EmployeeTicketinfo from "./components/Employee/EmployeeTicketinfo";
 import MyTickets from "./components/Employee/MyTickets";
@@ -35,41 +31,28 @@ import Allticketsinfo from "./components/Employee/Allticketsinfo";
 export default class App extends Component {
   render() {
     return (
-      // <Router>
-      //   <Routes>
-      //     <Route exact path="/" element={<Login />} />
-      //     <Route path="/signup" element={<Signup />} />
-      //     <Route path="/reset/:token" element={<Reset />} />
-      //     <Route path="/user" element={<UserDashBoard />}>
-      //       <Route path="usertickets" element={<UserTickets />} />
-      //       <Route path="ticketinfo/:id" element={<UserTicketInfo />} />
-      //       <Route path="profile" element={<UserProfile />} />
-      //     </Route>
-      //     <Route path="*" element={<PageNotFound />} />
-      //   </Routes>
-      // </Router>
-
-      // <Router>
-      //   <Routes>
-      //     <Route exact path="/" element={<Login />} />
-      //     <Route path="/signup" element={<Signup />} />
-      //     <Route path="/admin" element={<AdminDashboard />}>
-      //       <Route path="employeetable" element={<EmployeeTable />} />
-      //       <Route path="employeeinfo/:id" element={<EmployeeInfo />} />
-      //       <Route path="ticketstable" element={<TicketsTable />} />
-      //       <Route path="ticketinfo/:id" element={<TicketInfo />} />
-      //       <Route path="profile" element={<AdminProfile />} />
-      //       <Route path="departments" element={<Departments />} />
-      //     </Route>
-      //     <Route path="*" element={<PageNotFound />} />
-      //   </Routes>
-      // </Router>
-
       <Router>
         <Routes>
           <Route exact path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/reset/:token" element={<Reset />} />
+          <Route path="*" element={<PageNotFound />} />
+
+          <Route path="/user" element={<UserDashBoard />}>
+            <Route path="usertickets" element={<UserTickets />} />
+            <Route path="ticketinfo/:id" element={<UserTicketInfo />} />
+            <Route path="profile" element={<UserProfile />} />
+          </Route>
+
+          <Route path="/admin" element={<AdminDashboard />}>
+            <Route path="employeetable" element={<EmployeeTable />} />
+            <Route path="employeeinfo/:id" element={<EmployeeInfo />} />
+            <Route path="ticketstable" element={<TicketsTable />} />
+            <Route path="ticketinfo/:id" element={<TicketInfo />} />
+            <Route path="profile" element={<AdminProfile />} />
+            <Route path="departments" element={<Departments />} />
+          </Route>
+
           <Route path="/employee" element={<EmployeeDashboard />}>
             <Route path="alltickets" element={<Alltickets />} />
             <Route path="allticketsinfo/:id" element={<Allticketsinfo />} />
@@ -82,7 +65,6 @@ export default class App extends Component {
             />
             <Route path="profile" element={<EmployeeProfile />} />
           </Route>
-          <Route path="*" element={<PageNotFound />} />
         </Routes>
       </Router>
     );

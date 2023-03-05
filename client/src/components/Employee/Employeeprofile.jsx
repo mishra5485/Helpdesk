@@ -145,11 +145,7 @@ export default class EmployeeProfile extends Component {
       email: this.state.forgetemail,
     };
     try {
-      let resp = await axios.post(
-        `http://localhost:5000/employees/forgot`,
-        data,
-        config
-      );
+      let resp = await axios.post(`http://localhost:5000/forgot`, data, config);
 
       if (resp.status === 200) {
         toast.success("Email sent successfully ");
