@@ -2,7 +2,8 @@ const { CommonUser } = require("../models/commonUser");
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
-const verifyGoogleJWT = require("../common/utils");
+// const verifyGoogleJWT = require("../common/utils");
+const jwt_decode = require("jwt-decode");
 
 router.post("/login", async (req, res) => {
   let { email, password } = req.body;
@@ -30,17 +31,19 @@ router.post("/login", async (req, res) => {
 router.post("/loginwithgoogle", async (req, res) => {
   try {
     const { token } = req.body;
+    console.log(token)
     if (!token) return res.send("Please provide a valid token");
     else {
-      let { payload } = await verifyGoogleJWT(token);
-
-      const user = await CommonUser.findOne({ email: payload.email });
+      let Payload= await jwt_decode(token);
+      console.log(Payload)
+      const user = await CommonUser.findOne({ email: Payload.email });
+      
       if (!user) {
         return res
-          .status(403)
-          .send("User not registered. Please sign-up with Google first");
+        .status(403)
+        .send("User not registered. Please sign-up with Google first");
       } else {
-        let email = payload.email;
+        let email = Payload.email;
         const token = generateAuthToken({ email });
         res.status(200).header("x-auth-token", token).send({
           user_id: user._id,

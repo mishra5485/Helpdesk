@@ -9,6 +9,7 @@ const users = require("./routes/users");
 const employees = require("./routes/employees");
 const admin = require("./routes/admins");
 const login = require("./routes/login");
+const departments = require ("./routes/departments")
 
 app.use(express.json());
 app.use(cors());
@@ -17,6 +18,7 @@ app.use("/users", users);
 app.use("/employees", employees);
 app.use("/admins", admin);
 app.use("/", login);
+app.use("/departments",departments)
 app.use("/uploads", express.static("uploads"));
 
 // This should be the last route else any after it won't work
