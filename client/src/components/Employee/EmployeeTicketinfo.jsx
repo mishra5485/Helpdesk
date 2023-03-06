@@ -183,6 +183,7 @@ class EmployeeTicketinfo extends Component {
   render() {
     return (
       <>
+        {console.log(this.state.assigned)}
         <Toaster position="top-center" />
         <MDBContainer
           fluid
@@ -257,6 +258,20 @@ class EmployeeTicketinfo extends Component {
                         </MDBRow>
                       </MDBCol>
                     </MDBRow>
+                    {this.state.assigned.user_id === !null ? (
+                      <MDBRow between className="mt-3">
+                        <MDBCol size="6">
+                          <MDBRow className="mt-3">
+                            <MDBCol size="3" style={{ fontWeight: "bold" }}>
+                              Claimed By:
+                            </MDBCol>
+                            <MDBCol size="6">
+                              {this.state.assigned.user_name}
+                            </MDBCol>
+                          </MDBRow>
+                        </MDBCol>
+                      </MDBRow>
+                    ) : null}
                   </MDBContainer>
                 </MDBCardHeader>
                 <MDBContainer fluid>
@@ -272,20 +287,22 @@ class EmployeeTicketinfo extends Component {
                     </MDBCol>
                     <MDBCol size="10">{this.state.body}</MDBCol>
                   </MDBRow>
-                  <MDBRow
-                    className="mt-3 d-flex "
-                    style={{ justifyContent: "end" }}
-                  >
-                    <MDBCol size="2">
-                      <MDBBtn
-                        className="me-1"
-                        color="primary"
-                        onClick={this.ClaimTicket}
-                      >
-                        Claim
-                      </MDBBtn>
-                    </MDBCol>
-                  </MDBRow>
+                  {this.state.assigned.user_id === null ? (
+                    <MDBRow
+                      className="mt-3 d-flex "
+                      style={{ justifyContent: "end" }}
+                    >
+                      <MDBCol size="2">
+                        <MDBBtn
+                          className="me-1"
+                          color="primary"
+                          onClick={this.ClaimTicket}
+                        >
+                          Claim
+                        </MDBBtn>
+                      </MDBCol>
+                    </MDBRow>
+                  ) : null}
                 </MDBContainer>
                 <hr />
                 <MDBCardBody>

@@ -238,7 +238,6 @@ router.post("/claim/:id", async (req, res) => {
     const { assigned } = req.body;
     const { id } = req.params;
     const filter = { _id: id };
-    // console.log(assigned: assigned);
     const update = { assigned };
     console.log(update);
     let ticket = await Ticket.findOneAndUpdate(filter, update);
