@@ -5,6 +5,7 @@ const {
   validateMessageType,
   validateImageType,
   validateUpdate,
+  validateAssign,
 } = require("../middleware/validator");
 const express = require("express");
 const router = express.Router();
@@ -29,7 +30,6 @@ router.post("/create-ticket", async (req, res) => {
 
   const _id = uuidv4();
   const { subject, body, user, department_name } = req.body;
-  console.log(user);
   let ticket = new Ticket({
     _id,
     subject,
@@ -210,6 +210,11 @@ router.post("/update/:id", async (req, res) => {
 
 router.post("/claim/:id", async (req, res) => {
   try {
+    const response = await validateAssign(req.body);
+    if (response.error) {
+      return res.status(400).send(response.errorMessage);
+    }
+
     const { assigned } = req.body;
     const { id } = req.params;
     const filter = { _id: id };

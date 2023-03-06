@@ -11,7 +11,7 @@ const saltRounds = 10;
 const auth = require("../middleware/auth");
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
-const generateAuthToken = require("../common/utils");
+const generateAuthToken = require("../common/auth");
 const getTimestamp = require("../common/utils");
 var crypto = require("crypto");
 // const nodemailer = require("nodemailer");
@@ -47,6 +47,7 @@ router.post("/register", async (req, res) => {
 
     console.log(req.body);
     let createdAt = getTimestamp();
+    let access_level = "employee";
     employee = new CommonUser({
       _id,
       name,
@@ -55,7 +56,7 @@ router.post("/register", async (req, res) => {
       email,
       employeeNumber: lastEmployeeNumber,
       createdAt,
-      access_level: "employee",
+      access_level,
     });
     bcrypt.hash(password, saltRounds, async function (err, hash) {
       if (err) console.log(err);
@@ -63,6 +64,7 @@ router.post("/register", async (req, res) => {
       await employee.save();
     });
 
+    const payload = { email, access_level };
     const token = generateAuthToken({ email });
     res.status(200).header("x-auth-token", token).send(email.toLowerCase());
   }
