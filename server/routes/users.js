@@ -50,11 +50,8 @@ router.post("/register", async (req, res) => {
 router.post("/registerwithgoogle", async (req, res) => {
   const { token } = req.body;
   let Payload = await jwt_decode(token);
-  console.log(Payload);
   const _id = uuidv4();
-  console.log(_id);
   let { name, email, picture } = Payload;
-  console.log();
 
   let user = await CommonUser.findOne({ email: email, status: 1 });
   if (user) {

@@ -40,17 +40,16 @@ router.post("/login", async (req, res) => {
 router.post("/loginwithgoogle", async (req, res) => {
   try {
     const { token } = req.body;
-    console.log(token)
     if (!token) return res.send("Please provide a valid token");
     else {
-      let Payload= await jwt_decode(token);
-      console.log(Payload)
+      let Payload = await jwt_decode(token);
+      console.log(Payload);
       const user = await CommonUser.findOne({ email: Payload.email });
-      
+
       if (!user) {
         return res
-        .status(403)
-        .send("User not registered. Please sign-up with Google first");
+          .status(403)
+          .send("User not registered. Please sign-up with Google first");
       } else {
         let email = Payload.email;
         const token = generateAuthToken({ email });

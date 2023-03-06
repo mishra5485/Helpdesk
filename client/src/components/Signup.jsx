@@ -28,7 +28,6 @@ class Signup extends Component {
     const data = {
       token: ssotoken,
     };
-    console.log(data);
 
     try {
       let resp = await axios.post(
@@ -37,7 +36,7 @@ class Signup extends Component {
       );
       if (resp.status === 200) {
         toast.success(resp.data);
-        this.props.navigate("/");
+        this.props.navigate("/user/UserTickets");
       } else {
         if (resp.status === 403) {
           toast.error(resp.data);
