@@ -51,9 +51,10 @@ class Allticketsinfo extends Component {
         `${process.env.REACT_APP_BASE_URL}/tickets/${objid}`,
         config
       );
+      console.log(resp.data.user.userName);
       if (resp.status === 200) {
         this.setState({
-          userid: resp.data.user_id,
+          Username: resp.data.user.userName,
           TicketNumber: resp.data.ticketNumber,
           subject: resp.data.subject,
           body: resp.data.body,
@@ -243,9 +244,9 @@ class Allticketsinfo extends Component {
                       <MDBCol size="6">
                         <MDBRow className="mt-3">
                           <MDBCol size="3" style={{ fontWeight: "bold" }}>
-                            UserName:
+                            Created By:
                           </MDBCol>
-                          <MDBCol size="6">{this.state.userid}</MDBCol>
+                          <MDBCol size="6">{this.state.Username}</MDBCol>
                         </MDBRow>
                       </MDBCol>
                     </MDBRow>

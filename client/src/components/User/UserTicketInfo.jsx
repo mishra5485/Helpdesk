@@ -217,7 +217,7 @@ class UserTicketInfo extends Component {
                       <MDBCol size="6">
                         <MDBRow className="mt-3">
                           <MDBCol size="3" style={{ fontWeight: "bold" }}>
-                            UserName:
+                            Created By:
                           </MDBCol>
                           <MDBCol size="6">
                             {localStorage.getItem("username")}

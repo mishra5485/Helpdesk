@@ -23,13 +23,14 @@ import { withRouter } from "../withRouter";
 class EmployeeTicketinfo extends Component {
   state = {
     ticketNumber: "",
-    userid: "",
+    user: {},
     subject: "",
     body: "",
     departmentname: "",
     status: "",
     CreatedAt: "",
     msg: "",
+    assigned: {},
     file: null,
     resmsg: [],
     toggle: true,
@@ -51,9 +52,10 @@ class EmployeeTicketinfo extends Component {
         `${process.env.REACT_APP_BASE_URL}/tickets/${objid}`,
         config
       );
+      console.log(resp.data);
       if (resp.status === 200) {
         this.setState({
-          userid: resp.data.user_id,
+          user: resp.data.user,
           TicketNumber: resp.data.ticketNumber,
           subject: resp.data.subject,
           body: resp.data.body,
@@ -61,6 +63,7 @@ class EmployeeTicketinfo extends Component {
           status: resp.data.status,
           CreatedAt: resp.data.createdDate,
           resmsg: resp.data.comments,
+          assigned: resp.data.assigned,
         });
         toast.success("Ticket Fetched Successfully ");
       } else {
@@ -148,12 +151,17 @@ class EmployeeTicketinfo extends Component {
     const objid = this.props.params.id;
     const Usertoken = localStorage.getItem("token");
     const UserId = localStorage.getItem("id");
+    const username = localStorage.getItem("username");
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
     const data = {
-      Assigned: UserId,
+      assigned: {
+        user_name: username,
+        user_id: UserId,
+      },
     };
+    console.log(data);
     try {
       let resp = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/tickets/claim/${objid}`,
@@ -245,7 +253,7 @@ class EmployeeTicketinfo extends Component {
                           <MDBCol size="3" style={{ fontWeight: "bold" }}>
                             UserName:
                           </MDBCol>
-                          <MDBCol size="6">{this.state.userid}</MDBCol>
+                          <MDBCol size="6">{this.state.user.userName}</MDBCol>
                         </MDBRow>
                       </MDBCol>
                     </MDBRow>

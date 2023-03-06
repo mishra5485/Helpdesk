@@ -236,7 +236,7 @@ router.post("/claim/:id", async (req, res) => {
     const { assigned } = req.body;
     const { id } = req.params;
     const filter = { _id: id };
-    const update = { assigned };
+    const update = { assigned: assigned.user_id };
     console.log(update, filter);
     let ticket = await Ticket.findOneAndUpdate(filter, update);
     ticket = await Ticket.find(filter);
