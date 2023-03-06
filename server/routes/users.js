@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
-const generateAuthToken = require("../common/utils");
+const generateAuthToken = require("../common/auth");
 const verifyGoogleJWT = require("../common/utils");
 
 router.post("/register", async (req, res) => {
@@ -24,13 +24,14 @@ router.post("/register", async (req, res) => {
     return res.status(403).send("Already registered. Please login in!");
   } else {
     let createdAt = getTimestamp();
+    let access_level = "user";
     user = new CommonUser({
       _id,
       name,
       email,
       password,
       createdAt,
-      access_level: "user",
+      access_level,
     });
     bcrypt.hash(password, saltRounds, async function (err, hash) {
       if (err) console.log(err);
@@ -38,7 +39,8 @@ router.post("/register", async (req, res) => {
       await user.save();
     });
 
-    const token = generateAuthToken({ email });
+    const payload = { email, access_level };
+    const token = generateAuthToken({ payload });
     res.status(200).header("x-auth-token", token).send(email.toLowerCase());
   }
 });
