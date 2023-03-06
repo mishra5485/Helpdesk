@@ -46,8 +46,9 @@ class MyTickets extends Component {
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
+    const userId = localStorage.getItem("id");
     const data = {
-      department_name: "L2",
+      assigned: userId,
     };
     await axios
       .post(
@@ -172,11 +173,13 @@ class MyTickets extends Component {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
     const userid = localStorage.getItem("id");
+    const username = localStorage.getItem("username");
     const data = {
       subject: this.state.Subject,
       body: this.state.Body,
       department_name: this.state.Department,
       user_id: userid,
+      user_name: username,
     };
 
     try {
@@ -222,7 +225,7 @@ class MyTickets extends Component {
   render() {
     return (
       <>
-        <Toaster position="top-center" />
+        {/* <Toaster position="top-center" />
         <MDBContainer fluid className="mt-3">
           <Form onSubmit={this.search}>
             <MDBRow
@@ -479,7 +482,7 @@ class MyTickets extends Component {
               </Button>
             </Modal.Footer>
           </Form>
-        </Modal>
+        </Modal> */}
       </>
     );
   }

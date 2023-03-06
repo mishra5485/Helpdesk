@@ -8,6 +8,9 @@ const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 const generateAuthToken = require("../common/auth");
 const verifyGoogleJWT = require("../common/utils");
+const generateAuthToken = require("../common/utils");
+// const verifyGoogleJWT = require("../common/utils");
+const jwt_decode = require("jwt-decode");
 
 router.post("/register", async (req, res) => {
   const response = await validateEndUser(req.body);
@@ -44,12 +47,15 @@ router.post("/register", async (req, res) => {
     res.status(200).header("x-auth-token", token).send(email.toLowerCase());
   }
 });
-
+//=============================================================================
 router.post("/registerwithgoogle", async (req, res) => {
   const { token } = req.body;
-  let { payload } = await verifyGoogleJWT(token);
+  let Payload = await jwt_decode(token);
+  console.log(Payload);
   const _id = uuidv4();
-  let { name, email, picture } = payload;
+  console.log(_id);
+  let { name, email, picture } = Payload;
+  console.log();
 
   let user = await CommonUser.findOne({ email: email, status: 1 });
   if (user) {
