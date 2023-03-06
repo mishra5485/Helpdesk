@@ -30,7 +30,6 @@ class Login extends Component {
     const data = {
       token: ssotoken,
     };
-    console.log(data);
 
     try {
       let resp = await axios.post(
@@ -40,12 +39,12 @@ class Login extends Component {
       if (resp.status === 200) {
         console.log(resp);
 
-        localStorage.clear(); 
+        localStorage.clear();
 
         localStorage.setItem("username", resp.data.username);
-        localStorage.setItem("token",resp.data.token);
+        localStorage.setItem("token", resp.data.token);
         localStorage.setItem("access", resp.data.access_level);
-        localStorage.setItem("picture",resp.data.picture);
+        localStorage.setItem("picture", resp.data.picture);
         localStorage.setItem("id", resp.data.user_id);
 
         this.props.navigate("/user/usertickets");
