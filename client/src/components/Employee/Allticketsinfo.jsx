@@ -51,7 +51,7 @@ class Allticketsinfo extends Component {
         `${process.env.REACT_APP_BASE_URL}/tickets/${objid}`,
         config
       );
-      console.log(resp.data.user.userName);
+      console.log(resp.data);
       if (resp.status === 200) {
         this.setState({
           Username: resp.data.user.userName,
@@ -149,11 +149,15 @@ class Allticketsinfo extends Component {
     const objid = this.props.params.id;
     const Usertoken = localStorage.getItem("token");
     const UserId = localStorage.getItem("id");
+    const Username = localStorage.getItem("username");
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
     const data = {
-      Assigned: UserId,
+      assigned: {
+        user_id: UserId,
+        user_name: Username,
+      },
     };
     try {
       let resp = await axios.post(
