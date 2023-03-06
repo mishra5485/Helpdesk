@@ -13,8 +13,10 @@ import { Link } from "react-router-dom";
 import Logo from "../images/logo.svg";
 import toast, { Toaster } from "react-hot-toast";
 import { withRouter } from "./withRouter";
+import UserContext from "../auth/UserContext";
 
 class Login extends Component {
+  static contextType = UserContext;
   state = {
     email: "",
     password: "",
@@ -37,8 +39,6 @@ class Login extends Component {
       );
       if (resp.status === 200) {
         console.log(resp);
-
-        // localStorage.setItem("");
         this.props.navigate("/user/usertickets");
       } else {
         if (resp.status === 403) {

@@ -68,8 +68,9 @@ class EmployeeTickets extends Component {
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
+    const departmentname = localStorage.getItem("departmentname");
     const data = {
-      department_name: "L2",
+      department_name: departmentname,
     };
     try {
       let response = await axios.post(

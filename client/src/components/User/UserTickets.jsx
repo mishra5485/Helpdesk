@@ -106,11 +106,13 @@ class UserTickets extends Component {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
     const userid = localStorage.getItem("id");
+    const username = localStorage.getItem("username");
     const data = {
       subject: this.state.Subject,
       body: this.state.Body,
       department_name: this.state.Department,
       user_id: userid,
+      user_name: username,
     };
 
     try {
