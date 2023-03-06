@@ -7,6 +7,7 @@ var crypto = require("crypto");
 // const nodemailer = require("nodemailer");
 const sgMail = require("@sendgrid/mail");
 const saltRounds = 10;
+const generateAuthToken = require("../common/auth");
 
 router.post("/login", async (req, res) => {
   let { email, password } = req.body;
@@ -18,7 +19,9 @@ router.post("/login", async (req, res) => {
   bcrypt.compare(password, user.password, function (err, result) {
     if (!result) return res.status(403).send("Invalid email or password");
     else {
-      const token = generateAuthToken({ email });
+      console.log(user);
+      const payload = { email, access_level: user.access_level };
+      const token = generateAuthToken({ payload });
       res.status(200).header("x-auth-token", token).send({
         user_id: user._id,
         username: user.name,
@@ -27,6 +30,7 @@ router.post("/login", async (req, res) => {
         access_level: user.access_level,
         department_name: user.department_name,
       });
+      console.log(token);
     }
   });
 });
