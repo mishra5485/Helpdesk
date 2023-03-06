@@ -19,7 +19,7 @@ import toast, { Toaster } from "react-hot-toast";
 import ModalImage from "react-modal-image";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import MessageIcon from "@mui/icons-material/Message";
-import { withRouter } from "../../withRouter";
+import { withRouter } from "../withRouter";
 
 class MyTicketsinfo extends Component {
   state = {

@@ -32,11 +32,11 @@ class EmployeeTable extends Component {
     deleteId: "",
     items: [],
     currentpage: 0,
-    SearchcurrentPage: 0,
     pageCount: 0,
-    searchPageCount: 0,
     bdcolor: "",
     search: "",
+    SearchcurrentPage: 0,
+    searchPageCount: 0,
     searchPagination: false,
   };
 
@@ -161,7 +161,7 @@ class EmployeeTable extends Component {
 
     await axios
       .post(
-        `${process.env.REACT_APP_BASE_URL}/employees/search/${this.limit}/${this.state.SearchcurrentPage}`,
+        `${process.env.REACT_APP_BASE_URL}/tickets/search/${this.limit}/${this.state.SearchcurrentPage}`,
         data,
         config
       )
@@ -239,15 +239,6 @@ class EmployeeTable extends Component {
     } catch (error) {
       console.log(error);
     }
-  };
-
-  reset = async (e) => {
-    e.preventDefault();
-    this.setState({ searchPagination: false });
-    this.setState({ search: "" });
-    toast.success("Resetting search");
-
-    this.getData();
   };
 
   render() {

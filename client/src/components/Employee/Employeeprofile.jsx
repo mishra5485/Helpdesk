@@ -11,6 +11,7 @@ import {
   MDBTypography,
   MDBIcon,
   MDBInput,
+  MDBBtn,
 } from "mdb-react-ui-kit";
 import axios from "axios";
 import moment from "moment";
@@ -23,6 +24,7 @@ import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Button, Modal } from "react-bootstrap";
+import EditIcon from "@mui/icons-material/Edit";
 
 import "./Profile.css";
 export default class EmployeeProfile extends Component {
@@ -39,6 +41,8 @@ export default class EmployeeProfile extends Component {
     cnewpassword: "",
     forgetemail: "",
     forget: false,
+    file: null,
+    profilepic: "",
   };
 
   componentDidMount() {
@@ -57,8 +61,6 @@ export default class EmployeeProfile extends Component {
         `${process.env.REACT_APP_BASE_URL}/employees/employee/profile/${userid}`,
         config
       );
-      // console.log(resp.data.employeeNumber);
-      console.log(resp.data[0]);
       if (resp.status === 200) {
         this.setState({
           id: resp.data[0].employeeNumber,
@@ -66,6 +68,7 @@ export default class EmployeeProfile extends Component {
           department: resp.data[0].department_name,
           email: resp.data[0].email,
           joiningdate: resp.data[0].createdAt,
+          profilepic: resp.data[0].picture,
         });
         toast.success("Employee Details Fetched Successfully ");
       } else {
@@ -142,11 +145,7 @@ export default class EmployeeProfile extends Component {
       email: this.state.forgetemail,
     };
     try {
-      let resp = await axios.post(
-        `http://localhost:5000/employees/forgot`,
-        data,
-        config
-      );
+      let resp = await axios.post(`http://localhost:5000/forgot`, data, config);
 
       if (resp.status === 200) {
         toast.success("Email sent successfully ");
@@ -157,6 +156,32 @@ export default class EmployeeProfile extends Component {
       console.log(err);
       toast.error("Failed Try After Sometime");
     }
+  };
+
+  updateProfile = async (e) => {
+    e.preventDefault();
+    const userid = localStorage.getItem("id");
+    const Usertoken = localStorage.getItem("token");
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+    const formData = new FormData();
+    formData.append("avatar", this.state.file);
+
+    await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/employees/profile/image/${userid}`,
+        formData,
+        config
+      )
+      .then((response) => {
+        console.log(response.data.picture);
+        this.setState({ profilepic: response.data.picture });
+      })
+      .catch((err) => {
+        console.log(err);
+        // toast.error(err.response.data);
+      });
   };
 
   render() {
@@ -189,16 +214,56 @@ export default class EmployeeProfile extends Component {
                     >
                       <MDBContainer>
                         <MDBCardImage
-                          src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+                          src={`http://localhost:5000/uploads/${this.state.profilepic}`}
                           alt="Avatar"
                           className="my-5"
-                          style={{ width: "80px" }}
+                          style={{ width: "154px" }}
                           fluid
                         />
                         <MDBTypography tag="h5">
                           {this.state.name}
                         </MDBTypography>
                         <MDBCardText>{this.state.department}</MDBCardText>
+                        <MDBContainer>
+                          <form onSubmit={this.updateProfile}>
+                            <MDBRow
+                              style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                marginBottom: "10px",
+                              }}
+                            >
+                              <MDBCol size="8">
+                                <input
+                                  className="form-control"
+                                  type="file"
+                                  onChange={(e) =>
+                                    this.setState({
+                                      file: e.target.files[0],
+                                    })
+                                  }
+                                />
+                              </MDBCol>
+                            </MDBRow>
+                            <MDBRow
+                              style={{
+                                display: "flex",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <MDBCol size="8">
+                                <MDBBtn
+                                  color="primary"
+                                  style={{
+                                    paddingTop: ".55rem",
+                                  }}
+                                >
+                                  Upload
+                                </MDBBtn>
+                              </MDBCol>
+                            </MDBRow>
+                          </form>
+                        </MDBContainer>
                       </MDBContainer>
                     </MDBCol>
 
