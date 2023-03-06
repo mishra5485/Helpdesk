@@ -12,10 +12,13 @@ import {
   MDBBtn,
 } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
-import Nav from "./Nav";
 import axios from "axios";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import toast, { Toaster } from "react-hot-toast";
+import Form from "react-bootstrap/Form";
+import AddIcon from "@mui/icons-material/Add";
+import { Button, Modal } from "react-bootstrap";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
 
 class MyTickets extends Component {
   state = {
@@ -27,9 +30,12 @@ class MyTickets extends Component {
     searchPagination: false,
     searchPageCount: 0,
     SearchcurrentPage: 0,
+    Subject: "",
+    Body: "",
+    Department: "",
   };
 
-  limit = 15;
+  limit = 5;
 
   componentDidMount() {
     this.getData();
@@ -40,17 +46,18 @@ class MyTickets extends Component {
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
+    const userId = localStorage.getItem("id");
     const data = {
-      department_name: "L2",
+      assigned: userId,
     };
     await axios
       .post(
-        `${process.env.REACT_APP_BASE_URL}/tickets/department/${this.limit}/${this.state.currentPage}`,
+        `${process.env.REACT_APP_BASE_URL}/all/mytickets/${this.limit}/${this.state.currentPage}`,
         data,
         config
       )
       .then((response) => {
-        console.log(response.data);
+        console.log(response);
         let total = response.data.count;
         this.setState({
           pageCount: Math.ceil(total / this.limit),
@@ -156,33 +163,118 @@ class MyTickets extends Component {
     this.setState({ items: ApiData });
   };
 
+  handleSubmit = async (e) => {
+    e.preventDefault();
+    const Usertoken = localStorage.getItem("token");
+    const localusername = await localStorage.getItem("username");
+    this.setState({ username: localusername });
+
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+    const userid = localStorage.getItem("id");
+    const username = localStorage.getItem("username");
+    const data = {
+      subject: this.state.Subject,
+      body: this.state.Body,
+      department_name: this.state.Department,
+      user_id: userid,
+      user_name: username,
+    };
+
+    try {
+      await axios
+        .post(
+          `${process.env.REACT_APP_BASE_URL}/tickets/create-ticket`,
+          data,
+          config
+        )
+        .then((response) => {
+          if (response.status === 200) {
+            toast.success(response.data);
+            this.handleClose();
+            this.setState({ Subject: "", Body: "", Department: "" });
+            this.getData();
+          } else {
+            if (response.status === 400) {
+              toast.error(response.data);
+            }
+          }
+        });
+    } catch (err) {
+      console.log(err);
+    }
+    this.setState({ modal: false });
+  };
+
+  handleClose = () => {
+    this.setState({ showModal: false });
+  };
+
+  handleShow = () => {
+    this.setState({ showModal: true });
+  };
+
+  reset = async (e) => {
+    e.preventDefault();
+    this.setState({ searchPagination: false });
+    toast.success("Resetting search");
+    this.getData();
+  };
+
   render() {
     return (
       <>
-        <Toaster position="top-center" />
+        {/* <Toaster position="top-center" />
         <MDBContainer fluid className="mt-3">
-          <MDBRow
-            style={{
-              display: "flex",
-              justifyContent: "end",
-              className: "m-2",
-            }}
-          >
-            <MDBCol size="3">
-              <MDBInputGroup className="mb-3" size="4">
-                <input
-                  className="form-control"
-                  placeholder="Search"
-                  type="text"
-                  value={this.state.search}
-                  onChange={(e) => this.setState({ search: e.target.value })}
-                />
-                <MDBBtn className="me-1" color="info" onClick={this.search}>
-                  Search
-                </MDBBtn>
-              </MDBInputGroup>
-            </MDBCol>
-          </MDBRow>
+          <Form onSubmit={this.search}>
+            <MDBRow
+              style={{
+                display: "flex",
+                justifyContent: "end",
+                className: "m-2",
+              }}
+            >
+              <MDBCol size="3">
+                <MDBInputGroup className="mb-3" size="4">
+                  <input
+                    className="form-control"
+                    placeholder="Search"
+                    type="text"
+                    value={this.state.search}
+                    required="true"
+                    onChange={(e) => this.setState({ search: e.target.value })}
+                  />
+                  <MDBBtn
+                    className="me-2"
+                    color="info"
+                    onClick={() => this.search}
+                    style={{ cursor: "pointer" }}
+                  >
+                    Search
+                  </MDBBtn>
+                  <MDBBtn
+                    className="me-2"
+                    type="button"
+                    color="danger"
+                    onClick={this.reset}
+                  >
+                    Reset
+                  </MDBBtn>
+                </MDBInputGroup>
+              </MDBCol>
+              <MDBCol size="1">
+                <MDBBadge
+                  color="success"
+                  light
+                  onClick={this.handleShow}
+                  style={{ cursor: "pointer" }}
+                >
+                  <AddIcon />
+                </MDBBadge>
+              </MDBCol>
+            </MDBRow>
+          </Form>
         </MDBContainer>
         <div className="table-responsive">
           <MDBContainer>
@@ -325,6 +417,72 @@ class MyTickets extends Component {
             />
           )}
         </div>
+        <Modal show={this.state.showModal} onHide={this.handleClose}>
+          <Form>
+            <Modal.Header closeButton>
+              <Modal.Title>Create-Ticket</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <FloatingLabel
+                controlId="floatingTextarea1"
+                label="Subject"
+                className="mb-3"
+              >
+                <Form.Control
+                  as="textarea"
+                  required
+                  placeholder="Leave a comment here"
+                  style={{ height: "60px", resize: "none" }}
+                  onChange={(e) => this.setState({ Subject: e.target.value })}
+                />
+              </FloatingLabel>
+              <FloatingLabel
+                controlId="floatingTextarea2"
+                label="Body"
+                className="mb-3"
+              >
+                <Form.Control
+                  as="textarea"
+                  required
+                  placeholder="Leave a comment here"
+                  style={{ height: "150px", resize: "none" }}
+                  onChange={(e) => this.setState({ Body: e.target.value })}
+                />
+              </FloatingLabel>
+              <FloatingLabel controlId="floatingSelectGrid" label="Department">
+                <Form.Control
+                  as="select"
+                  required
+                  aria-label="Floating label select example"
+                  onChange={(e) =>
+                    this.setState({ Department: e.target.value })
+                  }
+                >
+                  <option>please select Department</option>
+                  <option value="L1">L1</option>
+                  <option value="L2">L2</option>
+                  <option value="L3">L3</option>
+                </Form.Control>
+              </FloatingLabel>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                type="button"
+                onClick={this.handleClose}
+              >
+                Close
+              </Button>
+              <Button
+                variant="primary"
+                type="button"
+                onClick={this.handleSubmit}
+              >
+                Save Changes
+              </Button>
+            </Modal.Footer>
+          </Form>
+        </Modal> */}
       </>
     );
   }

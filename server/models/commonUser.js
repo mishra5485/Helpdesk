@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
   },
   name: { type: String, index: true },
   password: { type: String },
-  picture: { type: String },
+  picture: { type: String, default: null },
   ssoLogin: { type: Boolean, default: false },
   access_level: { type: String },
   token: { type: String },

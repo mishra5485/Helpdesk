@@ -11,6 +11,7 @@ import {
   MDBTypography,
   MDBIcon,
   MDBInput,
+  MDBBtn,
 } from "mdb-react-ui-kit";
 import axios from "axios";
 import moment from "moment";
@@ -39,6 +40,7 @@ export default class UserProfile extends Component {
     cnewpassword: "",
     forgetemail: "",
     forget: false,
+    profilepic: "",
   };
 
   componentDidMount() {
@@ -140,11 +142,7 @@ export default class UserProfile extends Component {
       email: this.state.forgetemail,
     };
     try {
-      let resp = await axios.post(
-        `http://localhost:5000/employees/forgot`,
-        data,
-        config
-      );
+      let resp = await axios.post(`http://localhost:5000/forgot`, data, config);
 
       if (resp.status === 200) {
         toast.success("Email sent successfully ");
@@ -155,6 +153,32 @@ export default class UserProfile extends Component {
       console.log(err);
       toast.error("Failed Try After Sometime");
     }
+  };
+
+  updateProfile = async (e) => {
+    e.preventDefault();
+    const userid = localStorage.getItem("id");
+    const Usertoken = localStorage.getItem("token");
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+    const formData = new FormData();
+    formData.append("avatar", this.state.file);
+
+    await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/employees/profile/image/${userid}`,
+        formData,
+        config
+      )
+      .then((response) => {
+        console.log(response.data.picture);
+        this.setState({ profilepic: response.data.picture });
+      })
+      .catch((err) => {
+        console.log(err);
+        // toast.error(err.response.data);
+      });
   };
 
   render() {
@@ -197,6 +221,46 @@ export default class UserProfile extends Component {
                           {this.state.name}
                         </MDBTypography>
                         <MDBCardText>{this.state.department}</MDBCardText>
+                        <MDBContainer>
+                          <form onSubmit={this.updateProfile}>
+                            <MDBRow
+                              style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                marginBottom: "10px",
+                              }}
+                            >
+                              <MDBCol size="8">
+                                <input
+                                  className="form-control"
+                                  type="file"
+                                  onChange={(e) =>
+                                    this.setState({
+                                      file: e.target.files[0],
+                                    })
+                                  }
+                                />
+                              </MDBCol>
+                            </MDBRow>
+                            <MDBRow
+                              style={{
+                                display: "flex",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <MDBCol size="8">
+                                <MDBBtn
+                                  color="primary"
+                                  style={{
+                                    paddingTop: ".55rem",
+                                  }}
+                                >
+                                  Upload
+                                </MDBBtn>
+                              </MDBCol>
+                            </MDBRow>
+                          </form>
+                        </MDBContainer>
                       </MDBContainer>
                     </MDBCol>
 

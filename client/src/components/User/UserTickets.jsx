@@ -15,6 +15,10 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import toast, { Toaster } from "react-hot-toast";
+import { Button, Modal } from "react-bootstrap";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
+import Form from "react-bootstrap/Form";
+import AddIcon from "@mui/icons-material/Add";
 
 class UserTickets extends Component {
   state = {
@@ -22,6 +26,12 @@ class UserTickets extends Component {
     currentpage: 0,
     pageCount: 0,
     bdcolor: "",
+    Subject: "",
+    Body: "",
+    Department: "",
+    SearchcurrentPage: 0,
+    searchPageCount: 0,
+    searchPagination: false,
   };
 
   limit = 5;
@@ -29,6 +39,7 @@ class UserTickets extends Component {
   componentDidMount() {
     this.getData();
   }
+
   getData = async () => {
     const Usertoken = localStorage.getItem("token");
     const config = {
@@ -77,33 +88,180 @@ class UserTickets extends Component {
     this.setState({ items: ApiData });
   };
 
+  handleClose = () => {
+    this.setState({ showModal: false });
+  };
+
+  handleShow = () => {
+    this.setState({ showModal: true });
+  };
+
+  handleSubmit = async (e) => {
+    e.preventDefault();
+    const Usertoken = localStorage.getItem("token");
+    const localusername = await localStorage.getItem("username");
+    this.setState({ username: localusername });
+
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+    const userid = localStorage.getItem("id");
+    const username = localStorage.getItem("username");
+    const data = {
+      subject: this.state.Subject,
+      body: this.state.Body,
+      department_name: this.state.Department,
+      user_id: userid,
+      user_name: username,
+    };
+
+    try {
+      await axios
+        .post(
+          `${process.env.REACT_APP_BASE_URL}/tickets/create-ticket`,
+          data,
+          config
+        )
+        .then((response) => {
+          if (response.status === 200) {
+            toast.success(response.data);
+            this.handleClose();
+            this.setState({ Subject: "", Body: "", Department: "" });
+            this.getData();
+          } else {
+            if (response.status === 400) {
+              toast.error(response.data);
+            }
+          }
+        });
+    } catch (err) {
+      console.log(err);
+    }
+    this.setState({ modal: false });
+  };
+
+  search = async (e) => {
+    e.preventDefault();
+    this.setState({ searchPagination: true });
+    const Usertoken = localStorage.getItem("token");
+
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+
+    const data = {
+      keyword: this.state.search,
+    };
+
+    await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/tickets/search/${this.limit}/${this.state.SearchcurrentPage}`,
+        data,
+        config
+      )
+      .then((response) => {
+        console.log(response);
+        let total = response.data.count;
+        this.setState({
+          searchPageCount: Math.ceil(total / this.limit),
+        });
+        this.setState({ items: response.data.ticket });
+        toast.success("Tickets Fetched Successfully");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  fetchSearchData = async (currentPage) => {
+    const Usertoken = localStorage.getItem("token");
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+    const data = {
+      keyword: this.state.search,
+    };
+    try {
+      let response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/tickets/search/${this.limit}/${currentPage}`,
+        data,
+        config
+      );
+      let respdata = await response.data;
+      toast.success("Tickets Fetched Successfully");
+      return respdata.ticket;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  SearchhandlePageClick = async (data) => {
+    let currentPage = data.selected;
+    this.setState({ SearchcurrentPage: currentPage });
+    const ApiData = await this.fetchSearchData(currentPage);
+    this.setState({ items: ApiData });
+  };
+
+  reset = async (e) => {
+    e.preventDefault();
+    this.setState({ searchPagination: false });
+    toast.success("Resetting search");
+    this.getData();
+  };
+
   render() {
     return (
       <>
         <Toaster position="top-center" />
         <MDBContainer fluid className="mt-3">
-          <MDBRow
-            style={{
-              display: "flex",
-              justifyContent: "end",
-              className: "m-2",
-            }}
-          >
-            <MDBCol size="3">
-              <MDBInputGroup className="mb-3" size="4">
-                <input
-                  className="form-control"
-                  placeholder="Search"
-                  type="text"
-                  value={this.state.search}
-                  onChange={(e) => this.setState({ search: e.target.value })}
-                />
-                <MDBBtn className="me-1" color="info" onClick={this.search}>
-                  Search
-                </MDBBtn>
-              </MDBInputGroup>
-            </MDBCol>
-          </MDBRow>
+          <Form onSubmit={this.search}>
+            <MDBRow
+              style={{
+                display: "flex",
+                justifyContent: "end",
+                className: "m-2",
+              }}
+            >
+              <MDBCol size="3">
+                <MDBInputGroup className="mb-3" size="4">
+                  <input
+                    className="form-control"
+                    placeholder="Search"
+                    type="text"
+                    value={this.state.search}
+                    required="true"
+                    onChange={(e) => this.setState({ search: e.target.value })}
+                  />
+                  <MDBBtn
+                    className="me-2"
+                    color="info"
+                    onClick={() => this.search}
+                    style={{ cursor: "pointer" }}
+                  >
+                    Search
+                  </MDBBtn>
+                  <MDBBtn
+                    className="me-2"
+                    type="button"
+                    color="danger"
+                    onClick={this.reset}
+                  >
+                    Reset
+                  </MDBBtn>
+                </MDBInputGroup>
+              </MDBCol>
+              <MDBCol size="1">
+                <MDBBadge
+                  color="success"
+                  light
+                  onClick={this.handleShow}
+                  style={{ cursor: "pointer" }}
+                >
+                  <AddIcon />
+                </MDBBadge>
+              </MDBCol>
+            </MDBRow>
+          </Form>
         </MDBContainer>
         <div className="table-responsive">
           <MDBContainer>
@@ -224,6 +382,72 @@ class UserTickets extends Component {
             activeClassName={"active"}
           />
         </div>
+        <Modal show={this.state.showModal} onHide={this.handleClose}>
+          <Form>
+            <Modal.Header closeButton>
+              <Modal.Title>Create-Ticket</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <FloatingLabel
+                controlId="floatingTextarea1"
+                label="Subject"
+                className="mb-3"
+              >
+                <Form.Control
+                  as="textarea"
+                  required
+                  placeholder="Leave a comment here"
+                  style={{ height: "60px", resize: "none" }}
+                  onChange={(e) => this.setState({ Subject: e.target.value })}
+                />
+              </FloatingLabel>
+              <FloatingLabel
+                controlId="floatingTextarea2"
+                label="Body"
+                className="mb-3"
+              >
+                <Form.Control
+                  as="textarea"
+                  required
+                  placeholder="Leave a comment here"
+                  style={{ height: "150px", resize: "none" }}
+                  onChange={(e) => this.setState({ Body: e.target.value })}
+                />
+              </FloatingLabel>
+              <FloatingLabel controlId="floatingSelectGrid" label="Department">
+                <Form.Control
+                  as="select"
+                  required
+                  aria-label="Floating label select example"
+                  onChange={(e) =>
+                    this.setState({ Department: e.target.value })
+                  }
+                >
+                  <option>please select Department</option>
+                  <option value="L1">L1</option>
+                  <option value="L2">L2</option>
+                  <option value="L3">L3</option>
+                </Form.Control>
+              </FloatingLabel>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                type="button"
+                onClick={this.handleClose}
+              >
+                Close
+              </Button>
+              <Button
+                variant="primary"
+                type="button"
+                onClick={this.handleSubmit}
+              >
+                Save Changes
+              </Button>
+            </Modal.Footer>
+          </Form>
+        </Modal>
       </>
     );
   }

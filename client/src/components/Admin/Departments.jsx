@@ -1,35 +1,60 @@
 import React, { Component } from "react";
 import ReactPaginate from "react-paginate";
+import Nav from "./Nav";
 import {
   MDBTable,
   MDBTableHead,
   MDBTableBody,
   MDBContainer,
+  MDBBtn,
   MDBBadge,
+  MDBInputGroup,
   MDBRow,
   MDBCol,
-  MDBInputGroup,
-  MDBBtn,
 } from "mdb-react-ui-kit";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
+import Form from "react-bootstrap/Form";
 import { Link } from "react-router-dom";
+import { Button, Modal } from "react-bootstrap";
 import axios from "axios";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
+import DeleteIcon from "@mui/icons-material/Delete";
 import toast, { Toaster } from "react-hot-toast";
-import Form from "react-bootstrap/Form";
+import moment from "moment";
+import AddIcon from "@mui/icons-material/Add";
 
-class Alltickets extends Component {
+class Departments extends Component {
   state = {
+    showNav: false,
+    showModal: false,
+    delModal: false,
+    promptres: false,
+    name: "",
+    description: "",
+    deleteId: "",
     items: [],
     currentpage: 0,
+    SearchcurrentPage: 0,
     pageCount: 0,
+    searchPageCount: 0,
     bdcolor: "",
     search: "",
     searchPagination: false,
-    searchPageCount: 0,
-    SearchcurrentPage: 0,
   };
 
   limit = 5;
+
+  handleClose = () => {
+    this.setState({ showModal: false });
+  };
+
+  handleShow = () => {
+    this.setState({ showModal: true });
+  };
+
+  handleDelShow = () => {
+    this.setState({ delModal: true });
+  };
 
   componentDidMount() {
     this.getData();
@@ -40,40 +65,43 @@ class Alltickets extends Component {
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
-
     await axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/tickets/all/${this.limit}/${this.state.currentPage}`,
+        `${process.env.REACT_APP_BASE_URL}/employees/emp/all/${this.limit}/${this.state.currentPage}`,
         config
       )
       .then((response) => {
-        console.log(response.data);
-        let total = response.data.count;
-        this.setState({
-          pageCount: Math.ceil(total / this.limit),
-        });
-        this.setState({ items: response.data.tickets });
-        toast.success("Tickets Fetched Successfully");
+        if (response.status === 200) {
+          let total = response.data.count;
+          this.setState({
+            pageCount: Math.ceil(total / this.limit),
+          });
+          this.setState({ items: response.data.employees });
+          toast.success("Employee Fetched Successfully");
+        } else {
+          if (response.status === 404) {
+            toast.error(response.data);
+          }
+        }
       })
       .catch((err) => {
         console.log(err);
-        toast.error(err.response.data);
       });
   };
 
-  fetchComments = async (currentPage) => {
+  fetchData = async (currentPage) => {
     const Usertoken = localStorage.getItem("token");
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
     try {
       let response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/tickets/all/${this.limit}/${currentPage}`,
+        `${process.env.REACT_APP_BASE_URL}/employees/emp/all/${this.limit}/${currentPage}`,
         config
       );
       let respdata = await response.data;
-      toast.success("Tickets Fetched Successfully");
-      return respdata.tickets;
+      toast.success("Employee Fetched Successfully");
+      return respdata.employees;
     } catch (error) {
       console.log(error);
     }
@@ -82,8 +110,42 @@ class Alltickets extends Component {
   handlePageClick = async (data) => {
     let currentPage = data.selected;
     this.setState({ currentPage: currentPage });
-    const ApiData = await this.fetchComments(currentPage);
+    const ApiData = await this.fetchData(currentPage);
     this.setState({ items: ApiData });
+  };
+
+  handleSubmit = async (e) => {
+    e.preventDefault();
+    this.handleClose();
+    const Usertoken = localStorage.getItem("token");
+
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+    const data = {
+      name: this.state.username,
+      password: this.state.password,
+      department_name: this.state.department,
+      email: this.state.email,
+    };
+
+    try {
+      await axios
+        .post(
+          `${process.env.REACT_APP_BASE_URL}/employees/register`,
+          data,
+          config
+        )
+        .then((response) => {
+          if (response.status === 200) {
+            toast.success("Employee Created SuccessFully");
+            this.getData();
+          }
+        });
+    } catch (err) {
+      console.log(err);
+    }
+    this.setState({ modal: false });
   };
 
   search = async (e) => {
@@ -101,7 +163,7 @@ class Alltickets extends Component {
 
     await axios
       .post(
-        `${process.env.REACT_APP_BASE_URL}/tickets/search/${this.limit}/${this.state.SearchcurrentPage}`,
+        `${process.env.REACT_APP_BASE_URL}/employees/search/${this.limit}/${this.state.SearchcurrentPage}`,
         data,
         config
       )
@@ -111,7 +173,7 @@ class Alltickets extends Component {
         this.setState({
           searchPageCount: Math.ceil(total / this.limit),
         });
-        this.setState({ items: response.data.ticket });
+        this.setState({ items: response.data.employees });
         toast.success("Tickets Fetched Successfully");
       })
       .catch((err) => {
@@ -135,7 +197,7 @@ class Alltickets extends Component {
       );
       let respdata = await response.data;
       toast.success("Tickets Fetched Successfully");
-      return respdata.ticket;
+      return respdata.employees;
     } catch (error) {
       console.log(error);
     }
@@ -152,6 +214,41 @@ class Alltickets extends Component {
     e.preventDefault();
     this.setState({ searchPagination: false });
     toast.success("Resetting search");
+    this.getData();
+  };
+
+  handleDelClose = (e) => {
+    e.preventDefault();
+    this.setState({ delModal: false });
+  };
+
+  deleteEmp = async (empid) => {
+    this.setState({ delModal: true });
+    this.setState({ deleteId: empid });
+  };
+
+  handleDelResp = async (e) => {
+    e.preventDefault();
+    this.setState({ delModal: false });
+    try {
+      let response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/employees/delete/${this.state.deleteId}`
+      );
+      let respdata = await response.data;
+      toast.success("Employee deleted Successfully");
+      this.getData();
+      this.setState({ deleteId: "" });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  reset = async (e) => {
+    e.preventDefault();
+    this.setState({ searchPagination: false });
+    this.setState({ search: "" });
+    toast.success("Resetting search");
+
     this.getData();
   };
 
@@ -196,20 +293,30 @@ class Alltickets extends Component {
                   </MDBBtn>
                 </MDBInputGroup>
               </MDBCol>
+              <MDBCol size="1">
+                <MDBBadge
+                  color="success"
+                  light
+                  onClick={this.handleShow}
+                  style={{ cursor: "pointer" }}
+                >
+                  <AddIcon />
+                </MDBBadge>
+              </MDBCol>
             </MDBRow>
           </Form>
         </MDBContainer>
+
         <div className="table-responsive">
           <MDBContainer>
             <MDBTable bordered className="mt-5">
               <MDBTableHead className="table-dark">
                 <tr>
-                  <th scope="col">Ticket.no</th>
-                  <th scope="col">Subject</th>
-                  <th scope="col">Created-on</th>
+                  <th scope="col">Employee.Id</th>
+                  <th scope="col">Employee Name</th>
+                  <th scope="col">Email-id</th>
                   <th scope="col">Department</th>
-                  <th scope="col">Priority</th>
-                  <th scope="col">Status</th>
+                  <th scope="col">CreatedOn</th>
                   <th scope="col">Action</th>
                 </tr>
               </MDBTableHead>
@@ -217,72 +324,16 @@ class Alltickets extends Component {
                 {this.state.items.map((item, key) => {
                   return (
                     <tr key={key}>
-                      <td>{item.ticketNumber}</td>
-                      <td>{item.subject}</td>
-                      <td>{item.createdDate}</td>
+                      <td>{item.employeeNumber}</td>
+                      <td>{item.name}</td>
+                      <td>{item.email}</td>
                       <td>{item.department_name}</td>
                       <td>
-                        {item.priority === "Low" ? (
-                          <MDBBadge
-                            className="mx-2"
-                            color="success"
-                            light
-                            style={{ fontSize: "medium" }}
-                          >
-                            {item.priority}
-                          </MDBBadge>
-                        ) : item.priority === "Medium" ? (
-                          <MDBBadge
-                            className="mx-2"
-                            color="warning"
-                            light
-                            style={{ fontSize: "medium" }}
-                          >
-                            {item.priority}
-                          </MDBBadge>
-                        ) : (
-                          <MDBBadge
-                            className="mx-2"
-                            color="danger"
-                            light
-                            style={{ fontSize: "medium" }}
-                          >
-                            {item.priority}
-                          </MDBBadge>
-                        )}
+                        {moment.unix(item.createdAt).format("MMMM Do YYYY")}
                       </td>
+
                       <td>
-                        {item.status === "Open" ? (
-                          <MDBBadge
-                            className="mx-2"
-                            color="warning"
-                            light
-                            style={{ fontSize: "medium" }}
-                          >
-                            {item.status}
-                          </MDBBadge>
-                        ) : item.status === "In Progress" ? (
-                          <MDBBadge
-                            className="mx-2"
-                            color="primary"
-                            light
-                            style={{ fontSize: "medium" }}
-                          >
-                            {item.status}
-                          </MDBBadge>
-                        ) : (
-                          <MDBBadge
-                            className="mx-2"
-                            color="success"
-                            light
-                            style={{ fontSize: "medium" }}
-                          >
-                            {item.status}
-                          </MDBBadge>
-                        )}
-                      </td>
-                      <td>
-                        <Link to={`/employee/allticketsinfo/${item._id}`}>
+                        <Link to={`/admin/employeeinfo/${item._id}`}>
                           <button
                             className="btn btn-success "
                             style={{ marginRight: "8px" }}
@@ -290,6 +341,13 @@ class Alltickets extends Component {
                             <RemoveRedEyeOutlinedIcon />
                           </button>
                         </Link>
+                        <button
+                          onClick={() => this.deleteEmp(item._id)}
+                          className="btn btn-danger "
+                          style={{ marginRight: "8px" }}
+                        >
+                          <DeleteIcon />
+                        </button>
                       </td>
                     </tr>
                   );
@@ -297,7 +355,6 @@ class Alltickets extends Component {
               </MDBTableBody>
             </MDBTable>
           </MDBContainer>
-
           {this.state.searchPagination ? (
             <ReactPaginate
               previousLabel={"previous"}
@@ -340,9 +397,85 @@ class Alltickets extends Component {
             />
           )}
         </div>
+
+        <Modal show={this.state.showModal} onHide={this.handleClose}>
+          <Form>
+            <Modal.Header closeButton>
+              <Modal.Title>Create-Department</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <FloatingLabel
+                controlId="floatingTextarea1"
+                label="Name"
+                className="mb-3"
+              >
+                <Form.Control
+                  as="textarea"
+                  required
+                  placeholder="Leave a comment here"
+                  style={{ height: "60px", resize: "none" }}
+                  onChange={(e) => this.setState({ name: e.target.value })}
+                />
+              </FloatingLabel>
+              <FloatingLabel
+                controlId="floatingTextarea2"
+                label="Description"
+                className="mb-3"
+              >
+                <Form.Control
+                  as="textarea"
+                  required
+                  placeholder="Leave a comment here"
+                  style={{ height: "150px", resize: "none" }}
+                  onChange={(e) =>
+                    this.setState({ description: e.target.value })
+                  }
+                />
+              </FloatingLabel>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                type="button"
+                onClick={this.handleClose}
+              >
+                Close
+              </Button>
+              <Button
+                variant="primary"
+                type="button"
+                onClick={this.handleSubmit}
+              >
+                Save Changes
+              </Button>
+            </Modal.Footer>
+          </Form>
+        </Modal>
+
+        <Modal show={this.state.delModal} onHide={this.handleDelClose}>
+          <Modal.Body>Are you Sure!!! you want to delete</Modal.Body>
+          <Modal.Footer>
+            <form>
+              <Button
+                className="m-2"
+                variant="primary"
+                onClick={this.handleDelResp}
+              >
+                Yes
+              </Button>
+              <Button
+                variant="secondary"
+                className="m-2"
+                onClick={this.handleDelClose}
+              >
+                No
+              </Button>
+            </form>
+          </Modal.Footer>
+        </Modal>
       </>
     );
   }
 }
 
-export default Alltickets;
+export default Departments;

@@ -11,6 +11,7 @@ import {
   MDBTypography,
   MDBIcon,
   MDBInput,
+  MDBBtn,
 } from "mdb-react-ui-kit";
 import axios from "axios";
 import moment from "moment";
@@ -39,6 +40,8 @@ export default class UserProfile extends Component {
     cnewpassword: "",
     forgetemail: "",
     forget: false,
+    file: null,
+    profilepic: "",
   };
 
   componentDidMount() {
@@ -54,9 +57,10 @@ export default class UserProfile extends Component {
 
     try {
       let resp = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/employees/employee/profile/${userid}`,
+        `${process.env.REACT_APP_BASE_URL}/users/user/profile/${userid}`,
         config
       );
+      console.log(resp);
       if (resp.status === 200) {
         this.setState({
           id: resp.data.employeeNumber,
@@ -64,6 +68,7 @@ export default class UserProfile extends Component {
           department: resp.data.department_name,
           email: resp.data.email,
           joiningdate: resp.data.createdAt,
+          profilepic: resp.data.picture,
         });
         toast.success("Employee Details Fetched Successfully ");
       } else {
@@ -111,7 +116,8 @@ export default class UserProfile extends Component {
           config
         );
         if (resp.status === 200) {
-          toast.success(resp.data);
+          console.log(resp);
+          toast.success("Password Updated Successfully");
           this.handleClose();
         } else {
           if (resp.status === 403) {
@@ -130,31 +136,30 @@ export default class UserProfile extends Component {
     }
   };
 
-  handleForget = async (e) => {
+  updateProfile = async (e) => {
     e.preventDefault();
+    const userid = localStorage.getItem("id");
     const Usertoken = localStorage.getItem("token");
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
-    const data = {
-      email: this.state.forgetemail,
-    };
-    try {
-      let resp = await axios.post(
-        `http://localhost:5000/employees/forgot`,
-        data,
-        config
-      );
+    const formData = new FormData();
+    formData.append("avatar", this.state.file);
 
-      if (resp.status === 200) {
-        toast.success("Email sent successfully ");
-        this.setState({ forget: false });
-        this.setState({ forgetemail: "" });
-      }
-    } catch (err) {
-      console.log(err);
-      toast.error("Failed Try After Sometime");
-    }
+    await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/employees/profile/image/${userid}`,
+        formData,
+        config
+      )
+      .then((response) => {
+        console.log(response.data.picture);
+        this.setState({ profilepic: response.data.picture });
+      })
+      .catch((err) => {
+        console.log(err);
+        // toast.error(err.response.data);
+      });
   };
 
   render() {
@@ -187,31 +192,63 @@ export default class UserProfile extends Component {
                     >
                       <MDBContainer>
                         <MDBCardImage
-                          src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
                           alt="Avatar"
+                          src={`http://localhost:5000/uploads/${this.state.profilepic}`}
                           className="my-5"
                           style={{ width: "80px" }}
                           fluid
                         />
+
                         <MDBTypography tag="h5">
                           {this.state.name}
                         </MDBTypography>
-                        <MDBCardText>{this.state.department}</MDBCardText>
+                        <MDBContainer>
+                          <form onSubmit={this.updateProfile}>
+                            <MDBRow
+                              style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                marginBottom: "10px",
+                              }}
+                            >
+                              <MDBCol size="8">
+                                <input
+                                  className="form-control"
+                                  type="file"
+                                  onChange={(e) =>
+                                    this.setState({
+                                      file: e.target.files[0],
+                                    })
+                                  }
+                                />
+                              </MDBCol>
+                            </MDBRow>
+                            <MDBRow
+                              style={{
+                                display: "flex",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <MDBCol size="8">
+                                <MDBBtn
+                                  color="primary"
+                                  style={{
+                                    paddingTop: ".55rem",
+                                  }}
+                                >
+                                  Upload
+                                </MDBBtn>
+                              </MDBCol>
+                            </MDBRow>
+                          </form>
+                        </MDBContainer>
                       </MDBContainer>
                     </MDBCol>
 
                     <MDBCol md="8">
                       <MDBCardBody className="p-4">
-                        <MDBTypography tag="h6">Employee Profile</MDBTypography>
+                        <MDBTypography tag="h6">User Profile</MDBTypography>
                         <hr className="mt-0 mb-4" />
-                        <MDBRow className="pt-1">
-                          <MDBCol size="6" className="mb-3">
-                            <MDBTypography tag="h6">Id</MDBTypography>
-                            <MDBCardText className="text-muted">
-                              {this.state.id}
-                            </MDBCardText>
-                          </MDBCol>
-                        </MDBRow>
                         <MDBRow className="pt-1">
                           <MDBCol size="6" className="mb-3">
                             <MDBTypography tag="h6">Name</MDBTypography>
@@ -222,14 +259,6 @@ export default class UserProfile extends Component {
                         </MDBRow>
                         <MDBRow className="pt-1">
                           <MDBCol size="6" className="mb-3">
-                            <MDBTypography tag="h6">
-                              Department Name
-                            </MDBTypography>
-                            <MDBCardText className="text-muted">
-                              {this.state.department}
-                            </MDBCardText>
-                          </MDBCol>
-                          <MDBCol size="6" className="mb-3">
                             <MDBTypography tag="h6">Email</MDBTypography>
                             <MDBCardText className="text-muted">
                               {this.state.email}
@@ -238,9 +267,7 @@ export default class UserProfile extends Component {
                         </MDBRow>
                         <MDBRow className="pt-1">
                           <MDBCol size="6" className="mb-3">
-                            <MDBTypography tag="h6">
-                              Joining Date:-
-                            </MDBTypography>
+                            <MDBTypography tag="h6">Created On:-</MDBTypography>
                             <MDBCardText className="text-muted">
                               {moment
                                 .unix(this.state.joiningdate)
@@ -260,51 +287,7 @@ export default class UserProfile extends Component {
                               Reset Password
                             </button>
                           </MDBCol>
-                          <MDBCol size="6" className="mb-3">
-                            <button
-                              type="button"
-                              class="btn btn-primary"
-                              onClick={() =>
-                                this.setState({ forget: !this.state.forget })
-                              }
-                            >
-                              Forget Password
-                            </button>
-                          </MDBCol>
                         </MDBRow>
-
-                        {this.state.forget ? (
-                          <>
-                            <form onSubmit={this.handleForget}>
-                              <MDBRow className="pt-1 d-flex ">
-                                <MDBCol size="6">
-                                  <MDBInput
-                                    wrapperClass="mb-4 w-100"
-                                    label="Email"
-                                    id="formControl"
-                                    type="email"
-                                    autoComplete="off"
-                                    size="lg"
-                                    required="true"
-                                    value={this.state.forgetemail}
-                                    onChange={(e) =>
-                                      this.setState({
-                                        forgetemail: e.target.value,
-                                      })
-                                    }
-                                  />
-                                </MDBCol>
-                              </MDBRow>
-                              <MDBRow className="pt-1">
-                                <MDBCol>
-                                  <button type="submit" class="btn btn-primary">
-                                    Send Email
-                                  </button>
-                                </MDBCol>
-                              </MDBRow>
-                            </form>
-                          </>
-                        ) : null}
 
                         <div className="d-flex justify-content-start mt-5">
                           <a href="#!">

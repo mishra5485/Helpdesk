@@ -12,7 +12,7 @@ import Form from "react-bootstrap/Form";
 import axios from "axios";
 import moment from "moment";
 import toast, { Toaster } from "react-hot-toast";
-import { withRouter } from "../../withRouter";
+import { withRouter } from "../withRouter";
 
 class EmployeeInfo extends Component {
   state = {

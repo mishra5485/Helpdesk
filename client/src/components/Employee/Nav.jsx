@@ -9,10 +9,6 @@ import {
   MDBNavbarItem,
   MDBNavbarLink,
   MDBCollapse,
-  MDBDropdown,
-  MDBDropdownToggle,
-  MDBDropdownMenu,
-  MDBDropdownItem,
 } from "mdb-react-ui-kit";
 import { NavLink } from "react-router-dom";
 import { Button, Modal } from "react-bootstrap";
@@ -156,39 +152,31 @@ export default class Nav extends Component {
                     </NavLink>
                   </MDBNavbarLink>
                 </MDBNavbarItem>
-
                 <MDBNavbarItem>
-                  <MDBDropdown>
-                    <MDBDropdownToggle
-                      tag="a"
-                      className="nav-link"
-                      role="button"
+                  <MDBNavbarLink>
+                    <NavLink
+                      style={({ isActive }) =>
+                        isActive ? this.activeStyle : this.linkstyle
+                      }
+                      to="/employee/profile"
                     >
-                      Profile & LogOut
-                    </MDBDropdownToggle>
-                    <MDBDropdownMenu>
-                      <MDBDropdownItem link>
-                        <NavLink
-                          style={({ isActive }) =>
-                            isActive ? this.activeStyle : this.linkstyle
-                          }
-                          to="/employee/profile"
-                          // style={{
-                          //   display: "flex",
-                          //   alignItems: "center",
-                          // }}
-                        >
-                          <PersonIcon />
-                          {`${localStorage.getItem("username")}`}
-                        </NavLink>
-                      </MDBDropdownItem>
-                      <MDBDropdownItem link>
-                        <NavLink to="/" onClick={this.handleLogout}>
-                          LogOut
-                        </NavLink>
-                      </MDBDropdownItem>
-                    </MDBDropdownMenu>
-                  </MDBDropdown>
+                      <PersonIcon />
+                      {`${localStorage.getItem("username")}`}
+                    </NavLink>
+                  </MDBNavbarLink>
+                </MDBNavbarItem>
+                <MDBNavbarItem>
+                  <MDBNavbarLink>
+                    <NavLink
+                      style={({ isActive }) =>
+                        isActive ? this.activeStyle : this.linkstyle
+                      }
+                      onClick={this.handleLogout}
+                      to="/"
+                    >
+                      LogOut
+                    </NavLink>
+                  </MDBNavbarLink>
                 </MDBNavbarItem>
               </MDBNavbarNav>
             </MDBCollapse>

@@ -47,7 +47,10 @@ router.get("/all/:limit/:pageNumber", auth, async (req, res) => {
     let limit = req.params.limit;
     let pageNumber = req.params.pageNumber;
     let skippedItems = pageNumber * limit;
-    let tickets = await Ticket.find({}).limit(limit).skip(skippedItems);
+    let tickets = await Ticket.find({}).limit(limit).skip(skippedItems).sort({
+      ticketNumber: -1,
+    });
+
     let count = await Ticket.countDocuments({});
     res.status(200).send({ tickets: tickets, count: count });
   } catch (ex) {
@@ -157,7 +160,13 @@ router.post("/department/:limit/:pageNumber", async (req, res) => {
     let pageNumber = req.params.pageNumber;
     let skippedItems = pageNumber * limit;
     const countResult = await Ticket.find(req.body);
-    const result = await Ticket.find(req.body).limit(limit).skip(skippedItems);
+    const result = await Ticket.find(req.body)
+      .limit(limit)
+      .skip(skippedItems)
+      .skip(skippedItems)
+      .sort({
+        ticketNumber: -1,
+      });
     let count = countResult.length;
     res.status(200).send({ ticket: result, count });
   } catch (ex) {
@@ -171,7 +180,6 @@ router.post("all/mytickets/:limit/:pageNumber", async (req, res) => {
     let pageNumber = req.params.pageNumber;
     let skippedItems = pageNumber * limit;
     const countResult = await Ticket.find(req.body);
-    console.log(countResult);
     const result = await Ticket.find(req.body).limit(limit).skip(skippedItems);
     let count = countResult.length;
     res.status(200).send({ ticket: result, count });
@@ -205,8 +213,11 @@ router.post("/claim/:id", async (req, res) => {
     const { assigned } = req.body;
     const { id } = req.params;
     const filter = { _id: id };
-    let emp = await Ticket.findOneAndUpdate(filter, assigned);
-    res.status(200).send(emp);
+    const update = { assigned };
+    console.log(update, filter);
+    let ticket = await Ticket.findOneAndUpdate(filter, update);
+    ticket = await Ticket.find(filter);
+    res.status(200).send(ticket);
   } catch {
     res.status(500).send("unable to assign ticket");
   }
