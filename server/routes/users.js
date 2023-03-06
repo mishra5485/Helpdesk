@@ -8,7 +8,6 @@ const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 const generateAuthToken = require("../common/auth");
 const verifyGoogleJWT = require("../common/utils");
-const generateAuthToken = require("../common/utils");
 // const verifyGoogleJWT = require("../common/utils");
 const jwt_decode = require("jwt-decode");
 
