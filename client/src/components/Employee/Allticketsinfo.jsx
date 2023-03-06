@@ -75,7 +75,7 @@ class Allticketsinfo extends Component {
 
   handlesubmit = async (e) => {
     e.preventDefault();
-    const objid = this.props.match.params.id;
+    const objid = this.props.params.id;
     const Usertoken = localStorage.getItem("token");
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
@@ -108,7 +108,7 @@ class Allticketsinfo extends Component {
 
   handleFileSubmit = async (e) => {
     e.preventDefault();
-    const objid = this.props.match.params.id;
+    const objid = this.props.params.id;
 
     const Usertoken = localStorage.getItem("token");
 
