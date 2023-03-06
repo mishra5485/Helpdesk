@@ -57,7 +57,7 @@ class Alltickets extends Component {
       })
       .catch((err) => {
         console.log(err);
-        toast.error(err.response.data);
+        // toast.error(err.response);
       });
   };
 
