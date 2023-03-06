@@ -28,13 +28,13 @@ router.post("/create-ticket", async (req, res) => {
   } catch (ex) {}
 
   const _id = uuidv4();
-  const { subject, body, user_id, department_name } = req.body;
-  console.log(user_id);
+  const { subject, body, user, department_name } = req.body;
+  console.log(user);
   let ticket = new Ticket({
     _id,
     subject,
     body,
-    user_id,
+    user,
     department_name,
     ticketNumber: lastTicketNumber,
   });
@@ -213,7 +213,7 @@ router.post("/claim/:id", async (req, res) => {
     const { assigned } = req.body;
     const { id } = req.params;
     const filter = { _id: id };
-    const update = { assigned };
+    const update = { assigned: assigned.user_id };
     console.log(update, filter);
     let ticket = await Ticket.findOneAndUpdate(filter, update);
     ticket = await Ticket.find(filter);

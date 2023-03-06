@@ -178,8 +178,10 @@ class MyTickets extends Component {
       subject: this.state.Subject,
       body: this.state.Body,
       department_name: this.state.Department,
-      user_id: userid,
-      user_name: username,
+      user: {
+        user_id: userid,
+        userName: username,
+      },
     };
 
     try {

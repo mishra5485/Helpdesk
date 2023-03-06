@@ -312,12 +312,9 @@ class Departments extends Component {
             <MDBTable bordered className="mt-5">
               <MDBTableHead className="table-dark">
                 <tr>
-                  <th scope="col">Employee.Id</th>
-                  <th scope="col">Employee Name</th>
-                  <th scope="col">Email-id</th>
-                  <th scope="col">Department</th>
-                  <th scope="col">CreatedOn</th>
-                  <th scope="col">Action</th>
+                  <th scope="col">Department Id</th>
+                  <th scope="col">Department name Name</th>
+                  <th scope="col">Description</th>
                 </tr>
               </MDBTableHead>
               <MDBTableBody>
@@ -327,12 +324,12 @@ class Departments extends Component {
                       <td>{item.employeeNumber}</td>
                       <td>{item.name}</td>
                       <td>{item.email}</td>
-                      <td>{item.department_name}</td>
+                      {/* <td>{item.department_name}</td>
                       <td>
                         {moment.unix(item.createdAt).format("MMMM Do YYYY")}
-                      </td>
+                      </td> */}
 
-                      <td>
+                      {/* <td>
                         <Link to={`/admin/employeeinfo/${item._id}`}>
                           <button
                             className="btn btn-success "
@@ -348,7 +345,7 @@ class Departments extends Component {
                         >
                           <DeleteIcon />
                         </button>
-                      </td>
+                      </td> */}
                     </tr>
                   );
                 })}

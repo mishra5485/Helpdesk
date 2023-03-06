@@ -75,6 +75,7 @@ class Signup extends Component {
       .then((response) => {
         if (response.status === 200) {
           toast.success("Registered Successfully");
+          this.props.navigate("/");
         } else {
           if (response.status === 403) {
             toast.error(response.data);

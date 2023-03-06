@@ -10,9 +10,6 @@ const { v4: uuidv4 } = require("uuid");
 const { Department } = require("../models/department");
 const { Router } = require("express");
 
-
-
-
 // router.post("/createdepartment",async (req ,res)=>{
 //     const _id= uuidv4 ();
 //     let {name ,description, employees} = req.body
@@ -26,34 +23,21 @@ const { Router } = require("express");
 //     res.send("CREATED SUCCESSFULL")
 // })
 
-router.get("/getdepartment",async (req ,res)=>{
-    
-    let user = await Department.find()
-    console.log(user)
-    let departmentname= await user.map(elem=>elem.name)
-    console.log(departmentname)
+router.get("/getdepartment", async (req, res) => {
+  let user = await Department.find();
+  let departmentname = await user.map((elem) => elem.name);
+  //   console.log(departmentname);
 
-    
-    
-    res.send(departmentname)
-
-})
-
+  res.send(departmentname);
+});
 
 // router.post("/update/:id",async (req ,res)=>{
 //     let { name,description } =req.body
 //     const {id } = req.params
-    
+
 //     let user = await Department.findOneAndUpdate(req.params ,req.body)
 //     res.send("update successfully")
 
 // })
-
-
-
-
-
-
-
 
 module.exports = router;

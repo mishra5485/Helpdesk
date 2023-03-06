@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Nav from "./Nav";
 import {
   MDBCol,
   MDBContainer,
@@ -56,16 +55,16 @@ export default class UserProfile extends Component {
 
     try {
       let resp = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/employees/employee/profile/${userid}`,
-        config
+        `${process.env.REACT_APP_BASE_URL}/admins/admin/profile/${userid}`
       );
+      console.log(resp);
       if (resp.status === 200) {
         this.setState({
-          id: resp.data.employeeNumber,
-          name: resp.data.name,
-          department: resp.data.department_name,
-          email: resp.data.email,
-          joiningdate: resp.data.createdAt,
+          id: resp.data[0].employeeNumber,
+          name: resp.data[0].name,
+          department: resp.data[0].department_name,
+          email: resp.data[0].email,
+          joiningdate: resp.data[0].createdAt,
         });
         toast.success("Employee Details Fetched Successfully ");
       } else {
@@ -172,12 +171,10 @@ export default class UserProfile extends Component {
         config
       )
       .then((response) => {
-        console.log(response.data.picture);
         this.setState({ profilepic: response.data.picture });
       })
       .catch((err) => {
         console.log(err);
-        // toast.error(err.response.data);
       });
   };
 
@@ -211,7 +208,8 @@ export default class UserProfile extends Component {
                     >
                       <MDBContainer>
                         <MDBCardImage
-                          src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+                          src={`http://localhost:5000/uploads/${this.state.profilepic}`}
+                          // src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
                           alt="Avatar"
                           className="my-5"
                           style={{ width: "80px" }}
@@ -266,16 +264,8 @@ export default class UserProfile extends Component {
 
                     <MDBCol md="8">
                       <MDBCardBody className="p-4">
-                        <MDBTypography tag="h6">Employee Profile</MDBTypography>
+                        <MDBTypography tag="h6">Admin Profile</MDBTypography>
                         <hr className="mt-0 mb-4" />
-                        <MDBRow className="pt-1">
-                          <MDBCol size="6" className="mb-3">
-                            <MDBTypography tag="h6">Id</MDBTypography>
-                            <MDBCardText className="text-muted">
-                              {this.state.id}
-                            </MDBCardText>
-                          </MDBCol>
-                        </MDBRow>
                         <MDBRow className="pt-1">
                           <MDBCol size="6" className="mb-3">
                             <MDBTypography tag="h6">Name</MDBTypography>
@@ -285,14 +275,6 @@ export default class UserProfile extends Component {
                           </MDBCol>
                         </MDBRow>
                         <MDBRow className="pt-1">
-                          <MDBCol size="6" className="mb-3">
-                            <MDBTypography tag="h6">
-                              Department Name
-                            </MDBTypography>
-                            <MDBCardText className="text-muted">
-                              {this.state.department}
-                            </MDBCardText>
-                          </MDBCol>
                           <MDBCol size="6" className="mb-3">
                             <MDBTypography tag="h6">Email</MDBTypography>
                             <MDBCardText className="text-muted">
@@ -312,7 +294,6 @@ export default class UserProfile extends Component {
                             </MDBCardText>
                           </MDBCol>
                         </MDBRow>
-
                         <hr className="mt-0 mb-4" />
                         <MDBRow className="pt-1">
                           <MDBCol size="6" className="mb-3">
