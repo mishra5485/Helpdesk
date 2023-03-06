@@ -40,6 +40,7 @@ class Departments extends Component {
     bdcolor: "",
     search: "",
     searchPagination: false,
+
   };
 
   limit = 5;
@@ -61,47 +62,37 @@ class Departments extends Component {
   }
 
   getData = async () => {
-    const Usertoken = localStorage.getItem("token");
-    const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
-    };
+    // const Usertoken = localStorage.getItem("token");
+    // const config = {
+    //   headers: { Authorization: `Bearer ${Usertoken}` },
+    // };
     await axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/employees/emp/all/${this.limit}/${this.state.currentPage}`,
-        config
+        `${process.env.REACT_APP_BASE_URL}/departments/getalldepartment`,
+        // config
       )
       .then((response) => {
-        if (response.status === 200) {
-          let total = response.data.count;
-          this.setState({
-            pageCount: Math.ceil(total / this.limit),
-          });
-          this.setState({ items: response.data.employees });
-          toast.success("Employee Fetched Successfully");
-        } else {
-          if (response.status === 404) {
-            toast.error(response.data);
-          }
-        }
+        console.log(response)
+        this.setState({items:response.data})
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
-  fetchData = async (currentPage) => {
-    const Usertoken = localStorage.getItem("token");
-    const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
-    };
+    fetchData = async (currentPage) => {
+    // const Usertoken = localStorage.getItem("token");
+    // const config = {
+    //   headers: { Authorization: `Bearer ${Usertoken}` },
+    // };
     try {
       let response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/employees/emp/all/${this.limit}/${currentPage}`,
-        config
+        `${process.env.REACT_APP_BASE_URL}/departments/getdepartment/${this.limit}/${currentPage}`,
+        // config
       );
       let respdata = await response.data;
-      toast.success("Employee Fetched Successfully");
-      return respdata.employees;
+      toast.success("department Fetched Successfully");
+      return respdata.Departments;
     } catch (error) {
       console.log(error);
     }
@@ -114,31 +105,37 @@ class Departments extends Component {
     this.setState({ items: ApiData });
   };
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   handleSubmit = async (e) => {
     e.preventDefault();
     this.handleClose();
-    const Usertoken = localStorage.getItem("token");
+    // const Usertoken = localStorage.getItem("token");
+    // console.log("hello")
 
-    const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
-    };
+    // const config = {
+    //   headers: { Authorization: `Bearer ${Usertoken}` },
+    // };
     const data = {
-      name: this.state.username,
-      password: this.state.password,
-      department_name: this.state.department,
-      email: this.state.email,
+      name: this.state.name,
+      description: this.state.description,
+      // employees :this.state.employees
+      // email: this.state.email,
     };
+    console.log(data)
 
     try {
       await axios
         .post(
-          `${process.env.REACT_APP_BASE_URL}/employees/register`,
+          // `${process.env.REACT_APP_BASE_URL}/departments/createdepartment`,
+          "http://localhost:5000/departments/createdepartment",
           data,
-          config
+          // config
         )
         .then((response) => {
+          console.log(response)
           if (response.status === 200) {
-            toast.success("Employee Created SuccessFully");
+            toast.success("department Created SuccessFully");
             this.getData();
           }
         });
@@ -147,6 +144,7 @@ class Departments extends Component {
     }
     this.setState({ modal: false });
   };
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
   search = async (e) => {
     e.preventDefault();
@@ -312,25 +310,22 @@ class Departments extends Component {
             <MDBTable bordered className="mt-5">
               <MDBTableHead className="table-dark">
                 <tr>
-                  <th scope="col">Employee.Id</th>
-                  <th scope="col">Employee Name</th>
-                  <th scope="col">Email-id</th>
-                  <th scope="col">Department</th>
-                  <th scope="col">CreatedOn</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Description</th>
                   <th scope="col">Action</th>
-                </tr>
+                  {/*<th scope="col">Email-id</th>
+                  <th scope="col">Employess</th>
+                 <th scope="col">CreatedOn</th>*/} 
+            </tr>
               </MDBTableHead>
               <MDBTableBody>
                 {this.state.items.map((item, key) => {
                   return (
                     <tr key={key}>
-                      <td>{item.employeeNumber}</td>
                       <td>{item.name}</td>
-                      <td>{item.email}</td>
-                      <td>{item.department_name}</td>
-                      <td>
-                        {moment.unix(item.createdAt).format("MMMM Do YYYY")}
-                      </td>
+                      <td>{item.description}</td>
+                     {/* <td>{item.employess}</td>*/}
+                      
 
                       <td>
                         <Link to={`/admin/employeeinfo/${item._id}`}>

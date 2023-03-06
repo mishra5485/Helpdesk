@@ -13,12 +13,12 @@ const departmentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  employees: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Employee",
-    },
-  ],
+  // employees: [
+  //   {
+  //     type: mongoose.Schema.Types.ObjectId,
+  //     ref: "Employee",
+  //   },
+  // ],
 });
 
 const Department = mongoose.model("Department", departmentSchema);
