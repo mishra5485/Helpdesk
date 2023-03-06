@@ -58,23 +58,25 @@ router.get("/all/:limit/:pageNumber", auth, async (req, res) => {
   }
 });
 
-// router.get("/all/:id/:limit/:pageNumber", async (req, res) => {
-//   try {
-//     let { id, limit, pageNumber } = req.params;
-//     let skippedItems = pageNumber * limit;
-//     let tickets = await Ticket.find({ user: { $elemMatch: { user_id: id } } });
-//     // .limit(limit)
-//     // .skip(skippedItems)
-//     // .sort({
-//     //   ticketNumber: -1,
-//     // });
+router.get("/all/:id/:limit/:pageNumber", async (req, res) => {
+  try {
+    let { id, limit, pageNumber } = req.params;
+    let skippedItems = pageNumber * limit;
+    let tickets = await Ticket.find({
+      "user.user_id": id,
+    })
+      .limit(limit)
+      .skip(skippedItems)
+      .sort({
+        ticketNumber: -1,
+      });
 
-//     let count = tickets.length;
-//     res.status(200).send({ tickets: tickets, count: count });
-//   } catch (ex) {
-//     res.status(404).send("Unable to fetch tickets");
-//   }
-// });
+    let count = tickets.length;
+    res.status(200).send({ tickets: tickets, count: count });
+  } catch (ex) {
+    res.status(404).send("Unable to fetch tickets");
+  }
+});
 
 router.get("/:id", auth, async (req, res) => {
   try {
