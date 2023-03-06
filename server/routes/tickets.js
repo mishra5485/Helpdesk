@@ -214,8 +214,10 @@ router.post("/claim/:id", async (req, res) => {
     const { id } = req.params;
     const filter = { _id: id };
     const update = { assigned };
-    let emp = await Ticket.findOneAndUpdate(filter, update);
-    res.status(200).send(emp);
+    console.log(update, filter);
+    let ticket = await Ticket.findOneAndUpdate(filter, update);
+    ticket = await Ticket.find(filter);
+    res.status(200).send(ticket);
   } catch {
     res.status(500).send("unable to assign ticket");
   }
