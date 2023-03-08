@@ -176,21 +176,28 @@ router.post("/comment", upload.single("avatar"), async (req, res) => {
 
 router.post("/search/:limit/:pageNumber", async (req, res) => {
   try {
-    const { status, department_name, keyword } = req.body;
+    // let tickets = await Ticket.find({
+    //   "user.user_id": id,
+    // });
+
+    const { status, department_name, keyword, id } = req.body;
     const filter = {};
     if (status) filter.status = status;
     if (department_name) filter.department_name = department_name;
+    // if (id) filter.user = { user_id: id };
 
     let limit = req.params.limit;
     let pageNumber = req.params.pageNumber;
     let skippedItems = pageNumber * limit;
     const regexp = new RegExp(keyword, "i");
     const countResult = await Ticket.find({
+      "user.user_id": id,
       $and: [filter],
       $or: [{ ticketNumber: regexp }, { subject: regexp }],
     });
     console.log(countResult);
     const result = await Ticket.find({
+      "user.user_id": id,
       $and: [filter],
       $or: [{ ticketNumber: regexp }, { subject: regexp }],
     })
@@ -225,8 +232,7 @@ router.post("/department/:limit/:pageNumber", async (req, res) => {
 
 router.post("all/mytickets/:limit/:pageNumber", async (req, res) => {
   try {
-    let limit = req.params.limit;
-    let pageNumber = req.params.pageNumber;
+    let { limit, pageNumber } = req.params;
     let skippedItems = pageNumber * limit;
     const countResult = await Ticket.find(req.body);
     const result = await Ticket.find(req.body).limit(limit).skip(skippedItems);
