@@ -58,9 +58,10 @@ class UserTickets extends Component {
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
+    const UserId = localStorage.getItem("id");
     await axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/tickets/all/${this.limit}/${this.state.currentPage}`,
+        `${process.env.REACT_APP_BASE_URL}/tickets/all/${UserId}/${this.limit}/${this.state.currentPage}`,
         config
       )
       .then((response) => {
@@ -82,9 +83,11 @@ class UserTickets extends Component {
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
+    const UserId = localStorage.getItem("id");
+
     try {
       let response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/tickets/all/${this.limit}/${currentPage}`,
+        `${process.env.REACT_APP_BASE_URL}/tickets/all/${UserId}/${this.limit}/${currentPage}`,
         config
       );
       let respdata = await response.data;
@@ -121,13 +124,14 @@ class UserTickets extends Component {
     };
     const userid = localStorage.getItem("id");
     const username = localStorage.getItem("username");
+    console.log(username);
     const data = {
       subject: this.state.Subject,
       body: this.state.Body,
       department_name: this.state.Department,
       user: {
         user_id: userid,
-        userName: username,
+        user_name: username,
       },
     };
 

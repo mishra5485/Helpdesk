@@ -47,13 +47,9 @@ class MyTickets extends Component {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
     const userId = localStorage.getItem("id");
-    const data = {
-      assigned: userId,
-    };
     await axios
-      .post(
-        `${process.env.REACT_APP_BASE_URL}/all/mytickets/${this.limit}/${this.state.currentPage}`,
-        data,
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/tickets/employee/all/${userId}/${this.limit}/${this.state.currentPage}`,
         config
       )
       .then((response) => {
@@ -62,7 +58,7 @@ class MyTickets extends Component {
         this.setState({
           pageCount: Math.ceil(total / this.limit),
         });
-        this.setState({ items: response.data.ticket });
+        this.setState({ items: response.data.tickets });
         toast.success("Tickets Fetched Successfully");
       })
       .catch((err) => {
@@ -75,19 +71,17 @@ class MyTickets extends Component {
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
-    const data = {
-      department_name: "L2",
-    };
+    const userId = localStorage.getItem("id");
+
     try {
-      let response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/tickets/department/${this.limit}/${currentPage}`,
-        data,
+      let response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/tickets/employee/all/${userId}/${this.limit}/${currentPage}`,
         config
       );
       let respdata = await response.data;
       console.log(respdata);
       toast.success("Tickets Fetched Successfully");
-      return respdata.ticket;
+      return respdata.tickets;
     } catch (error) {
       console.log(error);
     }
@@ -227,7 +221,7 @@ class MyTickets extends Component {
   render() {
     return (
       <>
-        {/* <Toaster position="top-center" />
+        <Toaster position="top-center" />
         <MDBContainer fluid className="mt-3">
           <Form onSubmit={this.search}>
             <MDBRow
@@ -484,7 +478,7 @@ class MyTickets extends Component {
               </Button>
             </Modal.Footer>
           </Form>
-        </Modal> */}
+        </Modal>
       </>
     );
   }
