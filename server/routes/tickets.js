@@ -62,6 +62,9 @@ router.get("/all/:id/:limit/:pageNumber", async (req, res) => {
   try {
     let { id, limit, pageNumber } = req.params;
     let skippedItems = pageNumber * limit;
+    const countResult = await Ticket.find({
+      "user.user_id": id,
+    });
     let tickets = await Ticket.find({
       "user.user_id": id,
     })
@@ -71,7 +74,7 @@ router.get("/all/:id/:limit/:pageNumber", async (req, res) => {
         ticketNumber: -1,
       });
 
-    let count = tickets.length;
+    let count = countResult.length;
     res.status(200).send({ tickets: tickets, count: count });
   } catch (ex) {
     res.status(404).send("Unable to fetch tickets");
@@ -293,62 +296,5 @@ router.post("/update/:id", async (req, res) => {
     res.status(500).send("Failed to update employee details error");
   }
 });
-
-// router.post("/search", async (req, res) => {
-//   const { status, department_name, keyword } = req.body;
-//   console.log(status, department_name);
-//   const filter = {};
-//   if (status) filter.status = status;
-//   if (department_name) filter.department_name = department_name;
-
-//   // if (!department_name && !status) {
-//   // let limit = req.params.limit;
-//   // let pageNumber = req.params.pageNumber;
-//   // let skippedItems = pageNumber * limit;
-//   const regexp = new RegExp(keyword, "i");
-//   const countResult = await Ticket.find({
-//     $and: [filter],
-//     $or: [{ ticketNumber: regexp }, { subject: regexp }],
-//   });
-//   console.log(countResult);
-//   const result = await Ticket.find({
-//     $and: [filter],
-//     $or: [{ ticketNumber: regexp }, { subject: regexp }],
-//   });
-//   // .limit(limit)
-//   // .skip(skippedItems);
-//   let count = countResult.length;
-//   res.status(200).send({ ticket: result, count });
-//   // } else {
-//   //   const tickets = await Ticket.find({
-//   //     $and: [filter],
-//   //     $or: [{ ticketNumber: regexp }, { subject: regexp }],
-//   //   });
-//   //   console.log(tickets);
-//   // }
-// });
-
-// router.post("/search/:limit/:pageNumber", async (req, res) => {
-//   try {
-//     let { keyword } = req.body;
-//     let limit = req.params.limit;
-//     let pageNumber = req.params.pageNumber;
-//     let skippedItems = pageNumber * limit;
-//     const regexp = new RegExp(keyword, "i");
-//     const countResult = await Ticket.find({
-//       $or: [{ ticketNumber: regexp }, { subject: regexp }],
-//     });
-//     console.log(countResult);
-//     const result = await Ticket.find({
-//       $or: [{ ticketNumber: regexp }, { subject: regexp }],
-//     })
-//       .limit(limit)
-//       .skip(skippedItems);
-//     let count = countResult.length;
-//     res.status(200).send({ ticket: result, count });
-//   } catch (ex) {
-//     res.status(500).send("Failed to search");
-//   }
-// });
 
 module.exports = router;
