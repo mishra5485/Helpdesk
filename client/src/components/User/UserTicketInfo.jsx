@@ -64,7 +64,6 @@ class UserTicketInfo extends Component {
           resmsg: resp.data.comments,
           priority: resp.data.priority,
         });
-        toast.success("Ticket Fetched Successfully ");
       } else {
         if (resp.status === 404) {
           toast.error(resp.data);

@@ -10,6 +10,7 @@ import {
   MDBCol,
   MDBInputGroup,
   MDBBtn,
+  MDBCheckbox,
 } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -30,6 +31,7 @@ class MyTickets extends Component {
     searchPagination: false,
     searchPageCount: 0,
     SearchcurrentPage: 0,
+    department_list: [],
     Subject: "",
     Body: "",
     Department: "",
@@ -39,6 +41,7 @@ class MyTickets extends Component {
 
   componentDidMount() {
     this.getData();
+    this.getDepartments();
   }
 
   getData = async () => {
@@ -60,6 +63,17 @@ class MyTickets extends Component {
         });
         this.setState({ items: response.data.tickets });
         toast.success("Tickets Fetched Successfully");
+      })
+      .catch((err) => {
+        toast.error(err.response.data);
+      });
+  };
+
+  getDepartments = async () => {
+    await axios
+      .get(`${process.env.REACT_APP_BASE_URL}/departments/getdepartment`)
+      .then((response) => {
+        this.setState({ department_list: response.data });
       })
       .catch((err) => {
         toast.error(err.response.data);
@@ -454,10 +468,13 @@ class MyTickets extends Component {
                     this.setState({ Department: e.target.value })
                   }
                 >
-                  <option>please select Department</option>
-                  <option value="L1">L1</option>
-                  <option value="L2">L2</option>
-                  <option value="L3">L3</option>
+                  {this.state.department_list.map((elem, key) => {
+                    return (
+                      <option key={key} value={elem}>
+                        {elem}
+                      </option>
+                    );
+                  })}
                 </Form.Control>
               </FloatingLabel>
             </Modal.Body>
@@ -474,7 +491,7 @@ class MyTickets extends Component {
                 type="button"
                 onClick={this.handleSubmit}
               >
-                Save Changes
+                Submit
               </Button>
             </Modal.Footer>
           </Form>

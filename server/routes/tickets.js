@@ -191,7 +191,6 @@ router.post("/search/:limit/:pageNumber", async (req, res) => {
       $and: [filter],
       $or: [{ ticketNumber: regexp }, { subject: regexp }],
     });
-    console.log(countResult);
     const result = await Ticket.find({
       "user.user_id": id,
       $and: [filter],

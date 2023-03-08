@@ -29,15 +29,15 @@ import EmployeeDashboard from "./components/Employee/EmployeeDashboard";
 import Allticketsinfo from "./components/Employee/Allticketsinfo";
 
 export default class App extends Component {
+  state = {
+    token: localStorage.getItem("token"),
+    access_level: localStorage.getItem("access"),
+  };
+
   render() {
     return (
       <Router>
         <Routes>
-          <Route exact path="/" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/reset/:token" element={<Reset />} />
-          <Route path="*" element={<PageNotFound />} />
-
           <Route path="/user" element={<UserDashBoard />}>
             <Route path="usertickets" element={<UserTickets />} />
             <Route path="ticketinfo/:id" element={<UserTicketInfo />} />
@@ -65,6 +65,11 @@ export default class App extends Component {
             />
             <Route path="profile" element={<EmployeeProfile />} />
           </Route>
+
+          <Route exact path="/" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/reset/:token" element={<Reset />} />
+          <Route path="*" element={<PageNotFound />} />
         </Routes>
       </Router>
     );
