@@ -176,10 +176,6 @@ router.post("/comment", upload.single("avatar"), async (req, res) => {
 
 router.post("/search/:limit/:pageNumber", async (req, res) => {
   try {
-    // let tickets = await Ticket.find({
-    //   "user.user_id": id,
-    // });
-
     const { status, department_name, keyword, id } = req.body;
     const filter = {};
     if (status) filter.status = status;
