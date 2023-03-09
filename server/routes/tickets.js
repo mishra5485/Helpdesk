@@ -13,7 +13,7 @@ const { v4: uuidv4 } = require("uuid");
 const upload = require("../middleware/multer");
 const getTimestamp = require("../common/utils");
 
-router.post("/create-ticket", async (req, res) => {
+router.post("/create-ticket", auth, async (req, res) => {
   const response = await validate(req.body);
   if (response.error) {
     return res.status(400).send(response.errorMessage);
@@ -58,7 +58,7 @@ router.get("/all/:limit/:pageNumber", auth, async (req, res) => {
   }
 });
 
-router.get("/all/:id/:limit/:pageNumber", async (req, res) => {
+router.get("/all/:id/:limit/:pageNumber", auth, async (req, res) => {
   try {
     let { id, limit, pageNumber } = req.params;
     let skippedItems = pageNumber * limit;
@@ -81,7 +81,7 @@ router.get("/all/:id/:limit/:pageNumber", async (req, res) => {
   }
 });
 
-router.get("/employee/all/:id/:limit/:pageNumber", async (req, res) => {
+router.get("/employee/all/:id/:limit/:pageNumber", auth, async (req, res) => {
   try {
     let { id, limit, pageNumber } = req.params;
     let skippedItems = pageNumber * limit;
@@ -115,7 +115,7 @@ router.get("/all", auth, async (req, res) => {
   res.send(tickets);
 });
 
-router.post("/comment", upload.single("avatar"), async (req, res) => {
+router.post("/comment", auth, upload.single("avatar"), async (req, res) => {
   const { type } = req.body;
 
   if (type === "text") {
@@ -174,7 +174,7 @@ router.post("/comment", upload.single("avatar"), async (req, res) => {
   }
 });
 
-router.post("/search/:limit/:pageNumber", async (req, res) => {
+router.post("/search/:limit/:pageNumber", auth, async (req, res) => {
   try {
     const { status, department_name, keyword, id } = req.body;
     const filter = {};
@@ -225,7 +225,7 @@ router.post("/search/:limit/:pageNumber", async (req, res) => {
   }
 });
 
-router.post("/department/:limit/:pageNumber", async (req, res) => {
+router.post("/department/:limit/:pageNumber", auth, async (req, res) => {
   try {
     let limit = req.params.limit;
     let pageNumber = req.params.pageNumber;
@@ -245,7 +245,7 @@ router.post("/department/:limit/:pageNumber", async (req, res) => {
   }
 });
 
-router.post("all/mytickets/:limit/:pageNumber", async (req, res) => {
+router.post("all/mytickets/:limit/:pageNumber", auth, async (req, res) => {
   try {
     let { limit, pageNumber } = req.params;
     let skippedItems = pageNumber * limit;
@@ -258,7 +258,7 @@ router.post("all/mytickets/:limit/:pageNumber", async (req, res) => {
   }
 });
 
-router.post("/update/:id", async (req, res) => {
+router.post("/update/:id", auth, async (req, res) => {
   try {
     const { id } = req.params;
     const response = await validateUpdate(req.body);
@@ -278,7 +278,7 @@ router.post("/update/:id", async (req, res) => {
   }
 });
 
-router.post("/claim/:id", async (req, res) => {
+router.post("/claim/:id", auth, async (req, res) => {
   try {
     const response = await validateAssign(req.body);
     if (response.error) {
@@ -298,7 +298,7 @@ router.post("/claim/:id", async (req, res) => {
   }
 });
 
-router.post("/update/:id", async (req, res) => {
+router.post("/update/:id", auth, async (req, res) => {
   try {
     const { id } = req.params;
     const response = await validateUpdate(req.body);

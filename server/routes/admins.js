@@ -6,7 +6,8 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
-const generateAuthToken = require("../common/auth");
+const generateAuthToken = require("../middleware/auth");
+const auth = require("../common/auth");
 
 router.post("/register", async (req, res) => {
   const response = await validateAdmin(req.body);
@@ -44,7 +45,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.get("/admin/profile/:id", async (req, res) => {
+router.get("/admin/profile/:id", auth, async (req, res) => {
   try {
     const { id } = req.params;
     const admin = await CommonUser.find({
