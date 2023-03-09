@@ -255,7 +255,7 @@ class UserTicketInfo extends Component {
                   {this.state.resmsg.map((elem, key) => {
                     return (
                       <>
-                        {elem.createdBy === "Employee" ? (
+                        {elem.createdBy === "employee" ? (
                           <>
                             <div className="d-flex justify-content-between">
                               <p className="small mb-1">{elem.userName}</p>
@@ -269,9 +269,16 @@ class UserTicketInfo extends Component {
 
                               <div>
                                 {elem.type === "text" ? (
-                                  <p className="small p-2 me-3 mb-3 text-white rounded-3 bg-info">
-                                    {elem.content}
-                                  </p>
+                                  <>
+                                    <p className="small p-2 me-3 mb-3 text-white rounded-3 bg-info">
+                                      {elem.content}
+                                    </p>
+                                    <p className="small mb-1 text-muted">
+                                      {moment
+                                        .unix(elem.createdAt)
+                                        .format("MMMM Do YYYY")}
+                                    </p>
+                                  </>
                                 ) : (
                                   <MDBCard style={{ width: "250px" }}>
                                     <ModalImage

@@ -1,32 +1,29 @@
 const mongoose = require("mongoose");
+var moment = require("moment");
 
 const departmentSchema = new mongoose.Schema({
   _id: {
     type: String,
     required: true,
   },
-  name: {
-    type: String,
-    required: true,
-  },
-
-  departmentid: {
+  DepartmentNumber: {
     type: String,
     unique: true,
     default: 100,
     index: true,
   },
-  
+  name: {
+    type: String,
+    required: true,
+  },
   description: {
     type: String,
     required: true,
   },
-  // employees: [
-  //   {
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref: "Employee",
-  //   },
-  // ],
+  createdDate: {
+    type: String,
+    default: moment().format("MMM Do YYYY"),
+  },
 });
 
 const Department = mongoose.model("Department", departmentSchema);

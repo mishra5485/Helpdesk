@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import ReactPaginate from "react-paginate";
-import Nav from "./Nav";
 import {
   MDBTable,
   MDBTableHead,
@@ -14,13 +13,11 @@ import {
 } from "mdb-react-ui-kit";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
-import { Link } from "react-router-dom";
 import { Button, Modal } from "react-bootstrap";
 import axios from "axios";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import toast, { Toaster } from "react-hot-toast";
-import moment from "moment";
 import AddIcon from "@mui/icons-material/Add";
 
 class Departments extends Component {
@@ -40,7 +37,6 @@ class Departments extends Component {
     bdcolor: "",
     search: "",
     searchPagination: false,
-
   };
 
   limit = 5;
@@ -57,28 +53,34 @@ class Departments extends Component {
     this.setState({ delModal: true });
   };
 
+  handleDelClose = (e) => {
+    e.preventDefault();
+    this.setState({ delModal: false });
+  };
+
   componentDidMount() {
     this.getData();
   }
 
   getData = async () => {
-    // const Usertoken = localStorage.getItem("token");
-    // const config = {
-    //   headers: { Authorization: `Bearer ${Usertoken}` },
-    // };
+    const Usertoken = localStorage.getItem("token");
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
     await axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/employees/emp/all/${this.limit}/${this.state.currentPage}`,
+        `${process.env.REACT_APP_BASE_URL}/departments/all/department/${this.limit}/${this.state.currentPage}`,
         config
       )
       .then((response) => {
+        console.log(response.data);
         if (response.status === 200) {
           let total = response.data.count;
           this.setState({
             pageCount: Math.ceil(total / this.limit),
           });
-          this.setState({ items: response.data.employees });
-          toast.success("Employee Fetched Successfully");
+          this.setState({ items: response.data.departments });
+          toast.success("Department Fetched Successfully");
         } else {
           if (response.status === 404) {
             toast.error(response.data);
@@ -97,12 +99,12 @@ class Departments extends Component {
     };
     try {
       let response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/employees/emp/all/${this.limit}/${currentPage}`,
+        `${process.env.REACT_APP_BASE_URL}/departments/all/department/${this.limit}/${currentPage}`,
         config
       );
       let respdata = await response.data;
-      toast.success("Employee Fetched Successfully");
-      return respdata.employees;
+      toast.success("Department Fetched Successfully");
+      return respdata.departments;
     } catch (error) {
       console.log(error);
     }
@@ -118,29 +120,25 @@ class Departments extends Component {
   handleSubmit = async (e) => {
     e.preventDefault();
     this.handleClose();
-    // const Usertoken = localStorage.getItem("token");
-    // console.log("hello")
+    const Usertoken = localStorage.getItem("token");
 
-    // const config = {
-    //   headers: { Authorization: `Bearer ${Usertoken}` },
-    // };
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
     const data = {
       name: this.state.name,
       description: this.state.description,
-      // employees :this.state.employees
-      // email: this.state.email,
     };
 
     try {
       await axios
         .post(
-          `${process.env.REACT_APP_BASE_URL}/employees/register`,
+          `${process.env.REACT_APP_BASE_URL}/departments/createdepartment`,
           data,
           config
         )
         .then((response) => {
           if (response.status === 200) {
-            toast.success("department Created SuccessFully");
             this.getData();
           }
         });
@@ -150,78 +148,10 @@ class Departments extends Component {
     this.setState({ modal: false });
   };
 
-  search = async (e) => {
-    e.preventDefault();
-    this.setState({ searchPagination: true });
-    const Usertoken = localStorage.getItem("token");
-
-    const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
-    };
-
-    const data = {
-      keyword: this.state.search,
-    };
-
-    await axios
-      .post(
-        `${process.env.REACT_APP_BASE_URL}/employees/search/${this.limit}/${this.state.SearchcurrentPage}`,
-        data,
-        config
-      )
-      .then((response) => {
-        console.log(response);
-        let total = response.data.count;
-        this.setState({
-          searchPageCount: Math.ceil(total / this.limit),
-        });
-        this.setState({ items: response.data.employees });
-        toast.success("Tickets Fetched Successfully");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  fetchSearchData = async (currentPage) => {
-    const Usertoken = localStorage.getItem("token");
-    const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
-    };
-    const data = {
-      keyword: this.state.search,
-    };
-    try {
-      let response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/employees/search/${this.limit}/${currentPage}`,
-        data,
-        config
-      );
-      let respdata = await response.data;
-      toast.success("Tickets Fetched Successfully");
-      return respdata.employees;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  SearchhandlePageClick = async (data) => {
-    let currentPage = data.selected;
-    this.setState({ SearchcurrentPage: currentPage });
-    const ApiData = await this.fetchSearchData(currentPage);
-    this.setState({ items: ApiData });
-  };
-
   reset = async (e) => {
     e.preventDefault();
-    this.setState({ searchPagination: false });
-    toast.success("Resetting search");
+    this.setState({ searchPagination: false, search: "" });
     this.getData();
-  };
-
-  handleDelClose = (e) => {
-    e.preventDefault();
-    this.setState({ delModal: false });
   };
 
   deleteEmp = async (empid) => {
@@ -245,13 +175,66 @@ class Departments extends Component {
     }
   };
 
-  reset = async (e) => {
+  search = async (e) => {
     e.preventDefault();
-    this.setState({ searchPagination: false });
-    this.setState({ search: "" });
-    toast.success("Resetting search");
+    this.setState({ searchPagination: true });
+    const Usertoken = localStorage.getItem("token");
 
-    this.getData();
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+
+    const data = {
+      keyword: this.state.search,
+    };
+
+    await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/departments/search/${this.limit}/${this.state.SearchcurrentPage}`,
+        data,
+        config
+      )
+      .then((response) => {
+        console.log(response);
+        let total = response.data.count;
+        this.setState({
+          searchPageCount: Math.ceil(total / this.limit),
+        });
+        this.setState({ items: response.data.department });
+        toast.success("Tickets Fetched Successfully");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  fetchSearchData = async (currentPage) => {
+    const Usertoken = localStorage.getItem("token");
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+    const data = {
+      keyword: this.state.search,
+    };
+    try {
+      let response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/departments/search/${this.limit}/${currentPage}`,
+        data,
+        config
+      );
+      let respdata = await response.data;
+      toast.success("Tickets Fetched Successfully");
+      return respdata.department;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  SearchhandlePageClick = async (data) => {
+    let currentPage = data.selected;
+    this.setState({ SearchcurrentPage: currentPage });
+    const ApiData = await this.fetchSearchData(currentPage);
+    this.setState({ items: ApiData });
   };
 
   render() {
@@ -314,11 +297,10 @@ class Departments extends Component {
             <MDBTable bordered className="mt-5">
               <MDBTableHead className="table-dark">
                 <tr>
-                  <th scope="col">Employee.Id</th>
-                  <th scope="col">Employee Name</th>
-                  <th scope="col">Email-id</th>
-                  <th scope="col">Department</th>
-                  <th scope="col">CreatedOn</th>
+                  <th scope="col">Department Number</th>
+                  <th scope="col">Department Name</th>
+                  <th scope="col">Description</th>
+                  <th scope="col">Created On</th>
                   <th scope="col">Action</th>
                 </tr>
               </MDBTableHead>
@@ -326,25 +308,19 @@ class Departments extends Component {
                 {this.state.items.map((item, key) => {
                   return (
                     <tr key={key}>
-                      <td>{item.employeeNumber}</td>
+                      <td>{item.DepartmentNumber}</td>
                       <td>{item.name}</td>
-                      <td>{item.email}</td>
-                      <td>{item.department_name}</td>
-                      <td>
-                        {moment.unix(item.createdAt).format("MMMM Do YYYY")}
-                      </td>
+                      <td>{item.description}</td>
+                      <td>{item.createdDate}</td>
 
                       <td>
-                        <Link to={`/admin/employeeinfo/${item._id}`}>
-                          <button
-                            className="btn btn-success "
-                            style={{ marginRight: "8px" }}
-                          >
-                            <RemoveRedEyeOutlinedIcon />
-                          </button>
-                        </Link>
                         <button
-                          onClick={() => this.deleteEmp(item._id)}
+                          className="btn btn-success "
+                          style={{ marginRight: "8px" }}
+                        >
+                          <RemoveRedEyeOutlinedIcon />
+                        </button>
+                        <button
                           className="btn btn-danger "
                           style={{ marginRight: "8px" }}
                         >

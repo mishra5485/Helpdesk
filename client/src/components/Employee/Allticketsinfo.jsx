@@ -289,7 +289,7 @@ class Allticketsinfo extends Component {
                   {this.state.resmsg.map((elem, key) => {
                     return (
                       <>
-                        {elem.createdBy === "Employee" ? (
+                        {elem.createdBy === "user" ? (
                           <>
                             <div className="d-flex justify-content-between">
                               <p className="small mb-1">{elem.userName}</p>

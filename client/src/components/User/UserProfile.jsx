@@ -24,7 +24,6 @@ import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Button, Modal } from "react-bootstrap";
-
 import "../profile.css";
 export default class UserProfile extends Component {
   state = {
@@ -42,6 +41,7 @@ export default class UserProfile extends Component {
     forget: false,
     file: null,
     profilepic: "",
+    ssologin: false,
   };
 
   componentDidMount() {
@@ -69,6 +69,7 @@ export default class UserProfile extends Component {
           email: resp.data.email,
           joiningdate: resp.data.createdAt,
           profilepic: resp.data.picture,
+          ssologin: resp.data.ssoLogin,
         });
         toast.success("Employee Details Fetched Successfully ");
       } else {
@@ -158,7 +159,6 @@ export default class UserProfile extends Component {
       })
       .catch((err) => {
         console.log(err);
-        // toast.error(err.response.data);
       });
   };
 
@@ -191,57 +191,77 @@ export default class UserProfile extends Component {
                       }}
                     >
                       <MDBContainer>
-                        <MDBCardImage
-                          alt="Avatar"
-                          src={`http://localhost:5000/uploads/${this.state.profilepic}`}
-                          className="my-5"
-                          style={{ width: "80px" }}
-                          fluid
-                        />
+                        {this.state.profilepic ? (
+                          <MDBCardImage
+                            alt="Avatar"
+                            src={this.state.profilepic}
+                            className="my-5"
+                            style={{ width: "150px" }}
+                            fluid
+                          />
+                        ) : this.state.profilepic === null ? (
+                          <MDBCardImage
+                            alt="Avatar"
+                            src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+                            className="my-5"
+                            style={{ width: "80px" }}
+                            fluid
+                          />
+                        ) : (
+                          <MDBCardImage
+                            alt="Avatar"
+                            src={`http://localhost:5000/uploads/${this.state.profilepic}`}
+                            className="my-5"
+                            style={{ width: "80px" }}
+                            fluid
+                          />
+                        )}
 
                         <MDBTypography tag="h5">
                           {this.state.name}
                         </MDBTypography>
-                        <MDBContainer>
-                          <form onSubmit={this.updateProfile}>
-                            <MDBRow
-                              style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                marginBottom: "10px",
-                              }}
-                            >
-                              <MDBCol size="8">
-                                <input
-                                  className="form-control"
-                                  type="file"
-                                  onChange={(e) =>
-                                    this.setState({
-                                      file: e.target.files[0],
-                                    })
-                                  }
-                                />
-                              </MDBCol>
-                            </MDBRow>
-                            <MDBRow
-                              style={{
-                                display: "flex",
-                                justifyContent: "center",
-                              }}
-                            >
-                              <MDBCol size="8">
-                                <MDBBtn
-                                  color="primary"
-                                  style={{
-                                    paddingTop: ".55rem",
-                                  }}
-                                >
-                                  Upload
-                                </MDBBtn>
-                              </MDBCol>
-                            </MDBRow>
-                          </form>
-                        </MDBContainer>
+                        {this.state.ssologin === false ? (
+                          <MDBContainer>
+                            <form onSubmit={this.updateProfile}>
+                              <MDBRow
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  marginBottom: "10px",
+                                }}
+                              >
+                                <MDBCol size="8">
+                                  <input
+                                    className="form-control"
+                                    type="file"
+                                    onChange={(e) =>
+                                      this.setState({
+                                        file: e.target.files[0],
+                                      })
+                                    }
+                                  />
+                                </MDBCol>
+                              </MDBRow>
+                              <MDBRow
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <MDBCol size="8">
+                                  <MDBBtn
+                                    color="primary"
+                                    style={{
+                                      paddingTop: ".55rem",
+                                    }}
+                                  >
+                                    Upload
+                                  </MDBBtn>
+                                </MDBCol>
+                              </MDBRow>
+                            </form>
+                          </MDBContainer>
+                        ) : null}
                       </MDBContainer>
                     </MDBCol>
 
@@ -277,17 +297,19 @@ export default class UserProfile extends Component {
                         </MDBRow>
 
                         <hr className="mt-0 mb-4" />
-                        <MDBRow className="pt-1">
-                          <MDBCol size="6" className="mb-3">
-                            <button
-                              type="button"
-                              class="btn btn-primary"
-                              onClick={this.handleShow}
-                            >
-                              Reset Password
-                            </button>
-                          </MDBCol>
-                        </MDBRow>
+                        {this.state.ssologin === false ? (
+                          <MDBRow className="pt-1">
+                            <MDBCol size="6" className="mb-3">
+                              <button
+                                type="button"
+                                class="btn btn-primary"
+                                onClick={this.handleShow}
+                              >
+                                Reset Password
+                              </button>
+                            </MDBCol>
+                          </MDBRow>
+                        ) : null}
 
                         <div className="d-flex justify-content-start mt-5">
                           <a href="#!">

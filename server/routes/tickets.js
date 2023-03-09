@@ -115,7 +115,7 @@ router.get("/all", auth, async (req, res) => {
   res.send(tickets);
 });
 
-router.post("/comment", auth, upload.single("avatar"), async (req, res) => {
+router.post("/comment", upload.single("avatar"), async (req, res) => {
   const { type } = req.body;
 
   if (type === "text") {
