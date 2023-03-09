@@ -6,9 +6,10 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
-const generateAuthToken = require("../common/utils");
+const generateAuthToken = require("../common/auth");
+const verifyGoogleJWT = require("../common/utils");
 // const verifyGoogleJWT = require("../common/utils");
-const jwt_decode =require("jwt-decode")
+const jwt_decode = require("jwt-decode");
 
 router.post("/register", async (req, res) => {
   const response = await validateEndUser(req.body);
@@ -25,13 +26,14 @@ router.post("/register", async (req, res) => {
     return res.status(403).send("Already registered. Please login in!");
   } else {
     let createdAt = getTimestamp();
+    let access_level = "user";
     user = new CommonUser({
       _id,
       name,
       email,
       password,
       createdAt,
-      access_level: "user",
+      access_level,
     });
     bcrypt.hash(password, saltRounds, async function (err, hash) {
       if (err) console.log(err);
@@ -39,22 +41,19 @@ router.post("/register", async (req, res) => {
       await user.save();
     });
 
-    const token = generateAuthToken({ email });
+    const payload = { email, access_level };
+    const token = generateAuthToken({ payload });
     res.status(200).header("x-auth-token", token).send(email.toLowerCase());
   }
 });
 //=============================================================================
 router.post("/registerwithgoogle", async (req, res) => {
   const { token } = req.body;
-  let  Payload = await jwt_decode(token);
-   console.log(Payload)
+  let Payload = await jwt_decode(token);
   const _id = uuidv4();
-  console.log(_id)
-  let {  name,email, picture } = Payload;
-  console.log()
- 
+  let { name, email, picture } = Payload;
 
-  let user = await CommonUser.findOne({  email: email, status:1 });
+  let user = await CommonUser.findOne({ email: email, status: 1 });
   if (user) {
     return res.status(403).send("Already registered. Please login in!");
   } else {
@@ -76,7 +75,7 @@ router.post("/registerwithgoogle", async (req, res) => {
 });
 
 // =================================================================================
-router.get("/user/profile/:id", async (req, res) => {
+router.get("/user/profile/:id", auth, async (req, res) => {
   try {
     const { id } = req.params;
     const user = await CommonUser.findById(id);

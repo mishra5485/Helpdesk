@@ -64,7 +64,6 @@ class UserTicketInfo extends Component {
           resmsg: resp.data.comments,
           priority: resp.data.priority,
         });
-        toast.success("Ticket Fetched Successfully ");
       } else {
         if (resp.status === 404) {
           toast.error(resp.data);
@@ -217,7 +216,7 @@ class UserTicketInfo extends Component {
                       <MDBCol size="6">
                         <MDBRow className="mt-3">
                           <MDBCol size="3" style={{ fontWeight: "bold" }}>
-                            UserName:
+                            Created By:
                           </MDBCol>
                           <MDBCol size="6">
                             {localStorage.getItem("username")}

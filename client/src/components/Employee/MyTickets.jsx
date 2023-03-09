@@ -10,6 +10,7 @@ import {
   MDBCol,
   MDBInputGroup,
   MDBBtn,
+  MDBCheckbox,
 } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -30,6 +31,7 @@ class MyTickets extends Component {
     searchPagination: false,
     searchPageCount: 0,
     SearchcurrentPage: 0,
+    department_list: [],
     Subject: "",
     Body: "",
     Department: "",
@@ -39,6 +41,7 @@ class MyTickets extends Component {
 
   componentDidMount() {
     this.getData();
+    this.getDepartments();
   }
 
   getData = async () => {
@@ -47,13 +50,9 @@ class MyTickets extends Component {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
     const userId = localStorage.getItem("id");
-    const data = {
-      assigned: userId,
-    };
     await axios
-      .post(
-        `${process.env.REACT_APP_BASE_URL}/all/mytickets/${this.limit}/${this.state.currentPage}`,
-        data,
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/tickets/employee/all/${userId}/${this.limit}/${this.state.currentPage}`,
         config
       )
       .then((response) => {
@@ -62,8 +61,19 @@ class MyTickets extends Component {
         this.setState({
           pageCount: Math.ceil(total / this.limit),
         });
-        this.setState({ items: response.data.ticket });
+        this.setState({ items: response.data.tickets });
         toast.success("Tickets Fetched Successfully");
+      })
+      .catch((err) => {
+        toast.error(err.response.data);
+      });
+  };
+
+  getDepartments = async () => {
+    await axios
+      .get(`${process.env.REACT_APP_BASE_URL}/departments/getdepartment`)
+      .then((response) => {
+        this.setState({ department_list: response.data });
       })
       .catch((err) => {
         toast.error(err.response.data);
@@ -75,19 +85,17 @@ class MyTickets extends Component {
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
-    const data = {
-      department_name: "L2",
-    };
+    const userId = localStorage.getItem("id");
+
     try {
-      let response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/tickets/department/${this.limit}/${currentPage}`,
-        data,
+      let response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/tickets/employee/all/${userId}/${this.limit}/${currentPage}`,
         config
       );
       let respdata = await response.data;
       console.log(respdata);
       toast.success("Tickets Fetched Successfully");
-      return respdata.ticket;
+      return respdata.tickets;
     } catch (error) {
       console.log(error);
     }
@@ -178,8 +186,10 @@ class MyTickets extends Component {
       subject: this.state.Subject,
       body: this.state.Body,
       department_name: this.state.Department,
-      user_id: userid,
-      user_name: username,
+      user: {
+        user_id: userid,
+        userName: username,
+      },
     };
 
     try {
@@ -225,7 +235,7 @@ class MyTickets extends Component {
   render() {
     return (
       <>
-        {/* <Toaster position="top-center" />
+        <Toaster position="top-center" />
         <MDBContainer fluid className="mt-3">
           <Form onSubmit={this.search}>
             <MDBRow
@@ -458,10 +468,13 @@ class MyTickets extends Component {
                     this.setState({ Department: e.target.value })
                   }
                 >
-                  <option>please select Department</option>
-                  <option value="L1">L1</option>
-                  <option value="L2">L2</option>
-                  <option value="L3">L3</option>
+                  {this.state.department_list.map((elem, key) => {
+                    return (
+                      <option key={key} value={elem}>
+                        {elem}
+                      </option>
+                    );
+                  })}
                 </Form.Control>
               </FloatingLabel>
             </Modal.Body>
@@ -478,11 +491,11 @@ class MyTickets extends Component {
                 type="button"
                 onClick={this.handleSubmit}
               >
-                Save Changes
+                Submit
               </Button>
             </Modal.Footer>
           </Form>
-        </Modal> */}
+        </Modal>
       </>
     );
   }

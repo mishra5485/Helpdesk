@@ -68,31 +68,41 @@ class Departments extends Component {
     // };
     await axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/departments/getalldepartment`,
-        // config
+        `${process.env.REACT_APP_BASE_URL}/employees/emp/all/${this.limit}/${this.state.currentPage}`,
+        config
       )
       .then((response) => {
-        console.log(response)
-        this.setState({items:response.data})
+        if (response.status === 200) {
+          let total = response.data.count;
+          this.setState({
+            pageCount: Math.ceil(total / this.limit),
+          });
+          this.setState({ items: response.data.employees });
+          toast.success("Employee Fetched Successfully");
+        } else {
+          if (response.status === 404) {
+            toast.error(response.data);
+          }
+        }
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
-    fetchData = async (currentPage) => {
-    // const Usertoken = localStorage.getItem("token");
-    // const config = {
-    //   headers: { Authorization: `Bearer ${Usertoken}` },
-    // };
+  fetchData = async (currentPage) => {
+    const Usertoken = localStorage.getItem("token");
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
     try {
       let response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/departments/getalldepartment/${this.limit}/${currentPage}`,
-        // config
+        `${process.env.REACT_APP_BASE_URL}/employees/emp/all/${this.limit}/${currentPage}`,
+        config
       );
       let respdata = await response.data;
-      toast.success("department Fetched Successfully");
-      return respdata.Departments.reverse();
+      toast.success("Employee Fetched Successfully");
+      return respdata.employees;
     } catch (error) {
       console.log(error);
     }
@@ -105,8 +115,6 @@ class Departments extends Component {
     this.setState({ items: ApiData });
   };
 
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   handleSubmit = async (e) => {
     e.preventDefault();
     this.handleClose();
@@ -122,18 +130,15 @@ class Departments extends Component {
       // employees :this.state.employees
       // email: this.state.email,
     };
-    console.log(data)
 
     try {
       await axios
         .post(
-          // `${process.env.REACT_APP_BASE_URL}/departments/createdepartment`,
-          "http://localhost:5000/departments/createdepartment",
+          `${process.env.REACT_APP_BASE_URL}/employees/register`,
           data,
-          // config
+          config
         )
         .then((response) => {
-          console.log(response)
           if (response.status === 200) {
             toast.success("department Created SuccessFully");
             this.getData();
@@ -144,7 +149,6 @@ class Departments extends Component {
     }
     this.setState({ modal: false });
   };
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
   search = async (e) => {
     e.preventDefault();
@@ -310,22 +314,25 @@ class Departments extends Component {
             <MDBTable bordered className="mt-5">
               <MDBTableHead className="table-dark">
                 <tr>
-                <th scope="col">Department.id</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Description</th>
+                  <th scope="col">Employee.Id</th>
+                  <th scope="col">Employee Name</th>
+                  <th scope="col">Email-id</th>
+                  <th scope="col">Department</th>
+                  <th scope="col">CreatedOn</th>
                   <th scope="col">Action</th>
-                  {/*<th scope="col">Email-id</th>
-                 <th scope="col">CreatedOn</th>*/} 
-            </tr>
+                </tr>
               </MDBTableHead>
               <MDBTableBody>
                 {this.state.items.map((item, key) => {
                   return (
                     <tr key={key}>
-                    <td>{item.departmentid}</td>
+                      <td>{item.employeeNumber}</td>
                       <td>{item.name}</td>
-                      <td>{item.description}</td>
-                      
+                      <td>{item.email}</td>
+                      <td>{item.department_name}</td>
+                      <td>
+                        {moment.unix(item.createdAt).format("MMMM Do YYYY")}
+                      </td>
 
                       <td>
                         <Link to={`/admin/employeeinfo/${item._id}`}>

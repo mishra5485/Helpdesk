@@ -7,13 +7,32 @@ async function validateTicket(ticket) {
     body: Joi.string().min(5).required(),
     user: Joi.object({
       user_id: Joi.string().min(2).max(50).required(),
-      userName: Joi.string().min(2).max(50).required(),
+      user_name: Joi.string().min(2).max(50).required(),
     }).required(),
     department_name: Joi.string().min(2).max(50).required(),
   });
 
   try {
     const value = await schema.validateAsync(ticket);
+    return { error, value };
+  } catch (err) {
+    error = true;
+    let errorMessage = err.details[0].message;
+    return { error, errorMessage };
+  }
+}
+
+async function validateAssign(body) {
+  let error = false;
+  const schema = Joi.object({
+    assigned: Joi.object({
+      user_id: Joi.string().min(2).max(50).required(),
+      user_name: Joi.string().min(2).max(50).required(),
+    }).required(),
+  });
+
+  try {
+    const value = await schema.validateAsync(body);
     return { error, value };
   } catch (err) {
     error = true;

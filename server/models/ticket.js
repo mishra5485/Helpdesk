@@ -74,8 +74,14 @@ const ticketSchema = new mongoose.Schema(
       default: moment().format("MMM Do YYYY"),
     },
     assigned: {
-      type: String,
-      default: null,
+      user_id: {
+        type: String,
+        default: null,
+      },
+      user_name: {
+        type: String,
+        default: null,
+      },
     },
     comments: [commentSchema],
   },

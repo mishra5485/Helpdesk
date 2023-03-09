@@ -33,6 +33,7 @@ class MyTicketsinfo extends Component {
     CreatedAt: "",
     msg: "",
     file: null,
+    department_list: [],
     resmsg: [],
     toggle: true,
   };
@@ -40,7 +41,19 @@ class MyTicketsinfo extends Component {
   componentDidMount() {
     const objid = this.props.params.id;
     this.getdata(objid);
+    this.getDepartments();
   }
+
+  getDepartments = async () => {
+    await axios
+      .get(`${process.env.REACT_APP_BASE_URL}/departments/getdepartment`)
+      .then((response) => {
+        this.setState({ department_list: response.data });
+      })
+      .catch((err) => {
+        toast.error(err.response.data);
+      });
+  };
 
   getdata = async (objid) => {
     const Usertoken = localStorage.getItem("token");
@@ -329,9 +342,13 @@ class MyTicketsinfo extends Component {
                                 })
                               }
                             >
-                              <option> L1</option>
-                              <option>L2</option>
-                              <option>L3</option>
+                              {this.state.department_list.map((elem, key) => {
+                                return (
+                                  <option key={key} value={elem}>
+                                    {elem}
+                                  </option>
+                                );
+                              })}
                             </Form.Select>
                           </MDBCol>
                         </MDBRow>
