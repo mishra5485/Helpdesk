@@ -13,10 +13,9 @@ import { Link } from "react-router-dom";
 import Logo from "../images/logo.svg";
 import toast, { Toaster } from "react-hot-toast";
 import { withRouter } from "./withRouter";
-import UserContext from "../auth/UserContext";
-
+import { AuthProvider } from "../Context/AuthContext";
 class Login extends Component {
-  static contextType = UserContext;
+  static contextType = AuthProvider;
   state = {
     email: "",
     password: "",
@@ -59,6 +58,7 @@ class Login extends Component {
   };
 
   componentDidMount() {
+    console.log(this.context);
     const google = window.google;
     google.accounts.id.initialize({
       client_id:
