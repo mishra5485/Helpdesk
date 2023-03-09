@@ -40,7 +40,6 @@ class Login extends Component {
         console.log(resp);
 
         localStorage.clear();
-
         localStorage.setItem("username", resp.data.username);
         localStorage.setItem("token", resp.data.token);
         localStorage.setItem("access", resp.data.access_level);
@@ -70,6 +69,7 @@ class Login extends Component {
       theme: "outline",
       size: "large",
     });
+    google.accounts.id.prompt();
   }
 
   handlesubmit = async (e) => {

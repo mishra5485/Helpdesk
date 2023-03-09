@@ -10,8 +10,10 @@ import {
   MDBCol,
   MDBInputGroup,
   MDBBtn,
+  MDBCheckbox,
 } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
+import { Button, Modal } from "react-bootstrap";
 import axios from "axios";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import toast, { Toaster } from "react-hot-toast";
@@ -20,6 +22,7 @@ import Form from "react-bootstrap/Form";
 class Alltickets extends Component {
   state = {
     items: [],
+    department_list: [],
     currentpage: 0,
     pageCount: 0,
     bdcolor: "",
@@ -27,12 +30,21 @@ class Alltickets extends Component {
     searchPagination: false,
     searchPageCount: 0,
     SearchcurrentPage: 0,
+    departmentcheck: false,
+    statuscheck: false,
+    filterdepartment: "",
+    filterstatus: "",
+    filtersearch: "",
+    filterPagination: false,
+    filterPageCount: "",
+    filtercurrentPage: "",
   };
 
   limit = 5;
 
   componentDidMount() {
     this.getData();
+    this.getDepartments();
   }
 
   getData = async () => {
@@ -47,7 +59,6 @@ class Alltickets extends Component {
         config
       )
       .then((response) => {
-        console.log(response.data);
         let total = response.data.count;
         this.setState({
           pageCount: Math.ceil(total / this.limit),
@@ -58,6 +69,17 @@ class Alltickets extends Component {
       .catch((err) => {
         console.log(err);
         // toast.error(err.response);
+      });
+  };
+
+  getDepartments = async () => {
+    await axios
+      .get(`${process.env.REACT_APP_BASE_URL}/departments/getdepartment`)
+      .then((response) => {
+        this.setState({ department_list: response.data });
+      })
+      .catch((err) => {
+        toast.error(err.response.data);
       });
   };
 
@@ -129,7 +151,7 @@ class Alltickets extends Component {
     };
     try {
       let response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/employees/search/${this.limit}/${currentPage}`,
+        `${process.env.REACT_APP_BASE_URL}/tickets/search/${this.limit}/${currentPage}`,
         data,
         config
       );
@@ -151,8 +173,81 @@ class Alltickets extends Component {
   reset = async (e) => {
     e.preventDefault();
     this.setState({ searchPagination: false });
-    toast.success("Resetting search");
     this.getData();
+  };
+
+  handleClose = () => {
+    this.setState({ showModal: false });
+  };
+
+  handleShow = () => {
+    this.setState({ showModal: true });
+  };
+
+  handleFilter = async (e) => {
+    e.preventDefault();
+    this.setState({ filterPagination: true });
+
+    const Usertoken = localStorage.getItem("token");
+
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+
+    const data = {
+      status: this.state.filtersearch,
+      department_name: this.state.filterdepartment,
+      keyword: this.state.filterkeyword,
+    };
+
+    await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/tickets/search/${this.limit}/${this.state.SearchcurrentPage}`,
+        data,
+        config
+      )
+      .then((response) => {
+        console.log(response.data);
+        let total = response.data.count;
+        this.setState({
+          filterPageCount: Math.ceil(total / this.limit),
+        });
+        this.setState({ items: response.data.ticket });
+        this.handleClose();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  fetchFilterData = async (currentPage) => {
+    const Usertoken = localStorage.getItem("token");
+    const config = {
+      headers: { Authorization: `Bearer ${Usertoken}` },
+    };
+    const data = {
+      status: this.state.filtersearch,
+      department_name: this.state.filterdepartment,
+      keyword: this.state.filterkeyword,
+    };
+    try {
+      let response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/tickets/search/${this.limit}/${currentPage}`,
+        data,
+        config
+      );
+      let respdata = await response.data;
+      return respdata.ticket;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  FilterhandlePageClick = async (data) => {
+    let currentPage = data.selected;
+    this.setState({ filtercurrentPage: currentPage });
+    const ApiData = await this.fetchFilterData(currentPage);
+    this.setState({ items: ApiData });
   };
 
   render() {
@@ -193,6 +288,15 @@ class Alltickets extends Component {
                     onClick={this.reset}
                   >
                     Reset
+                  </MDBBtn>
+
+                  <MDBBtn
+                    className="me-2"
+                    type="button"
+                    color="info"
+                    onClick={this.handleShow}
+                  >
+                    Filter
                   </MDBBtn>
                 </MDBInputGroup>
               </MDBCol>
@@ -318,6 +422,26 @@ class Alltickets extends Component {
               breakLinkClassName={"page-link"}
               activeClassName={"active"}
             />
+          ) : this.state.filterPagination ? (
+            <ReactPaginate
+              previousLabel={"previous"}
+              nextLabel={"next"}
+              breakLabel={"..."}
+              pageCount={this.state.filterPageCount}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={2}
+              onPageChange={this.FilterhandlePageClick}
+              containerClassName={"pagination justify-content-center"}
+              pageClassName={"page-item"}
+              pageLinkClassName={"page-link"}
+              previousClassName={"page-item"}
+              previousLinkClassName={"page-link"}
+              nextClassName={"page-item"}
+              nextLinkClassName={"page-link"}
+              breakClassName={"page-item"}
+              breakLinkClassName={"page-link"}
+              activeClassName={"active"}
+            />
           ) : (
             <ReactPaginate
               previousLabel={"previous"}
@@ -340,6 +464,94 @@ class Alltickets extends Component {
             />
           )}
         </div>
+
+        <Modal show={this.state.showModal} onHide={this.handleClose}>
+          <Form>
+            <Modal.Header closeButton>
+              <Modal.Title>Filter</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <input
+                className="form-control my-3"
+                placeholder="Search Keyword"
+                type="text"
+                value={this.state.filtersearch}
+                required="true"
+                onChange={(e) =>
+                  this.setState({ filtersearch: e.target.value })
+                }
+              />
+
+              <MDBCheckbox
+                name="flexCheck"
+                value=""
+                id="flexCheckDefault"
+                label="Department"
+                onChange={(e) =>
+                  this.setState({ departmentcheck: e.target.checked })
+                }
+              />
+
+              {this.state.departmentcheck ? (
+                <Form.Select
+                  aria-label="Default select example"
+                  className="my-3"
+                  onChange={(e) =>
+                    this.setState({ filterdepartment: e.target.value })
+                  }
+                >
+                  {this.state.department_list.map((elem, key) => {
+                    return (
+                      <option key={key} value={elem}>
+                        {elem}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+              ) : null}
+
+              <MDBCheckbox
+                name="flexCheck"
+                value=""
+                id="flexCheckDefault"
+                label="Status"
+                onChange={(e) =>
+                  this.setState({ statuscheck: e.target.checked })
+                }
+              />
+              {this.state.statuscheck ? (
+                <Form.Select
+                  aria-label="Default select example"
+                  className="my-3"
+                  onChange={(e) =>
+                    this.setState({ filterstatus: e.target.value })
+                  }
+                >
+                  <option>Open this select menu</option>
+                  <option value="Open">Open</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Resolved">Resolved</option>
+                </Form.Select>
+              ) : null}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                type="button"
+                onClick={this.handleClose}
+              >
+                Close
+              </Button>
+              <Button
+                variant="primary"
+                type="button"
+                onClick={this.handleFilter}
+              >
+                Filter
+              </Button>
+            </Modal.Footer>
+          </Form>
+        </Modal>
       </>
     );
   }
