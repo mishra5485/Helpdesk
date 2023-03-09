@@ -75,7 +75,7 @@ router.post("/registerwithgoogle", async (req, res) => {
 });
 
 // =================================================================================
-router.get("/user/profile/:id", async (req, res) => {
+router.get("/user/profile/:id", auth, async (req, res) => {
   try {
     const { id } = req.params;
     const user = await CommonUser.findById(id);

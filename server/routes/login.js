@@ -129,7 +129,7 @@ router.post("/forgot", (req, res) => {
 });
 
 // Handle the password reset form submission
-router.post("/reset/:token", async (req, res) => {
+router.post("/reset/:token", auth, async (req, res) => {
   try {
     const password = req.body.new_password;
     if (!password) return res.status(401).send("Password is required");

@@ -157,10 +157,31 @@ async function validateResetPassword(body) {
   }
 }
 
+
+async function validatedepartment(body) {
+  let error = false;
+
+  const schema = Joi.object({
+    name: Joi.string().required(),
+    description: Joi.string().required(),
+    departmentid:Joi.string()
+
+  });
+
+  try {
+    const value = await schema.validateAsync(body);
+    return { error, value };
+  } catch (err) {
+    error = true;
+    let errorMessage = err.details[0].message;
+    return { error, errorMessage };
+  }
+}
+
 exports.validate = validateTicket;
 exports.validateMessageType = validateMessageType;
 exports.validateImageType = validateImageType;
 exports.validateUpdate = validateUpdate;
 exports.validateForgotPassword = validateForgotPassword;
 exports.validateResetPassword = validateResetPassword;
-exports.validateAssign = validateAssign;
+exports.validatedepartment =validatedepartment;
