@@ -180,27 +180,46 @@ router.post("/search/:limit/:pageNumber", async (req, res) => {
     const filter = {};
     if (status) filter.status = status;
     if (department_name) filter.department_name = department_name;
-    // if (id) filter.user = { user_id: id };
 
     let limit = req.params.limit;
     let pageNumber = req.params.pageNumber;
     let skippedItems = pageNumber * limit;
     const regexp = new RegExp(keyword, "i");
-    const countResult = await Ticket.find({
-      "user.user_id": id,
-      $and: [filter],
-      $or: [{ ticketNumber: regexp }, { subject: regexp }],
-    });
-    console.log(countResult);
-    const result = await Ticket.find({
-      "user.user_id": id,
-      $and: [filter],
-      $or: [{ ticketNumber: regexp }, { subject: regexp }],
-    })
-      .limit(limit)
-      .skip(skippedItems);
-    let count = countResult.length;
-    res.status(200).send({ ticket: result, count });
+    if (id) {
+      const countResult = await Ticket.find({
+        "user.user_id": id,
+        $and: [filter],
+        $or: [{ ticketNumber: regexp }, { subject: regexp }],
+      });
+      console.log(countResult);
+      const result = await Ticket.find({
+        "user.user_id": id,
+        $and: [filter],
+        $or: [{ ticketNumber: regexp }, { subject: regexp }],
+      })
+        .limit(limit)
+        .skip(skippedItems);
+      let count = countResult.length;
+      res.status(200).send({ ticket: result, count });
+    } else {
+      const countResult = await Ticket.find({
+        // "user.user_id": id,
+        $and: [filter],
+        $or: [{ ticketNumber: regexp }, { subject: regexp }],
+      });
+      console.log(countResult);
+      const result = await Ticket.find({
+        // "user.user_id": id,
+        $and: [filter],
+        $or: [{ ticketNumber: regexp }, { subject: regexp }],
+      })
+        .limit(limit)
+        .skip(skippedItems);
+      let count = countResult.length;
+      res.status(200).send({ ticket: result, count });
+    }
+    // let count = countResult.length;
+    // res.status(200).send({ ticket: result, count });
   } catch (ex) {
     res.status(500).send("Failed to search");
   }
