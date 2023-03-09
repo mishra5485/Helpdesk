@@ -1,8 +1,6 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import React, { Component } from "react";
 import { withRouter } from "./components/withRouter";
-
-import AuthProvider from "./Context/AuthContext";
 
 import Signup from "./components/Signup";
 import Login from "./components/Login";
@@ -32,70 +30,77 @@ import EmployeeDashboard from "./components/Employee/EmployeeDashboard";
 import Allticketsinfo from "./components/Employee/Allticketsinfo";
 
 class App extends Component {
-  static contextType = AuthProvider;
   state = {
     token: localStorage.getItem("token"),
-    access_level: "",
+    access_level: localStorage.getItem("access"),
   };
-
-  // componentDidMount() {
-  //   const localToken = localStorage.getItem("token");
-  //   const access = localStorage.getItem("access");
-
-  //   if (localToken && access === "user") {
-  //     this.props.navigate("/user/usertickets");
-  //     console.log("user");
-  //   } else {
-  //     if (localToken && access === "employee") {
-  //       console.log("employee");
-
-  //       this.props.navigate("/employee/alltickets");
-  //     } else {
-  //       if (localToken && access === "admin") {
-  //         console.log("admin");
-
-  //         this.props.navigate("/admin/tickettable");
-  //       }
-  //     }
-  //   }
-  // }
-
-  componentDidMount() {
-    const { username, picture, departmentname, access, id, token } =
-      this.context;
-
-    if (access === "user" && this.state.token) {
-      console.log("user");
-      this.props.navigate("/user/usertickets");
-    } else {
-      if (access === "employee" && this.state.token) {
-        console.log("employee");
-        this.props.navigate("/employee/alltickets");
-      } else {
-        if (access === "employee" && this.state.token) {
-          console.log("employee");
-          this.props.navigate("/admin/tickettable");
-        }
-      }
-    }
-  }
-
   render() {
+    let routes;
+
+    // if (this.state.access_level === "user" && this.state.token) {
+    //   routes = (
+    //     <Routes>
+    //       <Route path="/user" element={<UserDashBoard />}>
+    //         <Route path="usertickets" element={<UserTickets />} />
+    //         <Route path="ticketinfo/:id" element={<UserTicketInfo />} />
+    //         <Route path="profile" element={<UserProfile />} />
+    //       </Route>
+    //       <Route path="*" element={<PageNotFound />} />
+    //     </Routes>
+    //   );
+    // } else {
+    //   if (this.state.access_level === "employee" && this.state.token) {
+    //     routes = (
+    //       <Routes>
+    //         <Route path="/employee" element={<EmployeeDashboard />}>
+    //           <Route path="alltickets" element={<Alltickets />} />
+    //           <Route path="allticketsinfo/:id" element={<Allticketsinfo />} />
+    //           <Route path="mytickets" element={<MyTickets />} />
+    //           <Route path="myticketsinfo/:id" element={<MyTicketsinfo />} />
+    //           <Route path="departmenttickets" element={<EmployeeTickets />} />
+    //           <Route
+    //             path="departmentticketsinfo/:id"
+    //             element={<EmployeeTicketinfo />}
+    //           />
+    //           <Route path="profile" element={<EmployeeProfile />} />
+    //         </Route>
+    //         <Route path="*" element={<PageNotFound />} />
+    //       </Routes>
+    //     );
+    //   } else {
+    //     if (this.state.access_level === "admin" && this.state.token) {
+    //       routes = (
+    //         <Routes>
+    //           <Route path="/admin" element={<AdminDashboard />}>
+    //             <Route path="employeetable" element={<EmployeeTable />} />
+    //             <Route path="employeeinfo/:id" element={<EmployeeInfo />} />
+    //             <Route path="ticketstable" element={<TicketsTable />} />
+    //             <Route path="ticketinfo/:id" element={<TicketInfo />} />
+    //             <Route path="profile" element={<AdminProfile />} />
+    //             <Route path="departments" element={<Departments />} />
+    //           </Route>
+    //           <Route path="*" element={<PageNotFound />} />
+    //         </Routes>
+    //       );
+    //       window.location.href = "/admin/ticketstable";
+    //     } else {
+    //       routes = (
+    //         <Routes>
+    //           <Route exact path="/" element={<Login />} />
+    //           <Route path="/signup" element={<Signup />} />
+    //           <Route path="/reset/:token" element={<Reset />} />
+    //           <Route path="*" element={<PageNotFound />} />
+    //         </Routes>
+    //       );
+    //     }
+    //   }
+    // }
     return (
       <Routes>
         <Route path="/user" element={<UserDashBoard />}>
           <Route path="usertickets" element={<UserTickets />} />
           <Route path="ticketinfo/:id" element={<UserTicketInfo />} />
           <Route path="profile" element={<UserProfile />} />
-        </Route>
-
-        <Route path="/admin" element={<AdminDashboard />}>
-          <Route path="employeetable" element={<EmployeeTable />} />
-          <Route path="employeeinfo/:id" element={<EmployeeInfo />} />
-          <Route path="ticketstable" element={<TicketsTable />} />
-          <Route path="ticketinfo/:id" element={<TicketInfo />} />
-          <Route path="profile" element={<AdminProfile />} />
-          <Route path="departments" element={<Departments />} />
         </Route>
 
         <Route path="/employee" element={<EmployeeDashboard />}>
@@ -109,6 +114,15 @@ class App extends Component {
             element={<EmployeeTicketinfo />}
           />
           <Route path="profile" element={<EmployeeProfile />} />
+        </Route>
+
+        <Route path="/admin" element={<AdminDashboard />}>
+          <Route path="employeetable" element={<EmployeeTable />} />
+          <Route path="employeeinfo/:id" element={<EmployeeInfo />} />
+          <Route path="ticketstable" element={<TicketsTable />} />
+          <Route path="ticketinfo/:id" element={<TicketInfo />} />
+          <Route path="profile" element={<AdminProfile />} />
+          <Route path="departments" element={<Departments />} />
         </Route>
 
         <Route exact path="/" element={<Login />} />

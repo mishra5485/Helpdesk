@@ -12,19 +12,34 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import Logo from "../images/logo.svg";
 import toast, { Toaster } from "react-hot-toast";
+import { GoogleLogin } from "@react-oauth/google";
 import { withRouter } from "./withRouter";
-import { AuthProvider } from "../Context/AuthContext";
 class Login extends Component {
-  static contextType = AuthProvider;
   state = {
     email: "",
     password: "",
     success: false,
     forget: false,
     forgetemail: "",
+    token: localStorage.getItem("token"),
+    access_level: localStorage.getItem("access"),
   };
 
-  handleCallbackResponse = async (response) => {
+  componentDidMount() {
+    if (this.state.access_level === "user" && this.state.token) {
+      window.location.href = "/user/usertickets";
+    } else {
+      if (this.state.access_level === "employee" && this.state.token) {
+        window.location.href = "/employee/alltickets";
+      } else {
+        if (this.state.access_level === "admin" && this.state.token) {
+          window.location.href = "/admin/ticketstable";
+        }
+      }
+    }
+  }
+
+  responseMessage = async (response) => {
     const ssotoken = response.credential;
     const data = {
       token: ssotoken,
@@ -57,20 +72,9 @@ class Login extends Component {
     }
   };
 
-  componentDidMount() {
-    console.log(this.context);
-    const google = window.google;
-    google.accounts.id.initialize({
-      client_id:
-        "214010166124-urdkbn0993d2f8h950voub3cmfdkgbfd.apps.googleusercontent.com",
-      callback: this.handleCallbackResponse,
-    });
-    google.accounts.id.renderButton(document.getElementById("signInDiv"), {
-      theme: "outline",
-      size: "large",
-    });
-    google.accounts.id.prompt();
-  }
+  errorMessage = (error) => {
+    console.log(error);
+  };
 
   handlesubmit = async (e) => {
     const data = {
@@ -242,11 +246,12 @@ class Login extends Component {
                       </form>
                     </>
                   ) : null}
-
-                  <div
-                    id="signInDiv"
-                    style={{ margin: "auto", marginTop: "15px" }}
-                  ></div>
+                  <GoogleLogin
+                    onSuccess={this.responseMessage}
+                    onError={this.errorMessage}
+                    useOneTap
+                    auto_select
+                  />
                   <div>
                     <p className="mt-5">
                       Don't have an account?
