@@ -15,69 +15,56 @@ const { Router } = require("express");
 
 
 router.post("/createdepartment",async (req ,res)=>{
-    const _id= uuidv4 ();
-    let {name ,description} = req.body
     const response = await validatedepartment(req.body);
     if(response.error){
         return res.status(400).send(response.errorMessage);
     }
+
+    let lastDeptNumber;
+    try{
+        const lastDepartment = await Department.findOne().sort({  departmentid: -1 });
+        console.log(lastDepartment)
+        if(lastDepartment){
+            lastDeptNumber = lastDepartment.departmentid;
+            lastDeptNumber++;
+            console.log(lastDeptNumber)
+        }
+
+    }catch(ex){}
     
-    user = new Department({
+    const _id= uuidv4 ();
+    let {name ,description} = req.body
+    let department = new Department({
         _id,
         name,
         description,
+        departmentid:lastDeptNumber
          });
-    await user.save();
+    await department.save();
     res.send("CREATED SUCCESSFULL")
 })
 
 
-// let lastdepartmentnumber;
-// try {
-//   const lastdepartment = await Department.findOne().sort({ departmentnumber: -1 });
-//   if (lastdepartment) {
-//     lastdepartmentnumber = lastdepartment.departmentnumber;
-//     lastdepartmentnumber++;
-//   }
-// } catch (ex) {}
-
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// router.post("/create-ticket", async (req, res) => {
-//     const response = await validate(req.body);
-//     if (response.error) {
-//       return res.status(400).send(response.errorMessage);
-//     }
+router.get("/all/:limit/:pageNumber" ,async (req, res) => {
+    try {
+      let limit = req.params.limit;
+      let pageNumber = req.params.pageNumber;
+      let skippedItems = pageNumber * limit;
+      let departments = await Department.find({}).limit(limit).skip(skippedItems).sort({
+        departmentid: -1,
+      });
   
-//     let lastTicketNumber;
-//     try {
-//       const lastTicket = await Ticket.findOne().sort({ ticketNumber: -1 });
-//       if (lastTicket) {
-//         lastTicketNumber = lastTicket.ticketNumber;
-//         lastTicketNumber++;
-//       }
-//     } catch (ex) {}
-  
-//     const _id = uuidv4();
-//     const { subject, body, user_id, department_name } = req.body;
-//     console.log(user_id);
-//     let ticket = new Ticket({
-//       _id,
-//       subject,
-//       body,
-//       user_id,
-//       department_name,
-//       ticketNumber: lastTicketNumber,
-//     });
-//     await ticket.save();
-//     res.status(200).send("Ticket created successfully!");
-//   });
+      let count = await Department.countDocuments({});
+      res.status(200).send({ departments: departments, count: count });
+    } catch (ex) {
+      res.status(404).send("Unable to fetch tickets");
+    }
+  });
 
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
 router.get("/getdepartment",async (req ,res)=>{
     
     let user = await Department.find()
@@ -90,7 +77,7 @@ router.get("/getdepartment",async (req ,res)=>{
     res.send(departmentname)
 
 })
-
+//////////////////////////////////////////////////////////////////////////////////////////////
 
 // router.post("/update/:id",async (req ,res)=>{
 //     let { name,description } =req.body
@@ -101,23 +88,7 @@ router.get("/getdepartment",async (req ,res)=>{
 
 // })
 
-
-// router.get("/all/:limit/:pageNumber", auth, async (req, res) => {
-//     try {
-//       let limit = req.params.limit;
-//       let pageNumber = req.params.pageNumber;
-//       let skippedItems = pageNumber * limit;
-//       let tickets = await Ticket.find({}).limit(limit).skip(skippedItems).sort({
-//         ticketNumber: -1,
-//       });
-  
-//       let count = await Department.countDocuments({});
-//       res.status(200).send({ tickets: tickets, count: count });
-//     } catch (ex) {
-//       res.status(404).send("Unable to fetch tickets");
-//     }
-//   });
-
+//////////////////////////////////////////////////////////////////////////////////////
 
 router.get("/getalldepartment",async (req ,res)=>{
     

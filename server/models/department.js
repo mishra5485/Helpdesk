@@ -9,6 +9,14 @@ const departmentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
+  departmentid: {
+    type: String,
+    unique: true,
+    default: 100,
+    index: true,
+  },
+  
   description: {
     type: String,
     required: true,

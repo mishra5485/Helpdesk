@@ -87,12 +87,12 @@ class Departments extends Component {
     // };
     try {
       let response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/departments/getdepartment/${this.limit}/${currentPage}`,
+        `${process.env.REACT_APP_BASE_URL}/departments/getalldepartment/${this.limit}/${currentPage}`,
         // config
       );
       let respdata = await response.data;
       toast.success("department Fetched Successfully");
-      return respdata.Departments;
+      return respdata.Departments.reverse();
     } catch (error) {
       console.log(error);
     }
@@ -310,11 +310,11 @@ class Departments extends Component {
             <MDBTable bordered className="mt-5">
               <MDBTableHead className="table-dark">
                 <tr>
+                <th scope="col">Department.id</th>
                   <th scope="col">Name</th>
                   <th scope="col">Description</th>
                   <th scope="col">Action</th>
                   {/*<th scope="col">Email-id</th>
-                  <th scope="col">Employess</th>
                  <th scope="col">CreatedOn</th>*/} 
             </tr>
               </MDBTableHead>
@@ -322,9 +322,9 @@ class Departments extends Component {
                 {this.state.items.map((item, key) => {
                   return (
                     <tr key={key}>
+                    <td>{item.departmentid}</td>
                       <td>{item.name}</td>
                       <td>{item.description}</td>
-                     {/* <td>{item.employess}</td>*/}
                       
 
                       <td>
