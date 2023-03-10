@@ -157,15 +157,13 @@ async function validateResetPassword(body) {
   }
 }
 
-
 async function validatedepartment(body) {
   let error = false;
 
   const schema = Joi.object({
     name: Joi.string().required(),
     description: Joi.string().required(),
-    departmentid:Joi.string()
-
+    departmentid: Joi.string(),
   });
 
   try {
@@ -184,4 +182,5 @@ exports.validateImageType = validateImageType;
 exports.validateUpdate = validateUpdate;
 exports.validateForgotPassword = validateForgotPassword;
 exports.validateResetPassword = validateResetPassword;
-exports.validatedepartment =validatedepartment;
+exports.validatedepartment = validatedepartment;
+exports.validateAssign = validateAssign;

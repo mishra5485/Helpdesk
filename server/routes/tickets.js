@@ -279,6 +279,7 @@ router.post("/update/:id", auth, async (req, res) => {
 });
 
 router.post("/claim/:id", auth, async (req, res) => {
+  console.log("fxghjuytcgh");
   try {
     const response = await validateAssign(req.body);
     if (response.error) {

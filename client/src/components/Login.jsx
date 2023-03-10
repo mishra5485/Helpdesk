@@ -238,7 +238,7 @@ class Login extends Component {
                         </MDBRow>
                         <MDBRow className="pt-1">
                           <MDBCol>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary my-2">
                               Reset
                             </button>
                           </MDBCol>

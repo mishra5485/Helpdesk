@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Nav from "./Nav";
 import {
   MDBCol,
   MDBContainer,
@@ -135,29 +134,6 @@ export default class EmployeeProfile extends Component {
     }
   };
 
-  handleForget = async (e) => {
-    e.preventDefault();
-    const Usertoken = localStorage.getItem("token");
-    const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
-    };
-    const data = {
-      email: this.state.forgetemail,
-    };
-    try {
-      let resp = await axios.post(`http://localhost:5000/forgot`, data, config);
-
-      if (resp.status === 200) {
-        toast.success("Email sent successfully ");
-        this.setState({ forget: false });
-        this.setState({ forgetemail: "" });
-      }
-    } catch (err) {
-      console.log(err);
-      toast.error("Failed Try After Sometime");
-    }
-  };
-
   updateProfile = async (e) => {
     e.preventDefault();
     const userid = localStorage.getItem("id");
@@ -175,8 +151,9 @@ export default class EmployeeProfile extends Component {
         config
       )
       .then((response) => {
-        console.log(response.data.picture);
+        // console.log(response.data.picture);
         this.setState({ profilepic: response.data.picture });
+        toast.success("Profile Updated Successfully");
       })
       .catch((err) => {
         console.log(err);
@@ -213,38 +190,44 @@ export default class EmployeeProfile extends Component {
                       }}
                     >
                       <MDBContainer>
-                        <MDBCardImage
-                          src={`http://localhost:5000/uploads/${this.state.profilepic}`}
-                          alt="Avatar"
-                          className="my-5"
-                          style={{ width: "154px" }}
-                          fluid
-                        />
+                        {this.state.profilepic ? (
+                          <MDBCardImage
+                            src={`http://localhost:5000/uploads/${this.state.profilepic}`}
+                            alt="Avatar"
+                            className="my-5"
+                            style={{ width: "154px" }}
+                            fluid
+                          />
+                        ) : (
+                          <MDBCardImage
+                            alt="Avatar"
+                            src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+                            className="my-5"
+                            style={{ width: "80px" }}
+                            fluid
+                          />
+                        )}
+
                         <MDBTypography tag="h5">
                           {this.state.name}
                         </MDBTypography>
                         <MDBCardText>{this.state.department}</MDBCardText>
                         <MDBContainer>
                           <form onSubmit={this.updateProfile}>
-                            <MDBRow
-                              style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                marginBottom: "10px",
-                              }}
-                            >
-                              <MDBCol size="8">
+                            <div class="button_outer">
+                              <div class="btn_upload">
                                 <input
-                                  className="form-control"
                                   type="file"
+                                  id="upload_file"
                                   onChange={(e) =>
                                     this.setState({
                                       file: e.target.files[0],
                                     })
                                   }
                                 />
-                              </MDBCol>
-                            </MDBRow>
+                                Select Image
+                              </div>
+                            </div>
                             <MDBRow
                               style={{
                                 display: "flex",
@@ -325,17 +308,6 @@ export default class EmployeeProfile extends Component {
                               onClick={this.handleShow}
                             >
                               Reset Password
-                            </button>
-                          </MDBCol>
-                          <MDBCol size="6" className="mb-3">
-                            <button
-                              type="button"
-                              class="btn btn-primary"
-                              onClick={() =>
-                                this.setState({ forget: !this.state.forget })
-                              }
-                            >
-                              Forget Password
                             </button>
                           </MDBCol>
                         </MDBRow>

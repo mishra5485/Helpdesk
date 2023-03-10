@@ -184,7 +184,7 @@ class Allticketsinfo extends Component {
         <MDBContainer
           fluid
           className="py-5"
-          style={{ backgroundColor: "#eee" }}
+          style={{ backgroundColor: "#eee", height: "100vh" }}
         >
           <MDBRow className="d-flex justify-content-center ">
             <MDBCol sm="10" md="10" lg="10" xl="10">
@@ -269,7 +269,7 @@ class Allticketsinfo extends Component {
                     </MDBCol>
                     <MDBCol size="10">{this.state.body}</MDBCol>
                   </MDBRow>
-                  <MDBRow
+                  {/* <MDBRow
                     className="mt-3 d-flex "
                     style={{ justifyContent: "end" }}
                   >
@@ -282,10 +282,10 @@ class Allticketsinfo extends Component {
                         Claim
                       </MDBBtn>
                     </MDBCol>
-                  </MDBRow>
+                  </MDBRow> */}
                 </MDBContainer>
                 <hr />
-                <MDBCardBody>
+                {/* <MDBCardBody>
                   {this.state.resmsg.map((elem, key) => {
                     return (
                       <>
@@ -441,7 +441,7 @@ class Allticketsinfo extends Component {
                       </MDBInputGroup>
                     </MDBCardFooter>
                   </form>
-                )}
+                )} */}
               </MDBCard>
             </MDBCol>
           </MDBRow>

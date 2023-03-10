@@ -5,19 +5,11 @@ import {
   MDBCol,
   MDBCard,
   MDBCardHeader,
-  MDBCardBody,
   MDBBtn,
-  MDBCardFooter,
-  MDBInputGroup,
-  MDBBadge,
+  MDBCardBody,
 } from "mdb-react-ui-kit";
 import axios from "axios";
-import moment from "moment";
-import SendIcon from "@mui/icons-material/Send";
 import toast, { Toaster } from "react-hot-toast";
-import ModalImage from "react-modal-image";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
-import MessageIcon from "@mui/icons-material/Message";
 import { withRouter } from "../withRouter";
 
 class EmployeeTicketinfo extends Component {
@@ -52,7 +44,6 @@ class EmployeeTicketinfo extends Component {
         `${process.env.REACT_APP_BASE_URL}/tickets/${objid}`,
         config
       );
-      console.log(resp.data);
       if (resp.status === 200) {
         this.setState({
           user: resp.data.user,
@@ -170,6 +161,7 @@ class EmployeeTicketinfo extends Component {
       );
       if (resp.status === 200) {
         toast.success("Ticket Claimed Successfully ");
+        this.getdata();
       } else {
         if (resp.status === 404) {
           toast.error(resp.data);
@@ -183,7 +175,6 @@ class EmployeeTicketinfo extends Component {
   render() {
     return (
       <>
-        {console.log(this.state.assigned)}
         <Toaster position="top-center" />
         <MDBContainer
           fluid
@@ -191,119 +182,153 @@ class EmployeeTicketinfo extends Component {
           style={{ backgroundColor: "#eee", height: "100vh" }}
         >
           <MDBRow className="d-flex justify-content-center p-5 ">
-            <MDBCol sm="8" md="8" lg="8" xl="8">
+            <MDBCol sm="10" md="10" lg="10" xl="8">
               <MDBCard>
                 <MDBCardHeader className="d-flex justify-content-between align-items-center p-3">
                   <MDBContainer fluid>
-                    <MDBRow between className="mt-3">
-                      <MDBCol size="12">
-                        <MDBRow className="mt-3">
-                          <MDBCol
-                            size="2"
-                            style={{
-                              fontWeight: "bold",
-                              textAlign: "end",
-                              fontSize: "1.5rem",
-                            }}
-                          >
-                            TicketId:
-                          </MDBCol>
-                          <MDBCol
-                            size="4"
-                            style={{
-                              fontWeight: "bolder",
-                              fontSize: "1.5rem",
-                              textAlign: "start",
-                            }}
-                          >
-                            #{this.state.TicketNumber}
-                          </MDBCol>
-                        </MDBRow>
+                    <MDBRow className="mt-3">
+                      <MDBCol
+                        style={{
+                          textAlign: "end",
+                          fontSize: "1.5rem",
+                          textAlign: "start",
+                        }}
+                      >
+                        <label className="fw-bold"> Ticket Number:</label>
+                        <label className="mx-3">
+                          {this.state.TicketNumber}
+                        </label>
                       </MDBCol>
                     </MDBRow>
                     <hr />
-                    <MDBRow between className="mt-3">
-                      <MDBCol size="6">
-                        <MDBRow className="mt-3">
-                          <MDBCol size="3" style={{ fontWeight: "bold" }}>
-                            CreatedOn:
-                          </MDBCol>
-                          <MDBCol size="6">{this.state.CreatedAt}</MDBCol>
-                        </MDBRow>
+                    <MDBRow className="mt-3">
+                      <MDBCol
+                        sm="12"
+                        md="12"
+                        lg="6"
+                        className="my-3 font"
+                        style={{
+                          textAlign: "end",
+                          fontSize: "1.2rem",
+                          textAlign: "start",
+                        }}
+                      >
+                        <label className="fw-bold">CreatedOn:</label>&nbsp;
+                        <label className="mx-3">{this.state.CreatedAt}</label>
                       </MDBCol>
-                      <MDBCol size="6">
-                        <MDBRow className="mt-3">
-                          <MDBCol size="3" style={{ fontWeight: "bold" }}>
-                            AssignedTo:
-                          </MDBCol>
-                          <MDBCol size="6">{this.state.departmentname}</MDBCol>
-                        </MDBRow>
-                      </MDBCol>
-                    </MDBRow>
-                    <MDBRow between className="mt-3">
-                      <MDBCol size="6">
-                        <MDBRow className="mt-3">
-                          <MDBCol size="3" style={{ fontWeight: "bold" }}>
-                            Status:
-                          </MDBCol>
-                          <MDBCol size="6">{this.state.status}</MDBCol>
-                        </MDBRow>
-                      </MDBCol>
-                      <MDBCol size="6">
-                        <MDBRow className="mt-3">
-                          <MDBCol size="3" style={{ fontWeight: "bold" }}>
-                            UserName:
-                          </MDBCol>
-                          <MDBCol size="6">{this.state.user.userName}</MDBCol>
-                        </MDBRow>
+                      <MDBCol
+                        sm="12"
+                        md="12"
+                        lg="6"
+                        className="my-3"
+                        style={{
+                          textAlign: "end",
+                          fontSize: "1.2rem",
+                          textAlign: "start",
+                        }}
+                      >
+                        <label className="fw-bold">AssignedTo:</label>&nbsp;
+                        <label className="mx-3">
+                          {this.state.departmentname}
+                        </label>
                       </MDBCol>
                     </MDBRow>
-                    {this.state.assigned.user_id === !null ? (
-                      <MDBRow between className="mt-3">
-                        <MDBCol size="6">
-                          <MDBRow className="mt-3">
-                            <MDBCol size="3" style={{ fontWeight: "bold" }}>
-                              Claimed By:
-                            </MDBCol>
-                            <MDBCol size="6">
-                              {this.state.assigned.user_name}
-                            </MDBCol>
-                          </MDBRow>
+                    <MDBRow className="mt-3">
+                      <MDBCol
+                        sm="12"
+                        md="12"
+                        lg="6"
+                        className="my-3"
+                        style={{
+                          textAlign: "end",
+                          fontSize: "1.2rem",
+                          textAlign: "start",
+                        }}
+                      >
+                        <label className="fw-bold">Status:</label>
+                        <label className="mx-3">{this.state.status}</label>
+                      </MDBCol>
+                      <MDBCol
+                        sm="12"
+                        md="12"
+                        lg="6"
+                        className="my-3"
+                        style={{
+                          textAlign: "end",
+                          fontSize: "1.2rem",
+                          textAlign: "start",
+                        }}
+                      >
+                        <label className="fw-bold">UserName:</label>
+                        <label className="mx-3">
+                          {this.state.user.user_name}
+                        </label>
+                      </MDBCol>
+                    </MDBRow>
+                    {this.state.assigned.user_id ? (
+                      <MDBRow className="mt-3">
+                        <MDBCol
+                          style={{
+                            textAlign: "end",
+                            fontSize: "1.2rem",
+                            textAlign: "start",
+                          }}
+                        >
+                          <label className="fw-bold">Claimed By:</label>
+                          <label className="mx-3">
+                            {this.state.assigned.user_name}
+                          </label>
                         </MDBCol>
                       </MDBRow>
                     ) : null}
                   </MDBContainer>
                 </MDBCardHeader>
-                <MDBContainer fluid style={{ padding: "20px" }}>
-                  <MDBRow className="mt-3 d-flex px-2 py-2 ml-10">
-                    <MDBCol size="1" style={{ fontWeight: "bold" }}>
-                      Subject:
-                    </MDBCol>
-                    <MDBCol size="10">{this.state.subject}</MDBCol>
-                  </MDBRow>
-                  <MDBRow className="mt-3 d-flex p-2 ml-10">
-                    <MDBCol size="1" style={{ fontWeight: "bold" }}>
-                      Body:
-                    </MDBCol>
-                    <MDBCol size="10">{this.state.body}</MDBCol>
-                  </MDBRow>
-                  {this.state.assigned.user_id === null ? (
-                    <MDBRow
-                      className="mt-3 d-flex "
-                      style={{ justifyContent: "end" }}
-                    >
-                      <MDBCol size="2">
-                        <MDBBtn
-                          className="me-1"
-                          color="primary"
-                          onClick={this.ClaimTicket}
-                        >
-                          Claim
-                        </MDBBtn>
+                <MDBCardBody>
+                  <MDBContainer fluid>
+                    <MDBRow className="mt-3">
+                      <MDBCol
+                        className="my-3"
+                        style={{
+                          textAlign: "end",
+                          fontSize: "1.2rem",
+                          textAlign: "start",
+                        }}
+                      >
+                        <label className="fw-bold">Subject:</label>
+                        <label className="mx-3">{this.state.subject}</label>
                       </MDBCol>
                     </MDBRow>
-                  ) : null}
-                </MDBContainer>
+                    <MDBRow className="mt-3">
+                      <MDBCol
+                        className="my-3"
+                        style={{
+                          textAlign: "end",
+                          fontSize: "1.2rem",
+                          textAlign: "start",
+                        }}
+                      >
+                        <label className="fw-bold"> Body:</label>
+                        <label className="mx-3">{this.state.body}</label>
+                      </MDBCol>
+                    </MDBRow>
+                    {this.state.assigned.user_id === null ? (
+                      <MDBRow
+                        className="mt-3 d-flex "
+                        style={{ justifyContent: "end" }}
+                      >
+                        <MDBCol size="2">
+                          <MDBBtn
+                            className="me-1"
+                            color="primary"
+                            onClick={this.ClaimTicket}
+                          >
+                            Claim
+                          </MDBBtn>
+                        </MDBCol>
+                      </MDBRow>
+                    ) : null}
+                  </MDBContainer>
+                </MDBCardBody>
               </MDBCard>
             </MDBCol>
           </MDBRow>

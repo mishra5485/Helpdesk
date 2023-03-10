@@ -31,6 +31,7 @@ class EmployeeTable extends Component {
     promptres: false,
     deleteId: "",
     items: [],
+    department_list: [],
     currentpage: 0,
     pageCount: 0,
     bdcolor: "",
@@ -56,7 +57,19 @@ class EmployeeTable extends Component {
 
   componentDidMount() {
     this.getData();
+    this.getDepartments();
   }
+
+  getDepartments = async () => {
+    await axios
+      .get(`${process.env.REACT_APP_BASE_URL}/departments/getdepartment`)
+      .then((response) => {
+        this.setState({ department_list: response.data });
+      })
+      .catch((err) => {
+        toast.error(err.response.data);
+      });
+  };
 
   getData = async () => {
     const Usertoken = localStorage.getItem("token");
@@ -136,7 +149,6 @@ class EmployeeTable extends Component {
         )
         .then((response) => {
           if (response.status === 200) {
-            toast.success("Employee Created SuccessFully");
             this.getData();
           }
         });
@@ -166,7 +178,6 @@ class EmployeeTable extends Component {
         config
       )
       .then((response) => {
-        console.log(response);
         let total = response.data.count;
         this.setState({
           searchPageCount: Math.ceil(total / this.limit),
@@ -435,11 +446,18 @@ class EmployeeTable extends Component {
                   onChange={(e) =>
                     this.setState({ department: e.target.value })
                   }
+                  defaultValue="Select Department"
                 >
-                  <option>please select Department</option>
-                  <option value="L1">L1</option>
-                  <option value="L2">L2</option>
-                  <option value="L3">L3</option>
+                  <option disabled>Select Department</option>
+                  {this.state.department_list.map((elem, key) => {
+                    return (
+                      <>
+                        <option key={key} value={elem}>
+                          {elem}
+                        </option>
+                      </>
+                    );
+                  })}
                 </Form.Control>
               </FloatingLabel>
             </Modal.Body>

@@ -183,7 +183,6 @@ class MyTicketsinfo extends Component {
       status: this.state.status,
       priority: this.state.priority,
     };
-    console.log(data);
 
     await axios
       .post(
@@ -194,7 +193,7 @@ class MyTicketsinfo extends Component {
 
       .then((response) => {
         if (response.status === 200) {
-          toast.success("employee detail updated");
+          toast.success("Tickets detail updated");
         } else {
           if (response.status === 400) {
             toast.error(response.data);
@@ -299,10 +298,12 @@ class MyTicketsinfo extends Component {
                               onChange={(e) =>
                                 this.setState({ priority: e.target.value })
                               }
+                              value={this.state.priority}
                             >
-                              <option>Low</option>
-                              <option>Medium</option>
-                              <option>High</option>
+                              <option disabled>Select option</option>
+                              <option value="Low">Low</option>
+                              <option value="Medium">Medium</option>
+                              <option value="High">High</option>
                             </Form.Select>
                           </MDBCol>
                         </MDBRow>
@@ -318,10 +319,12 @@ class MyTicketsinfo extends Component {
                               onChange={(e) =>
                                 this.setState({ status: e.target.value })
                               }
+                              value={this.state.status}
                             >
-                              <option> Open</option>
-                              <option>In Progress</option>
-                              <option>Resolved</option>
+                              <option disabled>Select option</option>
+                              <option value="Open"> Open</option>
+                              <option value="In Progress">In Progress</option>
+                              <option value="Resolved">Resolved</option>
                             </Form.Select>
                           </MDBCol>
                         </MDBRow>
@@ -389,7 +392,7 @@ class MyTicketsinfo extends Component {
                   {this.state.resmsg.map((elem, key) => {
                     return (
                       <>
-                        {elem.createdBy === "Employee" ? (
+                        {elem.createdBy === "user" ? (
                           <>
                             <div className="d-flex justify-content-between">
                               <p className="small mb-1">{elem.userName}</p>

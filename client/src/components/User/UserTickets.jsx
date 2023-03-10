@@ -569,7 +569,9 @@ class UserTickets extends Component {
                   onChange={(e) =>
                     this.setState({ Department: e.target.value })
                   }
+                  defaultValue="Select Department"
                 >
+                  <option disabled>Select Department</option>
                   {this.state.department_list.map((elem, key) => {
                     return (
                       <option key={key} value={elem}>
@@ -636,7 +638,9 @@ class UserTickets extends Component {
                   onChange={(e) =>
                     this.setState({ filterdepartment: e.target.value })
                   }
+                  defaultValue="Select Department"
                 >
+                  <option disabled>Select Department</option>
                   {this.state.department_list.map((elem, key) => {
                     return (
                       <option key={key} value={elem}>
@@ -663,8 +667,9 @@ class UserTickets extends Component {
                   onChange={(e) =>
                     this.setState({ filterstatus: e.target.value })
                   }
+                  defaultValue="Select Status"
                 >
-                  <option>Open this select menu</option>
+                  <option disabled>Select Status</option>
                   <option value="Open">Open</option>
                   <option value="In Progress">In Progress</option>
                   <option value="Resolved">Resolved</option>

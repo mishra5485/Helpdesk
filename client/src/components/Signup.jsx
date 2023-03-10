@@ -13,6 +13,8 @@ import { Link } from "react-router-dom";
 import Logo from "../images/logo.svg";
 import toast, { Toaster } from "react-hot-toast";
 import { withRouter } from "./withRouter";
+import { GoogleLogin } from "@react-oauth/google";
+
 class Signup extends Component {
   constructor() {
     super();
@@ -36,6 +38,13 @@ class Signup extends Component {
       );
       if (resp.status === 200) {
         toast.success(resp.data);
+        console.log(resp.data);
+        localStorage.clear();
+        localStorage.setItem("username", resp.data.username);
+        localStorage.setItem("token", resp.data.token);
+        localStorage.setItem("access", resp.data.access_level);
+        localStorage.setItem("picture", resp.data.picture);
+        localStorage.setItem("id", resp.data.user_id);
         this.props.navigate("/user/UserTickets");
       } else {
         if (resp.status === 403) {
@@ -88,6 +97,35 @@ class Signup extends Component {
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  responseMessage = async (response) => {
+    const ssotoken = response.credential;
+    const data = {
+      token: ssotoken,
+    };
+
+    try {
+      let resp = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/users/registerwithgoogle`,
+        data
+      );
+      if (resp.status === 200) {
+        toast.success(resp.data);
+        this.props.navigate("/user/UserTickets");
+      } else {
+        if (resp.status === 403) {
+          toast.error(resp.data);
+        }
+      }
+    } catch (err) {
+      toast.error("Already registered. Please login in!");
+      console.log(err);
+    }
+  };
+
+  errorMessage = (error) => {
+    console.log(error);
   };
   render() {
     return (
@@ -177,10 +215,12 @@ class Signup extends Component {
                     >
                       OR
                     </div>
-                    <div
-                      id="signInDiv"
-                      style={{ margin: "auto", marginTop: "15px" }}
-                    ></div>
+                    <GoogleLogin
+                      onSuccess={this.responseMessage}
+                      onError={this.errorMessage}
+                      useOneTap
+                      auto_select
+                    />
                     <div>
                       <p className="mt-5  ">
                         Already have an account??

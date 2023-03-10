@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Nav from "./Nav";
 import {
   MDBCol,
   MDBContainer,
@@ -10,7 +9,6 @@ import {
   MDBCardImage,
   MDBTypography,
   MDBIcon,
-  MDBInput,
   MDBBtn,
 } from "mdb-react-ui-kit";
 import axios from "axios";
@@ -60,7 +58,7 @@ export default class UserProfile extends Component {
         `${process.env.REACT_APP_BASE_URL}/users/user/profile/${userid}`,
         config
       );
-      console.log(resp);
+      console.log(resp.data);
       if (resp.status === 200) {
         this.setState({
           id: resp.data.employeeNumber,
@@ -191,7 +189,7 @@ export default class UserProfile extends Component {
                       }}
                     >
                       <MDBContainer>
-                        {this.state.profilepic ? (
+                        {this.state.ssologin === true ? (
                           <MDBCardImage
                             alt="Avatar"
                             src={this.state.profilepic}
@@ -204,7 +202,7 @@ export default class UserProfile extends Component {
                             alt="Avatar"
                             src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
                             className="my-5"
-                            style={{ width: "80px" }}
+                            style={{ width: "100px" }}
                             fluid
                           />
                         ) : (
@@ -212,7 +210,7 @@ export default class UserProfile extends Component {
                             alt="Avatar"
                             src={`http://localhost:5000/uploads/${this.state.profilepic}`}
                             className="my-5"
-                            style={{ width: "80px" }}
+                            style={{ width: "100px" }}
                             fluid
                           />
                         )}
@@ -223,25 +221,20 @@ export default class UserProfile extends Component {
                         {this.state.ssologin === false ? (
                           <MDBContainer>
                             <form onSubmit={this.updateProfile}>
-                              <MDBRow
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "center",
-                                  marginBottom: "10px",
-                                }}
-                              >
-                                <MDBCol size="8">
+                              <div class="button_outer">
+                                <div class="btn_upload">
                                   <input
-                                    className="form-control"
                                     type="file"
+                                    id="upload_file"
                                     onChange={(e) =>
                                       this.setState({
                                         file: e.target.files[0],
                                       })
                                     }
                                   />
-                                </MDBCol>
-                              </MDBRow>
+                                  Select Image
+                                </div>
+                              </div>
                               <MDBRow
                                 style={{
                                   display: "flex",
@@ -468,7 +461,7 @@ export default class UserProfile extends Component {
               Close
             </Button>
             <Button variant="primary" onClick={this.handleReset}>
-              Save Changes
+              Save
             </Button>
           </Modal.Footer>
         </Modal>

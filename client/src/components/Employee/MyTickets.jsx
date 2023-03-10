@@ -188,7 +188,7 @@ class MyTickets extends Component {
       department_name: this.state.Department,
       user: {
         user_id: userid,
-        userName: username,
+        user_name: username,
       },
     };
 
@@ -200,6 +200,7 @@ class MyTickets extends Component {
           config
         )
         .then((response) => {
+          console.log(response);
           if (response.status === 200) {
             toast.success(response.data);
             this.handleClose();
@@ -467,12 +468,16 @@ class MyTickets extends Component {
                   onChange={(e) =>
                     this.setState({ Department: e.target.value })
                   }
+                  defaultValue="Select Department"
                 >
+                  <option disabled>Select Department</option>
                   {this.state.department_list.map((elem, key) => {
                     return (
-                      <option key={key} value={elem}>
-                        {elem}
-                      </option>
+                      <>
+                        <option key={key} value={elem}>
+                          {elem}
+                        </option>
+                      </>
                     );
                   })}
                 </Form.Control>
