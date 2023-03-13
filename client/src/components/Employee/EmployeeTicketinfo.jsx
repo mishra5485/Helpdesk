@@ -44,6 +44,7 @@ class EmployeeTicketinfo extends Component {
         `${process.env.REACT_APP_BASE_URL}/tickets/${objid}`,
         config
       );
+      console.log(resp.data);
       if (resp.status === 200) {
         this.setState({
           user: resp.data.user,
@@ -259,9 +260,9 @@ class EmployeeTicketinfo extends Component {
                           textAlign: "start",
                         }}
                       >
-                        <label className="fw-bold">UserName:</label>
+                        <label className="fw-bold">Created By:</label>
                         <label className="mx-3">
-                          {this.state.user.user_name}
+                          {this.state.user.userName}
                         </label>
                       </MDBCol>
                     </MDBRow>

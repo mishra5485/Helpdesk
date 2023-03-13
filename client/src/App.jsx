@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import React, { Component } from "react";
 import { withRouter } from "./components/withRouter";
+import RequireAuth from "./components/Context/requireauth";
 
 import Signup from "./components/Signup";
 import Login from "./components/Login";
@@ -38,32 +39,162 @@ class App extends Component {
   render() {
     return (
       <Routes>
-        <Route path="/user" element={<UserDashBoard />}>
-          <Route path="usertickets" element={<UserTickets />} />
-          <Route path="ticketinfo/:id" element={<UserTicketInfo />} />
-          <Route path="profile" element={<UserProfile />} />
+        <Route
+          path="/user"
+          element={
+            <RequireAuth>
+              <UserDashBoard />
+            </RequireAuth>
+          }
+        >
+          <Route
+            path="usertickets"
+            element={
+              <RequireAuth>
+                <UserTickets />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="ticketinfo/:id"
+            element={
+              <RequireAuth>
+                <UserTicketInfo />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="profile"
+            element={
+              <RequireAuth>
+                <UserProfile />
+              </RequireAuth>
+            }
+          />
         </Route>
 
-        <Route path="/employee" element={<EmployeeDashboard />}>
-          <Route path="alltickets" element={<Alltickets />} />
-          <Route path="allticketsinfo/:id" element={<Allticketsinfo />} />
-          <Route path="mytickets" element={<MyTickets />} />
-          <Route path="myticketsinfo/:id" element={<MyTicketsinfo />} />
-          <Route path="departmenttickets" element={<EmployeeTickets />} />
+        <Route
+          path="/employee"
+          element={
+            <RequireAuth>
+              <EmployeeDashboard />
+            </RequireAuth>
+          }
+        >
+          <Route
+            path="alltickets"
+            element={
+              <RequireAuth>
+                <Alltickets />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="allticketsinfo/:id"
+            element={
+              <RequireAuth>
+                <Allticketsinfo />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="mytickets"
+            element={
+              <RequireAuth>
+                <MyTickets />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="myticketsinfo/:id"
+            element={
+              <RequireAuth>
+                <MyTicketsinfo />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="departmenttickets"
+            element={
+              <RequireAuth>
+                <EmployeeTickets />
+              </RequireAuth>
+            }
+          />
           <Route
             path="departmentticketsinfo/:id"
-            element={<EmployeeTicketinfo />}
+            element={
+              <RequireAuth>
+                <EmployeeTicketinfo />
+              </RequireAuth>
+            }
           />
-          <Route path="profile" element={<EmployeeProfile />} />
+          <Route
+            path="profile"
+            element={
+              <RequireAuth>
+                <EmployeeProfile />
+              </RequireAuth>
+            }
+          />
         </Route>
 
-        <Route path="/admin" element={<AdminDashboard />}>
-          <Route path="employeetable" element={<EmployeeTable />} />
-          <Route path="employeeinfo/:id" element={<EmployeeInfo />} />
-          <Route path="ticketstable" element={<TicketsTable />} />
-          <Route path="ticketinfo/:id" element={<TicketInfo />} />
-          <Route path="profile" element={<AdminProfile />} />
-          <Route path="departments" element={<Departments />} />
+        <Route
+          path="/admin"
+          element={
+            <RequireAuth>
+              <AdminDashboard />
+            </RequireAuth>
+          }
+        >
+          <Route
+            path="employeetable"
+            element={
+              <RequireAuth>
+                <EmployeeTable />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="employeeinfo/:id"
+            element={
+              <RequireAuth>
+                <EmployeeInfo />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="ticketstable"
+            element={
+              <RequireAuth>
+                <TicketsTable />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="ticketinfo/:id"
+            element={
+              <RequireAuth>
+                <TicketInfo />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="profile"
+            element={
+              <RequireAuth>
+                <AdminProfile />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="departments"
+            element={
+              <RequireAuth>
+                <Departments />
+              </RequireAuth>
+            }
+          />
         </Route>
 
         <Route exact path="/" element={<Login />} />

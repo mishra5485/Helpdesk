@@ -210,7 +210,7 @@ export default class UserProfile extends Component {
                             alt="Avatar"
                             src={`http://localhost:5000/uploads/${this.state.profilepic}`}
                             className="my-5"
-                            style={{ width: "100px" }}
+                            style={{ width: "210px" }}
                             fluid
                           />
                         )}

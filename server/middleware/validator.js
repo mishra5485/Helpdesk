@@ -7,7 +7,7 @@ async function validateTicket(ticket) {
     body: Joi.string().min(5).required(),
     user: Joi.object({
       user_id: Joi.string().min(2).max(50).required(),
-      user_name: Joi.string().min(2).max(50).required(),
+      userName: Joi.string().min(2).max(50).required(),
     }).required(),
     department_name: Joi.string().min(2).max(50).required(),
   });

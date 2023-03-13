@@ -42,6 +42,7 @@ export default class EmployeeProfile extends Component {
     forget: false,
     file: null,
     profilepic: "",
+    token: localStorage.getItem("token"),
   };
 
   componentDidMount() {
@@ -115,14 +116,14 @@ export default class EmployeeProfile extends Component {
           config
         );
         if (resp.status === 200) {
-          toast.success(resp.data);
+          toast.success("Password reset Successfully");
           this.handleClose();
         } else {
           if (resp.status === 403) {
-            toast.error(resp.data);
+            toast.error("Failed to reset password");
           } else {
             if (resp.status === 400) {
-              toast.error(resp.data);
+              toast.error("Failed to reset password");
             }
           }
         }

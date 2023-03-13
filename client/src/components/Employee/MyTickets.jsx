@@ -10,7 +10,6 @@ import {
   MDBCol,
   MDBInputGroup,
   MDBBtn,
-  MDBCheckbox,
 } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -188,7 +187,7 @@ class MyTickets extends Component {
       department_name: this.state.Department,
       user: {
         user_id: userid,
-        user_name: username,
+        userName: username,
       },
     };
 

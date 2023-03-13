@@ -36,6 +36,7 @@ class MyTicketsinfo extends Component {
     department_list: [],
     resmsg: [],
     toggle: true,
+    user: {},
   };
 
   componentDidMount() {
@@ -78,6 +79,7 @@ class MyTicketsinfo extends Component {
           status: resp.data.status,
           CreatedAt: resp.data.createdDate,
           resmsg: resp.data.comments,
+          user: resp.data.user,
         });
         toast.success("Ticket Fetched Successfully ");
       } else {
@@ -163,6 +165,7 @@ class MyTicketsinfo extends Component {
 
   empUpdate = async (e) => {
     e.preventDefault();
+    console.log(this.state.department_name);
     console.log({
       department: this.state.department_name,
       status: this.state.status,
@@ -212,6 +215,7 @@ class MyTicketsinfo extends Component {
   render() {
     return (
       <>
+        {console.log(this.state.user)}
         <Toaster position="top-center" />
         <MDBContainer
           fluid
@@ -280,9 +284,9 @@ class MyTicketsinfo extends Component {
                       <MDBCol size="6">
                         <MDBRow className="mt-3">
                           <MDBCol size="3" style={{ fontWeight: "bold" }}>
-                            UserName:
+                            CreatedBy:
                           </MDBCol>
-                          <MDBCol size="6">{this.state.userid}</MDBCol>
+                          <MDBCol size="6">{this.state.user.userName}</MDBCol>
                         </MDBRow>
                       </MDBCol>
                     </MDBRow>
@@ -344,7 +348,9 @@ class MyTicketsinfo extends Component {
                                   departmentname: e.target.value,
                                 })
                               }
+                              defaultValue="Select Department"
                             >
+                              <option disabled>Select Department</option>
                               {this.state.department_list.map((elem, key) => {
                                 return (
                                   <option key={key} value={elem}>

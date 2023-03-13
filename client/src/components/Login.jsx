@@ -14,6 +14,7 @@ import Logo from "../images/logo.svg";
 import toast, { Toaster } from "react-hot-toast";
 import { GoogleLogin } from "@react-oauth/google";
 import { withRouter } from "./withRouter";
+
 class Login extends Component {
   state = {
     email: "",
@@ -51,15 +52,14 @@ class Login extends Component {
         data
       );
       if (resp.status === 200) {
-        console.log(resp);
-
-        localStorage.clear();
-        localStorage.setItem("username", resp.data.username);
-        localStorage.setItem("token", resp.data.token);
-        localStorage.setItem("access", resp.data.access_level);
-        localStorage.setItem("picture", resp.data.picture);
-        localStorage.setItem("id", resp.data.user_id);
-
+        setTimeout(() => {
+          localStorage.clear();
+          localStorage.setItem("username", resp.data.username);
+          localStorage.setItem("token", resp.data.token);
+          localStorage.setItem("access", resp.data.access_level);
+          localStorage.setItem("picture", resp.data.picture);
+          localStorage.setItem("id", resp.data.user_id);
+        }, 300);
         this.props.navigate("/user/usertickets");
       } else {
         if (resp.status === 403) {
@@ -86,7 +86,6 @@ class Login extends Component {
     await axios
       .post(`${process.env.REACT_APP_BASE_URL}/login`, data)
       .then((response) => {
-        console.log(response);
         if (response.status === 200) {
           localStorage.setItem("username", response.data.username);
           localStorage.setItem("token", response.data.token);

@@ -43,6 +43,7 @@ class UserTickets extends Component {
     filterPageCount: "",
     filtercurrentPage: "",
     showFilterModal: false,
+    token: localStorage.getItem("token"),
   };
 
   limit = 5;
@@ -139,14 +140,13 @@ class UserTickets extends Component {
     };
     const userid = localStorage.getItem("id");
     const username = localStorage.getItem("username");
-    console.log(username);
     const data = {
       subject: this.state.Subject,
       body: this.state.Body,
       department_name: this.state.Department,
       user: {
         user_id: userid,
-        user_name: username,
+        userName: username,
       },
     };
 
@@ -244,8 +244,7 @@ class UserTickets extends Component {
 
   reset = async (e) => {
     e.preventDefault();
-    this.setState({ searchPagination: false });
-    toast.success("Resetting search");
+    this.setState({ searchPagination: false, search: "" });
     this.getData();
   };
 
@@ -259,7 +258,7 @@ class UserTickets extends Component {
 
     const userid = localStorage.getItem("id");
     const data = {
-      status: this.state.filtersearch,
+      status: this.state.filterstatus,
       department_name: this.state.filterdepartment,
       keyword: this.state.filterkeyword,
       id: userid,
