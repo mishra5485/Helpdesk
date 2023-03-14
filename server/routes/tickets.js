@@ -42,6 +42,20 @@ router.post("/create-ticket", auth, async (req, res) => {
   res.status(200).send("Ticket created successfully!");
 });
 
+router.post("all/mytickets/:limit/:pageNumber", auth, async (req, res) => {
+  try {
+    console.log(req.body);
+    let { limit, pageNumber } = req.params;
+    let skippedItems = pageNumber * limit;
+    const countResult = await Ticket.find(req.body);
+    const result = await Ticket.find(req.body).limit(limit).skip(skippedItems);
+    let count = countResult.length;
+    res.status(200).send({ ticket: result, count });
+  } catch (ex) {
+    res.status(500).send("Failed to search");
+  }
+});
+
 router.get("/all/:limit/:pageNumber", auth, async (req, res) => {
   try {
     let limit = req.params.limit;
@@ -85,6 +99,9 @@ router.get("/employee/all/:id/:limit/:pageNumber", auth, async (req, res) => {
   try {
     let { id, limit, pageNumber } = req.params;
     let skippedItems = pageNumber * limit;
+    let ticketsCount = await Ticket.find({
+      "assigned.user_id": id,
+    });
     let tickets = await Ticket.find({
       "assigned.user_id": id,
     })
@@ -94,7 +111,7 @@ router.get("/employee/all/:id/:limit/:pageNumber", auth, async (req, res) => {
         ticketNumber: -1,
       });
 
-    let count = tickets.length;
+    let count = ticketsCount.length;
     res.status(200).send({ tickets: tickets, count: count });
   } catch (ex) {
     res.status(404).send("Unable to fetch tickets");
@@ -238,19 +255,6 @@ router.post("/department/:limit/:pageNumber", auth, async (req, res) => {
       .sort({
         ticketNumber: -1,
       });
-    let count = countResult.length;
-    res.status(200).send({ ticket: result, count });
-  } catch (ex) {
-    res.status(500).send("Failed to search");
-  }
-});
-
-router.post("all/mytickets/:limit/:pageNumber", auth, async (req, res) => {
-  try {
-    let { limit, pageNumber } = req.params;
-    let skippedItems = pageNumber * limit;
-    const countResult = await Ticket.find(req.body);
-    const result = await Ticket.find(req.body).limit(limit).skip(skippedItems);
     let count = countResult.length;
     res.status(200).send({ ticket: result, count });
   } catch (ex) {

@@ -19,6 +19,13 @@ import ModalImage from "react-modal-image";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import MessageIcon from "@mui/icons-material/Message";
 import { withRouter } from "../withRouter";
+import { connect } from "react-redux";
+
+const mapStatetoProps = (props) => {
+  return {
+    log: props.LoginUserData,
+  };
+};
 
 class UserTicketInfo extends Component {
   state = {
@@ -41,9 +48,8 @@ class UserTicketInfo extends Component {
   }
 
   getdata = async (objid) => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
 
     try {
@@ -51,7 +57,6 @@ class UserTicketInfo extends Component {
         `${process.env.REACT_APP_BASE_URL}/tickets/${objid}`,
         config
       );
-      console.log(resp);
       if (resp.status === 200) {
         this.setState({
           userid: resp.data.user_id,
@@ -77,15 +82,14 @@ class UserTicketInfo extends Component {
   handlesubmit = async (e) => {
     e.preventDefault();
     const objid = this.props.params.id;
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     const data = {
       id: objid,
       content: this.state.msg,
-      createdBy: localStorage.getItem("access"),
-      userName: localStorage.getItem("username"),
+      createdBy: this.props.log.access_level,
+      userName: this.props.log.username,
       type: "text",
     };
     await axios
@@ -111,17 +115,15 @@ class UserTicketInfo extends Component {
     e.preventDefault();
     const objid = this.props.params.id;
 
-    const Usertoken = localStorage.getItem("token");
-
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
 
     const formData = new FormData();
     formData.append("avatar", this.state.file);
     formData.append("id", objid);
-    formData.append("createdBy", localStorage.getItem("access"));
-    formData.append("userName", localStorage.getItem("username"));
+    formData.append("createdBy", this.props.log.access_level);
+    formData.append("userName", this.props.log.username);
     formData.append("type", "image");
 
     axios
@@ -170,7 +172,7 @@ class UserTicketInfo extends Component {
                               fontSize: "1.5rem",
                             }}
                           >
-                            TicketId:
+                            Ticket Number:
                           </MDBCol>
                           <MDBCol
                             size="4"
@@ -180,7 +182,7 @@ class UserTicketInfo extends Component {
                               textAlign: "start",
                             }}
                           >
-                            #{this.state.TicketNumber}
+                            {this.state.TicketNumber}
                           </MDBCol>
                         </MDBRow>
                       </MDBCol>
@@ -218,9 +220,7 @@ class UserTicketInfo extends Component {
                           <MDBCol size="3" style={{ fontWeight: "bold" }}>
                             Created By:
                           </MDBCol>
-                          <MDBCol size="6">
-                            {localStorage.getItem("username")}
-                          </MDBCol>
+                          <MDBCol size="6">{this.props.log.username}</MDBCol>
                         </MDBRow>
                       </MDBCol>
                     </MDBRow>
@@ -425,4 +425,4 @@ class UserTicketInfo extends Component {
   }
 }
 
-export default withRouter(UserTicketInfo);
+export default connect(mapStatetoProps)(withRouter(UserTicketInfo));

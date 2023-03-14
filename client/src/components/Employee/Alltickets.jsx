@@ -40,7 +40,7 @@ class Alltickets extends Component {
     filtercurrentPage: "",
   };
 
-  limit = 5;
+  limit = 7;
 
   componentDidMount() {
     this.getData();
@@ -68,7 +68,6 @@ class Alltickets extends Component {
       })
       .catch((err) => {
         console.log(err);
-        // toast.error(err.response);
       });
   };
 
@@ -172,7 +171,7 @@ class Alltickets extends Component {
 
   reset = async (e) => {
     e.preventDefault();
-    this.setState({ searchPagination: false });
+    this.setState({ searchPagination: false, search: "" });
     this.getData();
   };
 
@@ -195,7 +194,7 @@ class Alltickets extends Component {
     };
 
     const data = {
-      status: this.state.filtersearch,
+      status: this.state.filterstatus,
       department_name: this.state.filterdepartment,
       keyword: this.state.filterkeyword,
     };
@@ -207,7 +206,6 @@ class Alltickets extends Component {
         config
       )
       .then((response) => {
-        console.log(response.data);
         let total = response.data.count;
         this.setState({
           filterPageCount: Math.ceil(total / this.limit),
@@ -226,7 +224,7 @@ class Alltickets extends Component {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
     const data = {
-      status: this.state.filtersearch,
+      status: this.state.filterstatus,
       department_name: this.state.filterdepartment,
       keyword: this.state.filterkeyword,
     };
@@ -263,7 +261,7 @@ class Alltickets extends Component {
                 className: "m-2",
               }}
             >
-              <MDBCol size="3">
+              <MDBCol sm="10" lg="4" md="6">
                 <MDBInputGroup className="mb-3" size="4">
                   <input
                     className="form-control"
@@ -304,7 +302,7 @@ class Alltickets extends Component {
           </Form>
         </MDBContainer>
         <div className="table-responsive">
-          <MDBContainer>
+          <MDBContainer className="mx-5" style={{ maxWidth: 1800 }}>
             <MDBTable bordered className="mt-5">
               <MDBTableHead className="table-dark">
                 <tr>
@@ -475,10 +473,10 @@ class Alltickets extends Component {
                 className="form-control my-3"
                 placeholder="Search Keyword"
                 type="text"
-                value={this.state.filtersearch}
+                value={this.state.filterkeyword}
                 required="true"
                 onChange={(e) =>
-                  this.setState({ filtersearch: e.target.value })
+                  this.setState({ filterkeyword: e.target.value })
                 }
               />
 

@@ -162,7 +162,7 @@ class EmployeeTicketinfo extends Component {
       );
       if (resp.status === 200) {
         toast.success("Ticket Claimed Successfully ");
-        this.getdata();
+        this.props.navigate("/employee/departmenttickets");
       } else {
         if (resp.status === 404) {
           toast.error(resp.data);

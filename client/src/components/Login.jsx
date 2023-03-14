@@ -14,6 +14,20 @@ import Logo from "../images/logo.svg";
 import toast, { Toaster } from "react-hot-toast";
 import { GoogleLogin } from "@react-oauth/google";
 import { withRouter } from "./withRouter";
+import { LoginData } from "../action/Action";
+import { connect } from "react-redux";
+
+const mapStatetoProps = (props) => {
+  return {
+    log: props.LoginUserData,
+  };
+};
+
+const DispatchToProps = (dispatch) => {
+  return {
+    LoggedIn: (logindata) => dispatch(LoginData(logindata)),
+  };
+};
 
 class Login extends Component {
   state = {
@@ -23,17 +37,16 @@ class Login extends Component {
     forget: false,
     forgetemail: "",
     token: localStorage.getItem("token"),
-    access_level: localStorage.getItem("access"),
   };
 
   componentDidMount() {
-    if (this.state.access_level === "user" && this.state.token) {
+    if (this.props.log.access_level === "user" && this.state.token) {
       window.location.href = "/user/usertickets";
     } else {
-      if (this.state.access_level === "employee" && this.state.token) {
+      if (this.props.log.access_level === "employee" && this.state.token) {
         window.location.href = "/employee/alltickets";
       } else {
-        if (this.state.access_level === "admin" && this.state.token) {
+        if (this.props.log.access_level === "admin" && this.state.token) {
           window.location.href = "/admin/ticketstable";
         }
       }
@@ -52,14 +65,7 @@ class Login extends Component {
         data
       );
       if (resp.status === 200) {
-        setTimeout(() => {
-          localStorage.clear();
-          localStorage.setItem("username", resp.data.username);
-          localStorage.setItem("token", resp.data.token);
-          localStorage.setItem("access", resp.data.access_level);
-          localStorage.setItem("picture", resp.data.picture);
-          localStorage.setItem("id", resp.data.user_id);
-        }, 300);
+        this.props.LoggedIn(resp.data);
         this.props.navigate("/user/usertickets");
       } else {
         if (resp.status === 403) {
@@ -87,13 +93,14 @@ class Login extends Component {
       .post(`${process.env.REACT_APP_BASE_URL}/login`, data)
       .then((response) => {
         if (response.status === 200) {
-          localStorage.setItem("username", response.data.username);
-          localStorage.setItem("token", response.data.token);
-          localStorage.setItem("access", response.data.access_level);
-          localStorage.setItem("id", response.data.user_id);
-          localStorage.setItem("departmentname", response.data.department_name);
+          this.props.LoggedIn(response.data);
+          // localStorage.setItem("username", response.data.username);
+          // localStorage.setItem("token", response.data.token);
+          // localStorage.setItem("access", response.data.access_level);
+          // localStorage.setItem("id", response.data.user_id);
+          // localStorage.setItem("departmentname", response.data.department_name);
 
-          if (response.data.access_level === "user") {
+          if (this.props.log.access_level === "user") {
             this.props.navigate("/user/usertickets");
           } else {
             if (response.data.access_level === "employee") {
@@ -109,8 +116,8 @@ class Login extends Component {
         }
       })
       .catch((err) => {
+        toast.error("Server Error Try After SomeTime");
         console.log(err);
-        toast.error("Invalid Email Address and Password");
       });
   };
 
@@ -245,12 +252,15 @@ class Login extends Component {
                       </form>
                     </>
                   ) : null}
-                  <GoogleLogin
-                    onSuccess={this.responseMessage}
-                    onError={this.errorMessage}
-                    useOneTap
-                    auto_select
-                  />
+                  <MDBContainer className="d-flex justify-center">
+                    <GoogleLogin
+                      onSuccess={this.responseMessage}
+                      onError={this.errorMessage}
+                      useOneTap
+                      auto_select
+                    />
+                  </MDBContainer>
+
                   <div>
                     <p className="mt-5">
                       Don't have an account?
@@ -269,4 +279,4 @@ class Login extends Component {
   }
 }
 
-export default withRouter(Login);
+export default connect(mapStatetoProps, DispatchToProps)(withRouter(Login));

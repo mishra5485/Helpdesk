@@ -36,7 +36,7 @@ class MyTickets extends Component {
     Department: "",
   };
 
-  limit = 5;
+  limit = 7;
 
   componentDidMount() {
     this.getData();
@@ -49,9 +49,10 @@ class MyTickets extends Component {
       headers: { Authorization: `Bearer ${Usertoken}` },
     };
     const userId = localStorage.getItem("id");
+
     await axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/tickets/employee/all/${userId}/${this.limit}/${this.state.currentPage}`,
+        `${process.env.REACT_APP_BASE_URL}/tickets/employee/all/${userId}/${this.limit}/${this.state.currentpage}`,
         config
       )
       .then((response) => {
@@ -173,8 +174,6 @@ class MyTickets extends Component {
   handleSubmit = async (e) => {
     e.preventDefault();
     const Usertoken = localStorage.getItem("token");
-    const localusername = await localStorage.getItem("username");
-    this.setState({ username: localusername });
 
     const config = {
       headers: { Authorization: `Bearer ${Usertoken}` },
@@ -227,8 +226,7 @@ class MyTickets extends Component {
 
   reset = async (e) => {
     e.preventDefault();
-    this.setState({ searchPagination: false });
-    toast.success("Resetting search");
+    this.setState({ searchPagination: false, search: "" });
     this.getData();
   };
 
@@ -245,7 +243,7 @@ class MyTickets extends Component {
                 className: "m-2",
               }}
             >
-              <MDBCol size="3">
+              <MDBCol sm="10" lg="4" md="6">
                 <MDBInputGroup className="mb-3" size="4">
                   <input
                     className="form-control"
@@ -273,7 +271,7 @@ class MyTickets extends Component {
                   </MDBBtn>
                 </MDBInputGroup>
               </MDBCol>
-              <MDBCol size="1">
+              <MDBCol lg="1" sm="2" md="2">
                 <MDBBadge
                   color="success"
                   light
@@ -287,7 +285,7 @@ class MyTickets extends Component {
           </Form>
         </MDBContainer>
         <div className="table-responsive">
-          <MDBContainer>
+          <MDBContainer className="mx-5" style={{ maxWidth: 1800 }}>
             <MDBTable bordered className="mt-5">
               <MDBTableHead className="table-dark">
                 <tr>

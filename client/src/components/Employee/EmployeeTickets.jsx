@@ -29,7 +29,7 @@ class EmployeeTickets extends Component {
     SearchcurrentPage: 0,
   };
 
-  limit = 5;
+  limit = 7;
 
   componentDidMount() {
     this.getData();
@@ -158,8 +158,7 @@ class EmployeeTickets extends Component {
 
   reset = async (e) => {
     e.preventDefault();
-    this.setState({ searchPagination: false });
-    toast.success("Resetting search");
+    this.setState({ searchPagination: false, search: "" });
     this.getData();
   };
 
@@ -176,7 +175,7 @@ class EmployeeTickets extends Component {
                 className: "m-2",
               }}
             >
-              <MDBCol size="3">
+              <MDBCol sm="10" lg="4" md="6">
                 <MDBInputGroup className="mb-3" size="4">
                   <input
                     className="form-control"
@@ -208,7 +207,7 @@ class EmployeeTickets extends Component {
           </Form>
         </MDBContainer>
         <div className="table-responsive">
-          <MDBContainer>
+          <MDBContainer className="mx-5" style={{ maxWidth: 1800 }}>
             <MDBTable bordered className="mt-5">
               <MDBTableHead className="table-dark">
                 <tr>

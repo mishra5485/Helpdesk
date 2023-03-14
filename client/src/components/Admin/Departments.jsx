@@ -39,7 +39,7 @@ class Departments extends Component {
     searchPagination: false,
   };
 
-  limit = 5;
+  limit = 7;
 
   handleClose = () => {
     this.setState({ showModal: false });
@@ -293,7 +293,7 @@ class Departments extends Component {
         </MDBContainer>
 
         <div className="table-responsive">
-          <MDBContainer>
+          <MDBContainer className="mx-5" style={{ maxWidth: 1800 }}>
             <MDBTable bordered className="mt-5">
               <MDBTableHead className="table-dark">
                 <tr>

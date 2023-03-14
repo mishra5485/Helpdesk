@@ -20,6 +20,13 @@ import { Button, Modal } from "react-bootstrap";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import AddIcon from "@mui/icons-material/Add";
+import { connect } from "react-redux";
+
+const mapStatetoProps = (props) => {
+  return {
+    log: props.LoginUserData,
+  };
+};
 
 class UserTickets extends Component {
   state = {
@@ -43,10 +50,9 @@ class UserTickets extends Component {
     filterPageCount: "",
     filtercurrentPage: "",
     showFilterModal: false,
-    token: localStorage.getItem("token"),
   };
 
-  limit = 5;
+  limit = 7;
 
   componentDidMount() {
     this.getData();
@@ -65,14 +71,12 @@ class UserTickets extends Component {
   };
 
   getData = async () => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
-    const UserId = localStorage.getItem("id");
     await axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/tickets/all/${UserId}/${this.limit}/${this.state.currentPage}`,
+        `${process.env.REACT_APP_BASE_URL}/tickets/all/${this.props.log.user_id}/${this.limit}/${this.state.currentPage}`,
         config
       )
       .then((response) => {
@@ -88,15 +92,13 @@ class UserTickets extends Component {
   };
 
   fetchComments = async (currentPage) => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
-    const UserId = localStorage.getItem("id");
 
     try {
       let response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/tickets/all/${UserId}/${this.limit}/${currentPage}`,
+        `${process.env.REACT_APP_BASE_URL}/tickets/all/${this.props.log.user_id}/${this.limit}/${currentPage}`,
         config
       );
       let respdata = await response.data;
@@ -131,22 +133,16 @@ class UserTickets extends Component {
 
   handleSubmit = async (e) => {
     e.preventDefault();
-    const Usertoken = localStorage.getItem("token");
-    const localusername = await localStorage.getItem("username");
-    this.setState({ username: localusername });
-
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
-    const userid = localStorage.getItem("id");
-    const username = localStorage.getItem("username");
     const data = {
       subject: this.state.Subject,
       body: this.state.Body,
       department_name: this.state.Department,
       user: {
-        user_id: userid,
-        userName: username,
+        user_id: this.props.log.user_id,
+        userName: this.props.log.userName,
       },
     };
 
@@ -178,16 +174,14 @@ class UserTickets extends Component {
   search = async (e) => {
     e.preventDefault();
     this.setState({ searchPagination: true });
-    const Usertoken = localStorage.getItem("token");
 
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
 
-    const userid = localStorage.getItem("id");
     const data = {
       keyword: this.state.search,
-      id: userid,
+      id: this.props.log.user_id,
     };
 
     await axios
@@ -211,15 +205,13 @@ class UserTickets extends Component {
   };
 
   fetchSearchData = async (currentPage) => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
 
-    const userid = localStorage.getItem("id");
     const data = {
       keyword: this.state.search,
-      id: userid,
+      id: this.props.log.user_id,
     };
     try {
       let response = await axios.post(
@@ -251,17 +243,15 @@ class UserTickets extends Component {
   handleFilter = async (e) => {
     e.preventDefault();
     this.setState({ filterPagination: true });
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
 
-    const userid = localStorage.getItem("id");
     const data = {
       status: this.state.filterstatus,
       department_name: this.state.filterdepartment,
       keyword: this.state.filterkeyword,
-      id: userid,
+      id: this.props.log.user_id,
     };
 
     await axios
@@ -271,7 +261,11 @@ class UserTickets extends Component {
         config
       )
       .then((response) => {
-        console.log(response.data);
+        this.setState({
+          statuscheck: false,
+          departmentcheck: false,
+          filterkeyword: "",
+        });
         let total = response.data.count;
         this.setState({
           filterPageCount: Math.ceil(total / this.limit),
@@ -285,16 +279,15 @@ class UserTickets extends Component {
   };
 
   fetchFilterData = async (currentPage) => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
-    const userid = localStorage.getItem("id");
+
     const data = {
       status: this.state.filtersearch,
       department_name: this.state.filterdepartment,
       keyword: this.state.filterkeyword,
-      id: userid,
+      id: this.props.log.user_id,
     };
     try {
       let response = await axios.post(
@@ -321,7 +314,6 @@ class UserTickets extends Component {
     return (
       <>
         <Toaster position="top-center" />
-
         <MDBContainer fluid className="mt-3">
           <Form onSubmit={this.search}>
             <MDBRow
@@ -331,7 +323,7 @@ class UserTickets extends Component {
                 className: "m-2",
               }}
             >
-              <MDBCol size="4" sm="12" md="4">
+              <MDBCol sm="10" lg="4" md="6">
                 <MDBInputGroup className="mb-3" size="4">
                   <input
                     className="form-control"
@@ -368,12 +360,12 @@ class UserTickets extends Component {
                   </MDBBtn>
                 </MDBInputGroup>
               </MDBCol>
-              <MDBCol size="1">
+              <MDBCol lg="1" sm="2" md="2">
                 <MDBBadge
                   color="success"
                   light
                   onClick={this.handleShow}
-                  style={{ cursor: "pointer" }}
+                  style={{ cursor: "pointer", marginRight: "10px" }}
                 >
                   <AddIcon />
                 </MDBBadge>
@@ -381,9 +373,8 @@ class UserTickets extends Component {
             </MDBRow>
           </Form>
         </MDBContainer>
-
         <div className="table-responsive">
-          <MDBContainer>
+          <MDBContainer className="mx-5" style={{ maxWidth: 1800 }}>
             <MDBTable bordered className="mt-5">
               <MDBTableHead className="table-dark">
                 <tr>
@@ -527,7 +518,6 @@ class UserTickets extends Component {
             </>
           )}
         </div>
-
         <Modal show={this.state.showModal} onHide={this.handleClose}>
           <Form>
             <Modal.Header closeButton>
@@ -599,7 +589,6 @@ class UserTickets extends Component {
             </Modal.Footer>
           </Form>
         </Modal>
-
         <Modal
           show={this.state.showFilterModal}
           onHide={this.handleFilterClose}
@@ -613,10 +602,10 @@ class UserTickets extends Component {
                 className="form-control my-3"
                 placeholder="Search Keyword"
                 type="text"
-                value={this.state.filtersearch}
+                value={this.state.filterkeyword}
                 required="true"
                 onChange={(e) =>
-                  this.setState({ filtersearch: e.target.value })
+                  this.setState({ filterkeyword: e.target.value })
                 }
               />
 
@@ -698,4 +687,4 @@ class UserTickets extends Component {
   }
 }
 
-export default UserTickets;
+export default connect(mapStatetoProps)(UserTickets);

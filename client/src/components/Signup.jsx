@@ -95,6 +95,7 @@ class Signup extends Component {
         }
       })
       .catch((err) => {
+        toast.error("Server Error");
         console.log(err);
       });
   };
@@ -206,21 +207,14 @@ class Signup extends Component {
                       }
                     />
                     <MDBBtn size="lg">SignUp</MDBBtn>
-                    <div
-                      style={{
-                        margin: "auto",
-                        marginTop: "15px",
-                        fontWeight: "Bold",
-                      }}
-                    >
-                      OR
-                    </div>
-                    <GoogleLogin
-                      onSuccess={this.responseMessage}
-                      onError={this.errorMessage}
-                      useOneTap
-                      auto_select
-                    />
+                    <MDBContainer className="d-flex justify-center mt-3">
+                      <GoogleLogin
+                        onSuccess={this.responseMessage}
+                        onError={this.errorMessage}
+                        useOneTap
+                        auto_select
+                      />
+                    </MDBContainer>
                     <div>
                       <p className="mt-5  ">
                         Already have an account??
