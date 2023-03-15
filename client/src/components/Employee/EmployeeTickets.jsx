@@ -16,6 +16,13 @@ import axios from "axios";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import toast, { Toaster } from "react-hot-toast";
 import Form from "react-bootstrap/Form";
+import { connect } from "react-redux";
+
+const mapStatetoProps = (props) => {
+  return {
+    log: props.LoginUserData,
+  };
+};
 
 class EmployeeTickets extends Component {
   state = {
@@ -36,13 +43,12 @@ class EmployeeTickets extends Component {
   }
 
   getData = async () => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
-    const department = localStorage.getItem("departmentname");
+
     const data = {
-      department_name: department,
+      department_name: this.props.log.department_name,
     };
     await axios
       .post(
@@ -64,13 +70,12 @@ class EmployeeTickets extends Component {
   };
 
   fetchComments = async (currentPage) => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
-    const departmentname = localStorage.getItem("departmentname");
+
     const data = {
-      department_name: departmentname,
+      department_name: this.props.log.department_name,
     };
     try {
       let response = await axios.post(
@@ -97,10 +102,9 @@ class EmployeeTickets extends Component {
   search = async (e) => {
     e.preventDefault();
     this.setState({ searchPagination: true });
-    const Usertoken = localStorage.getItem("token");
 
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
 
     const data = {
@@ -128,9 +132,8 @@ class EmployeeTickets extends Component {
   };
 
   fetchSearchData = async (currentPage) => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     const data = {
       keyword: this.state.search,
@@ -354,4 +357,4 @@ class EmployeeTickets extends Component {
   }
 }
 
-export default EmployeeTickets;
+export default connect(mapStatetoProps)(EmployeeTickets);

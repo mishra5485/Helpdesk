@@ -11,6 +11,13 @@ import {
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { withRouter } from "../withRouter";
+import { connect } from "react-redux";
+
+const mapStatetoProps = (props) => {
+  return {
+    log: props.LoginUserData,
+  };
+};
 
 class EmployeeTicketinfo extends Component {
   state = {
@@ -34,9 +41,8 @@ class EmployeeTicketinfo extends Component {
   }
 
   getdata = async (objid) => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
 
     try {
@@ -71,15 +77,15 @@ class EmployeeTicketinfo extends Component {
   handlesubmit = async (e) => {
     e.preventDefault();
     const objid = this.props.match.params.id;
-    const Usertoken = localStorage.getItem("token");
+
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     const data = {
       id: objid,
       content: this.state.msg,
-      createdBy: localStorage.getItem("access"),
-      userName: localStorage.getItem("username"),
+      createdBy: this.props.log.access_level,
+      userName: this.props.log.username,
       type: "text",
     };
     await axios
@@ -105,17 +111,15 @@ class EmployeeTicketinfo extends Component {
     e.preventDefault();
     const objid = this.props.match.params.id;
 
-    const Usertoken = localStorage.getItem("token");
-
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
 
     const formData = new FormData();
     formData.append("avatar", this.state.file);
     formData.append("id", objid);
-    formData.append("createdBy", localStorage.getItem("access"));
-    formData.append("userName", localStorage.getItem("username"));
+    formData.append("createdBy", this.props.log.access_level);
+    formData.append("userName", this.props.log.username);
     formData.append("type", "image");
 
     axios
@@ -141,16 +145,14 @@ class EmployeeTicketinfo extends Component {
 
   ClaimTicket = async (e) => {
     const objid = this.props.params.id;
-    const Usertoken = localStorage.getItem("token");
-    const UserId = localStorage.getItem("id");
-    const username = localStorage.getItem("username");
+
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     const data = {
       assigned: {
-        user_name: username,
-        user_id: UserId,
+        user_name: this.props.log.username,
+        user_id: this.props.log.user_id,
       },
     };
     console.log(data);
@@ -339,4 +341,4 @@ class EmployeeTicketinfo extends Component {
   }
 }
 
-export default withRouter(EmployeeTicketinfo);
+export default connect(mapStatetoProps)(withRouter(EmployeeTicketinfo));

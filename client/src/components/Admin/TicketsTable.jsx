@@ -18,6 +18,13 @@ import Form from "react-bootstrap/Form";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import toast, { Toaster } from "react-hot-toast";
+import { connect } from "react-redux";
+
+const mapStatetoProps = (props) => {
+  return {
+    log: props.LoginUserData,
+  };
+};
 
 class TicketsTable extends Component {
   state = {
@@ -37,9 +44,8 @@ class TicketsTable extends Component {
   }
 
   getData = async () => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     await axios
       .get(
@@ -66,9 +72,8 @@ class TicketsTable extends Component {
   };
 
   fetchData = async (currentPage) => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     try {
       let response = await axios.get(
@@ -93,10 +98,9 @@ class TicketsTable extends Component {
   search = async (e) => {
     e.preventDefault();
     this.setState({ searchPagination: true });
-    const Usertoken = localStorage.getItem("token");
 
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
 
     const data = {
@@ -129,9 +133,8 @@ class TicketsTable extends Component {
   };
 
   fetchSearchData = async (currentPage) => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     const data = {
       keyword: this.state.search,
@@ -352,4 +355,4 @@ class TicketsTable extends Component {
   }
 }
 
-export default TicketsTable;
+export default connect(mapStatetoProps)(TicketsTable);

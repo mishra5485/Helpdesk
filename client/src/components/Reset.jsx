@@ -30,7 +30,6 @@ class Reset extends Component {
       await axios
         .post(`${process.env.REACT_APP_BASE_URL}/reset/${token}`, data)
         .then((response) => {
-          console.log(response);
           if (response.status === 200) {
             this.props.navigate("/");
             toast.success("Password Updated Successfully");

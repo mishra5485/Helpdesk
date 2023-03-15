@@ -11,11 +11,24 @@ import {
   MDBCollapse,
 } from "mdb-react-ui-kit";
 import { NavLink } from "react-router-dom";
-
 import PersonIcon from "@mui/icons-material/Person";
 import toast, { Toaster } from "react-hot-toast";
+import { connect } from "react-redux";
+import { LoginData } from "../../action/Action";
 
-export default class Nav extends Component {
+const mapStatetoProps = (props) => {
+  return {
+    log: props.LoginUserData,
+  };
+};
+
+const DispatchToProps = (dispatch) => {
+  return {
+    LoggedIn: (logindata) => dispatch(LoginData(logindata)),
+  };
+};
+
+class Nav extends Component {
   constructor() {
     super();
     this.state = {
@@ -29,6 +42,7 @@ export default class Nav extends Component {
     localStorage.clear();
     toast.success("Logout Successfully");
     this.props.navigate("/");
+    this.props.LoggedIn(null);
   };
 
   activeStyle = {
@@ -82,7 +96,7 @@ export default class Nav extends Component {
                     to="/user/profile"
                   >
                     <PersonIcon />
-                    {`${localStorage.getItem("username")}`}
+                    {this.props.log.username}
                   </NavLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
@@ -100,3 +114,5 @@ export default class Nav extends Component {
     );
   }
 }
+
+export default connect(mapStatetoProps, DispatchToProps)(Nav);

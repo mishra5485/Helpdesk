@@ -18,6 +18,13 @@ import axios from "axios";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import toast, { Toaster } from "react-hot-toast";
 import Form from "react-bootstrap/Form";
+import { connect } from "react-redux";
+
+const mapStatetoProps = (props) => {
+  return {
+    log: props.LoginUserData,
+  };
+};
 
 class Alltickets extends Component {
   state = {
@@ -48,9 +55,8 @@ class Alltickets extends Component {
   }
 
   getData = async () => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
 
     await axios
@@ -83,9 +89,8 @@ class Alltickets extends Component {
   };
 
   fetchComments = async (currentPage) => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     try {
       let response = await axios.get(
@@ -110,10 +115,9 @@ class Alltickets extends Component {
   search = async (e) => {
     e.preventDefault();
     this.setState({ searchPagination: true });
-    const Usertoken = localStorage.getItem("token");
 
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
 
     const data = {
@@ -141,9 +145,8 @@ class Alltickets extends Component {
   };
 
   fetchSearchData = async (currentPage) => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     const data = {
       keyword: this.state.search,
@@ -187,10 +190,8 @@ class Alltickets extends Component {
     e.preventDefault();
     this.setState({ filterPagination: true });
 
-    const Usertoken = localStorage.getItem("token");
-
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
 
     const data = {
@@ -219,9 +220,8 @@ class Alltickets extends Component {
   };
 
   fetchFilterData = async (currentPage) => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     const data = {
       status: this.state.filterstatus,
@@ -555,4 +555,4 @@ class Alltickets extends Component {
   }
 }
 
-export default Alltickets;
+export default connect(mapStatetoProps)(Alltickets);

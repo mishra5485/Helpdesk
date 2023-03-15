@@ -19,6 +19,13 @@ import Form from "react-bootstrap/Form";
 import AddIcon from "@mui/icons-material/Add";
 import { Button, Modal } from "react-bootstrap";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
+import { connect } from "react-redux";
+
+const mapStatetoProps = (props) => {
+  return {
+    log: props.LoginUserData,
+  };
+};
 
 class MyTickets extends Component {
   state = {
@@ -44,15 +51,13 @@ class MyTickets extends Component {
   }
 
   getData = async () => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
-    const userId = localStorage.getItem("id");
 
     await axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/tickets/employee/all/${userId}/${this.limit}/${this.state.currentpage}`,
+        `${process.env.REACT_APP_BASE_URL}/tickets/employee/all/${this.props.log.user_id}/${this.limit}/${this.state.currentpage}`,
         config
       )
       .then((response) => {
@@ -81,15 +86,13 @@ class MyTickets extends Component {
   };
 
   fetchComments = async (currentPage) => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
-    const userId = localStorage.getItem("id");
 
     try {
       let response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/tickets/employee/all/${userId}/${this.limit}/${currentPage}`,
+        `${process.env.REACT_APP_BASE_URL}/tickets/employee/all/${this.props.log.user_id}/${this.limit}/${currentPage}`,
         config
       );
       let respdata = await response.data;
@@ -111,10 +114,9 @@ class MyTickets extends Component {
   search = async (e) => {
     e.preventDefault();
     this.setState({ searchPagination: true });
-    const Usertoken = localStorage.getItem("token");
 
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
 
     const data = {
@@ -142,9 +144,8 @@ class MyTickets extends Component {
   };
 
   fetchSearchData = async (currentPage) => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     const data = {
       keyword: this.state.search,
@@ -173,20 +174,18 @@ class MyTickets extends Component {
 
   handleSubmit = async (e) => {
     e.preventDefault();
-    const Usertoken = localStorage.getItem("token");
 
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
-    const userid = localStorage.getItem("id");
-    const username = localStorage.getItem("username");
+
     const data = {
       subject: this.state.Subject,
       body: this.state.Body,
       department_name: this.state.Department,
       user: {
-        user_id: userid,
-        userName: username,
+        user_id: this.props.log.user_id,
+        userName: this.props.log.username,
       },
     };
 
@@ -503,4 +502,4 @@ class MyTickets extends Component {
   }
 }
 
-export default MyTickets;
+export default connect(mapStatetoProps)(MyTickets);

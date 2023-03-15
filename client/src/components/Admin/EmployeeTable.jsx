@@ -22,6 +22,13 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import toast, { Toaster } from "react-hot-toast";
 import moment from "moment";
 import AddIcon from "@mui/icons-material/Add";
+import { connect } from "react-redux";
+
+const mapStatetoProps = (props) => {
+  return {
+    log: props.LoginUserData,
+  };
+};
 
 class EmployeeTable extends Component {
   state = {
@@ -72,9 +79,8 @@ class EmployeeTable extends Component {
   };
 
   getData = async () => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     await axios
       .get(
@@ -101,9 +107,8 @@ class EmployeeTable extends Component {
   };
 
   fetchData = async (currentPage) => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     try {
       let response = await axios.get(
@@ -128,10 +133,9 @@ class EmployeeTable extends Component {
   handleSubmit = async (e) => {
     e.preventDefault();
     this.handleClose();
-    const Usertoken = localStorage.getItem("token");
 
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     const data = {
       name: this.state.username,
@@ -161,10 +165,9 @@ class EmployeeTable extends Component {
   search = async (e) => {
     e.preventDefault();
     this.setState({ searchPagination: true });
-    const Usertoken = localStorage.getItem("token");
 
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
 
     const data = {
@@ -191,9 +194,8 @@ class EmployeeTable extends Component {
   };
 
   fetchSearchData = async (currentPage) => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     const data = {
       keyword: this.state.search,
@@ -505,4 +507,4 @@ class EmployeeTable extends Component {
   }
 }
 
-export default EmployeeTable;
+export default connect(mapStatetoProps)(EmployeeTable);

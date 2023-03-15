@@ -19,6 +19,13 @@ import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import toast, { Toaster } from "react-hot-toast";
 import AddIcon from "@mui/icons-material/Add";
+import { connect } from "react-redux";
+
+const mapStatetoProps = (props) => {
+  return {
+    log: props.LoginUserData,
+  };
+};
 
 class Departments extends Component {
   state = {
@@ -63,9 +70,8 @@ class Departments extends Component {
   }
 
   getData = async () => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     await axios
       .get(
@@ -93,9 +99,8 @@ class Departments extends Component {
   };
 
   fetchData = async (currentPage) => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     try {
       let response = await axios.get(
@@ -120,10 +125,9 @@ class Departments extends Component {
   handleSubmit = async (e) => {
     e.preventDefault();
     this.handleClose();
-    const Usertoken = localStorage.getItem("token");
 
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     const data = {
       name: this.state.name,
@@ -178,10 +182,9 @@ class Departments extends Component {
   search = async (e) => {
     e.preventDefault();
     this.setState({ searchPagination: true });
-    const Usertoken = localStorage.getItem("token");
 
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
 
     const data = {
@@ -209,9 +212,8 @@ class Departments extends Component {
   };
 
   fetchSearchData = async (currentPage) => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     const data = {
       keyword: this.state.search,
@@ -456,4 +458,4 @@ class Departments extends Component {
   }
 }
 
-export default Departments;
+export default connect(mapStatetoProps)(Departments);

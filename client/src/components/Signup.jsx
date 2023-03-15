@@ -25,51 +25,6 @@ class Signup extends Component {
     };
   }
 
-  handleCallbackResponse = async (response) => {
-    const ssotoken = response.credential;
-    const data = {
-      token: ssotoken,
-    };
-
-    try {
-      let resp = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/users/registerwithgoogle`,
-        data
-      );
-      if (resp.status === 200) {
-        toast.success(resp.data);
-        console.log(resp.data);
-        localStorage.clear();
-        localStorage.setItem("username", resp.data.username);
-        localStorage.setItem("token", resp.data.token);
-        localStorage.setItem("access", resp.data.access_level);
-        localStorage.setItem("picture", resp.data.picture);
-        localStorage.setItem("id", resp.data.user_id);
-        this.props.navigate("/user/UserTickets");
-      } else {
-        if (resp.status === 403) {
-          toast.error(resp.data);
-        }
-      }
-    } catch (err) {
-      toast.error("Already registered. Please login in!");
-      console.log(err);
-    }
-  };
-
-  componentDidMount() {
-    const google = window.google;
-    google.accounts.id.initialize({
-      client_id:
-        "214010166124-urdkbn0993d2f8h950voub3cmfdkgbfd.apps.googleusercontent.com",
-      callback: this.handleCallbackResponse,
-    });
-    google.accounts.id.renderButton(document.getElementById("signInDiv"), {
-      theme: "outline",
-      size: "large",
-    });
-  }
-
   handlesubmit = async (e) => {
     e.preventDefault();
     const data = {
@@ -128,6 +83,7 @@ class Signup extends Component {
   errorMessage = (error) => {
     console.log(error);
   };
+
   render() {
     return (
       <>

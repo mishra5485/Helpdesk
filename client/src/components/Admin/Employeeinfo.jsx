@@ -13,6 +13,13 @@ import axios from "axios";
 import moment from "moment";
 import toast, { Toaster } from "react-hot-toast";
 import { withRouter } from "../withRouter";
+import { connect } from "react-redux";
+
+const mapStatetoProps = (props) => {
+  return {
+    log: props.LoginUserData,
+  };
+};
 
 class EmployeeInfo extends Component {
   state = {
@@ -34,9 +41,8 @@ class EmployeeInfo extends Component {
   }
 
   getdata = async (objid) => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
 
     try {
@@ -67,10 +73,9 @@ class EmployeeInfo extends Component {
   empUpdate = async (e) => {
     e.preventDefault();
     const objid = this.props.params.id;
-    const Usertoken = localStorage.getItem("token");
 
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     const data = {
       name: this.state.empname,
@@ -225,4 +230,4 @@ class EmployeeInfo extends Component {
   }
 }
 
-export default withRouter(EmployeeInfo);
+export default connect(mapStatetoProps)(withRouter(EmployeeInfo));

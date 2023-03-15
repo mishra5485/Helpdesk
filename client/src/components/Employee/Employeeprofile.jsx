@@ -24,9 +24,16 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Button, Modal } from "react-bootstrap";
 import EditIcon from "@mui/icons-material/Edit";
-
 import "./Profile.css";
-export default class EmployeeProfile extends Component {
+import { connect } from "react-redux";
+
+const mapStatetoProps = (props) => {
+  return {
+    log: props.LoginUserData,
+  };
+};
+
+class EmployeeProfile extends Component {
   state = {
     showModal: false,
     showpassword: false,
@@ -42,7 +49,6 @@ export default class EmployeeProfile extends Component {
     forget: false,
     file: null,
     profilepic: "",
-    token: localStorage.getItem("token"),
   };
 
   componentDidMount() {
@@ -50,15 +56,13 @@ export default class EmployeeProfile extends Component {
   }
 
   getdata = async () => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
-    const userid = localStorage.getItem("id");
 
     try {
       let resp = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/employees/employee/profile/${userid}`,
+        `${process.env.REACT_APP_BASE_URL}/employees/employee/profile/${this.props.log.user_id}`,
         config
       );
       if (resp.status === 200) {
@@ -99,11 +103,9 @@ export default class EmployeeProfile extends Component {
 
   handleReset = async () => {
     if (this.state.newpassword === this.state.cnewpassword) {
-      const Usertoken = localStorage.getItem("token");
       const config = {
-        headers: { Authorization: `Bearer ${Usertoken}` },
+        headers: { Authorization: `Bearer ${this.props.log.token}` },
       };
-      const userid = localStorage.getItem("id");
       const data = {
         current_password: this.state.password,
         new_password: this.state.cnewpassword,
@@ -111,7 +113,7 @@ export default class EmployeeProfile extends Component {
 
       try {
         let resp = await axios.post(
-          `${process.env.REACT_APP_BASE_URL}/employees/reset/password/${userid}`,
+          `${process.env.REACT_APP_BASE_URL}/employees/reset/password/${this.props.log.user_id}`,
           data,
           config
         );
@@ -137,17 +139,16 @@ export default class EmployeeProfile extends Component {
 
   updateProfile = async (e) => {
     e.preventDefault();
-    const userid = localStorage.getItem("id");
-    const Usertoken = localStorage.getItem("token");
+
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     const formData = new FormData();
     formData.append("avatar", this.state.file);
 
     await axios
       .post(
-        `${process.env.REACT_APP_BASE_URL}/employees/profile/image/${userid}`,
+        `${process.env.REACT_APP_BASE_URL}/employees/profile/image/${this.props.log.user_id}`,
         formData,
         config
       )
@@ -511,3 +512,5 @@ export default class EmployeeProfile extends Component {
     );
   }
 }
+
+export default connect(mapStatetoProps)(EmployeeProfile);

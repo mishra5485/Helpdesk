@@ -19,6 +19,13 @@ import ModalImage from "react-modal-image";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import MessageIcon from "@mui/icons-material/Message";
 import { withRouter } from "../withRouter";
+import { connect } from "react-redux";
+
+const mapStatetoProps = (props) => {
+  return {
+    log: props.LoginUserData,
+  };
+};
 
 class TicketInfo extends Component {
   state = {
@@ -41,9 +48,8 @@ class TicketInfo extends Component {
   }
 
   getdata = async (objid) => {
-    const Usertoken = localStorage.getItem("token");
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
 
     try {
@@ -76,15 +82,15 @@ class TicketInfo extends Component {
   handlesubmit = async (e) => {
     e.preventDefault();
     const objid = this.props.params.id;
-    const Usertoken = localStorage.getItem("token");
+
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
     const data = {
       id: objid,
       content: this.state.msg,
-      createdBy: localStorage.getItem("access"),
-      userName: localStorage.getItem("username"),
+      createdBy: this.props.log.access_level,
+      userName: this.props.log.username,
       type: "text",
     };
     await axios
@@ -108,16 +114,16 @@ class TicketInfo extends Component {
   handleFileSubmit = async (e) => {
     e.preventDefault();
     const objid = this.props.params.id;
-    const Usertoken = localStorage.getItem("token");
+
     const config = {
-      headers: { Authorization: `Bearer ${Usertoken}` },
+      headers: { Authorization: `Bearer ${this.props.log.token}` },
     };
 
     const formData = new FormData();
     formData.append("avatar", this.state.file);
     formData.append("id", objid);
-    formData.append("createdBy", localStorage.getItem("access"));
-    formData.append("userName", localStorage.getItem("username"));
+    formData.append("createdBy", this.props.log.access_level);
+    formData.append("userName", this.props.log.username);
     formData.append("type", "image");
 
     axios
@@ -449,4 +455,4 @@ class TicketInfo extends Component {
   }
 }
 
-export default withRouter(TicketInfo);
+export default connect(mapStatetoProps)(withRouter(TicketInfo));
